@@ -1,7 +1,7 @@
 # Webster-2022
 ## Complaint Box
 
-### Team Name : [WEB Newbies](https://github.com/Kitashi14/WEB-Newbies)
+### Team Name : [0π](https://github.com/Kitashi14/Webster-2022)
 
 ### Team Members Name : 
 
