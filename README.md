@@ -11,13 +11,13 @@
 
 ### Proposed Features :
 
-.User Login/ Signup
-·Various user profiles (residents, electrician etc)
-·One can add multiple profession
-·Standard & Custom Complaints
-·Add/Delete/Update complaints
-·Worker of different profession can select the complaint the want to take
-·Ratings on complaints by the resolve work done on them
+- User Login/ Signup
+- Various user profiles (residents, electrician etc)
+- One can add multiple profession
+- Standard & Custom Complaints
+- Add/Delete/Update complaints
+- Worker of different profession can select the complaint the want to take
+- Ratings on complaints by the resolve work done on them
 
 ### Tech Stack :
 
