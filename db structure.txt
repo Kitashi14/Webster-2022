@@ -1,0 +1,96 @@
+user-list{
+    
+    id;
+    username;
+    first-name;
+    last-name;
+    email;
+    password;
+    address;
+    date-created;
+    location-x;
+    location-y;
+    verified;
+    
+    professions{
+
+        worker-id;
+        worker-profession;
+        worker-rating;
+        worker-score;
+    }
+}
+
+token-list{
+
+    id;
+    user-id;
+    otp;
+    date-created;
+    data-expire;
+}
+
+complain-list{
+
+    id;
+    creator-id (user-id);
+    creator (user-username);
+    title;
+    description;
+    profession;
+    address;
+    location-x;
+    location-y;
+    date-created;
+    worker-id (null initially);
+    worker-user-name (null initially);
+    accepted-workers{
+
+        worker-id;
+        worker-username;
+        accepted-date;
+    }
+    status (approved/not-approved/resolved); 
+    
+    (if resolved) rating;
+    (if resolved) comment;
+    (if resolved) resolved-date;
+
+    (if approved) approved-date;
+
+
+}
+
+notification-list{
+
+    id;
+    complain-id;
+    worker-id;
+    worker-username;
+    date-created;
+    read-status;
+    delete-status (optional);
+    type (info/status);
+    (if info) previous-info;
+    (if info) current-info;
+
+    (if status) previous-status;
+    (if status) current-status;
+    
+}
+
+worker-list{
+
+    id;
+    user-id;
+    user-username;
+    user-firstname;
+    user-secondname;
+    user-address;
+    user-location-x;
+    user-location-y;
+    date-created;
+    profession;
+    rating;
+    score;
+}
