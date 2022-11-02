@@ -5,8 +5,10 @@ user-list{
     first-name;
     last-name (not compulsory);
     email;
-    password;
+    isGoogle;
+    password (if not google);
     address;
+    phoneNumber;
     age;
     date-created;
     location-x;
@@ -40,6 +42,7 @@ complain-list{
     description;
     profession;
     address;
+    phoneNumber;
     location-x;
     location-y;
     date-created;
@@ -87,6 +90,8 @@ worker-list{
     user-username;
     user-firstname;
     user-secondname;
+    user-email;
+    user-phoneNumber;
     user-age;
     user-address;
     user-location-x;
