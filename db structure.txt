@@ -3,10 +3,11 @@ user-list{
     id;
     username;
     first-name;
-    last-name;
+    last-name (not compulsory);
     email;
     password;
     address;
+    age;
     date-created;
     location-x;
     location-y;
@@ -86,6 +87,7 @@ worker-list{
     user-username;
     user-firstname;
     user-secondname;
+    user-age;
     user-address;
     user-location-x;
     user-location-y;
