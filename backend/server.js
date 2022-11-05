@@ -5,12 +5,13 @@ require("dotenv").config();
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
 
-//extracting express module 
+//extracting express module
 const express = require("express");
 const app = express();
 
 //extracting routers
 const authRouters = require("./routers/auth-routers");
+const userRouters = require("./routers/user-routers");
 
 //for reading cookies while getting requests
 app.use(cookieParser());
@@ -26,7 +27,7 @@ app.use(express.static("public"));
 app.use(
     cors({
         //Sets Access-Control-Allow-Origin to the UI URI
-        origin: true,
+        origin: process.env.UI_ROOT_URI,
         //Sets Access-Control-Allow-Credentials to true to recieve cookies
         credentials: true
     })
@@ -38,12 +39,15 @@ app.use(
 //connecting to mongobd database server
 const mongoose = require("mongoose");
 const dbName = process.env.DBNAME;
-mongoose.connect(`mongodb+srv://${process.env.DATABASE_USERNAME}:${process.env.DATABASE_PASSWORD}@cluster0.rhccnpx.mongodb.net/?retryWrites=true&w=majority/${dbName}`);
+// mongoose.connect(
+//   `mongodb+srv://${process.env.DATABASE_USERNAME}:${process.env.DATABASE_PASSWORD}@cluster0.rhccnpx.mongodb.net/?retryWrites=true&w=majority/${dbName}`
+// );
+mongoose.connect(`mongodb://localhost:${process.env.LOCAL_DATABASE_PORT}/${dbName}`);
 
 //setting api
-app.use("/api/auth",authRouters);
+app.use("/api/auth", authRouters);
+app.use("/api/user", userRouters);
 
 //setting the server port
 const port = process.env.PORT;
 app.listen(port, () => console.log(`Server listening on port ${port}...`));
-
