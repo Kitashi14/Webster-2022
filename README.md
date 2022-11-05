@@ -1,12 +1,13 @@
 # Webster-2022
+
 ## Complaint Box
 
 ### Team Name : [0π](https://github.com/Kitashi14/Webster-2022)
 
-### Team Members Name : 
+### Team Members Name :
 
-- Sudhir Shukla 
-- Rishav Raj 
+- Sudhir Shukla
+- Rishav Raj
 - Ritik Vaidyasen
 
 ### Proposed Features :
@@ -21,11 +22,11 @@
 
 ### Tech Stack :
 
-  1. NODE js
-  2. Bootstrap
-  3. HTML
-  4. CSS
-  5. JavaScript 
-  6. MongoDB 
-  7. ReactJS
-  8. ExpressJS
+1. NODE js
+2. Tailwind
+3. HTML
+4. CSS
+5. JavaScript
+6. MongoDB
+7. ReactJS
+8. ExpressJS
