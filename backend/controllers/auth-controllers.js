@@ -1,71 +1,78 @@
-const querystring = require('querystring');
+//querystring used for formatting in url-encoded form
+const querystring = require("querystring");
+
+//axios for sending api requests
 const axios = require("axios");
+
+//for creating jwt token
 const jwt = require("jsonwebtoken");
+
+//importing function
+const { getUserInfo } = require("./user-controllers");
 
 const redirectURI = process.env.GOOGLE_AUTH_REDIRECT_URI;
 
-const googleAuthPage = async (req,res,next) =>{
-    console.log("google auth page request hit");
-    function getGoogleAuthURL() {
-        const rootUrl = "https://accounts.google.com/o/oauth2/v2/auth";
-        const options = {
-          redirect_uri: `${process.env.SERVER_ROOT_URI}/${redirectURI}`,
-          client_id: process.env.GOOGLE_CLIENT_ID,
-          access_type: "offline",
-          response_type: "code",
-          prompt: "consent",
-          scope: [
-            "https://www.googleapis.com/auth/userinfo.profile",
-            "https://www.googleapis.com/auth/userinfo.email",
-          ].join(" "),
-        };
-      
-        return `${rootUrl}?${querystring.stringify(options)}`;
-      }
+//for getting url of google authentication page
+const googleAuthPage = async (req, res, next) => {
+  console.log("\n", "google auth page request hit");
 
-      return res.redirect(getGoogleAuthURL());
+  //return google auth link
+  function getGoogleAuthURL() {
+    const rootUrl = "https://accounts.google.com/o/oauth2/v2/auth";
+    const options = {
+      redirect_uri: `${process.env.SERVER_ROOT_URI}/${redirectURI}`,
+      client_id: process.env.GOOGLE_CLIENT_ID,
+      access_type: "offline",
+      response_type: "code",
+      prompt: "consent",
+      scope: [
+        "https://www.googleapis.com/auth/userinfo.profile",
+        "https://www.googleapis.com/auth/userinfo.email",
+      ].join(" "),
+    };
 
-}
+    return `${rootUrl}?${querystring.stringify(options)}`;
+  }
+  console.log("\n", "sending googleAuthPage link");
+  return res.status(200).json({ url: getGoogleAuthURL() });
+};
 
-const redirectGoogleEmail = async (req,res,next) =>{
+//fetching google user data (for login and creating account)
+const redirectGoogleEmail = async (req, res, next) => {
+  console.log("\n", "redirect api hit");
+  console.log("\n", "got the user code of the google user");
 
-    console.log("redirect api hit");
-    function getTokens({
-        code,
-        clientId,
-        clientSecret,
-        redirectUri,
-      }) {
-        /*
-         * Uses the code to get tokens
-         * that can be used to axios the user's profile
-         */
-        const url = "https://oauth2.googleapis.com/token";
-        const values = {
-          code,
-          client_id: clientId,
-          client_secret: clientSecret,
-          redirect_uri: redirectUri,
-          grant_type: "authorization_code",
-        };
-      
-        return axios
-          .post(url,querystring.stringify(values), {
-            headers: {
-              "Content-Type": "application/x-www-form-urlencoded",
-            },
-          })
-          .then((res) =>{
-            return res.data;
-          })
-          .catch((error) => {
-            console.error(`Failed to axios auth tokens`);
-            throw new Error(error.message);
-          });
-    }
+  //code of user got after redirecting google auth page
+  const code = req.query.code;
 
-    const code = req.query.code;
+  //fetching access token and id token of user form google server with user code
+  function getTokens({ code, clientId, clientSecret, redirectUri }) {
+    const url = "https://oauth2.googleapis.com/token";
+    const values = {
+      code,
+      client_id: clientId,
+      client_secret: clientSecret,
+      redirect_uri: redirectUri,
+      grant_type: "authorization_code",
+    };
 
+    return axios
+      .post(url, querystring.stringify(values), {
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+      })
+      .then((res) => {
+        console.log("\n", "got the access-token of the google user");
+        return res.data;
+      })
+      .catch((error) => {
+        console.error(`\nFailed to axios auth tokens`);
+        console.log("\n", error.message);
+        const response = { error: "Google Authentication error" };
+        res.status(500).json(response);
+      });
+  }
   const { id_token, access_token } = await getTokens({
     code,
     clientId: process.env.GOOGLE_CLIENT_ID,
@@ -84,37 +91,77 @@ const redirectGoogleEmail = async (req,res,next) =>{
       }
     )
     .then((res) => {
+      console.log("\n", "got the user data from google auth");
       return res.data;
     })
     .catch((error) => {
-      console.error(`Failed to axios user`);
-      throw new Error(error.message);
+      console.error(`\nFailed to axios user`);
+      console.log("\n", error.message);
+      const response = { error: "Failed to find user data" };
+      res.status(500).json(response);
     });
 
-    const userData = {
-        userEmail: googleUser.email,
-        isVerified : googleUser.verified_email,
-        isGoogleVerified : true
-    }
+  console.log("\n", "checking if the user exist");
+  //check if a user exist with this google email
+  const existingUser = await getUserInfo(googleUser.email);
 
+  console.log("\n", "existingUser : ", existingUser);
+
+  //if doesn't exist then redirect to create account page
+  if (!existingUser) {
+    console.log("\n", "user is new");
+    const userData = {
+      userEmail: googleUser.email,
+      isVerified: googleUser.verified_email,
+      isGoogleVerified: true,
+    };
+
+    //creating jwt token
     const token = jwt.sign(userData, process.env.JWT_SECRET);
 
-  res.cookie("email token", token, {
-    maxAge: 900000,
-    httpOnly: true,
-    secure: false,
-  });
-
+    //sending cookies to client side
+    console.log("\ncreating email token");
+    res.cookie(process.env.EMAIL_COOKIE_NAME, token, {
+      expires: new Date(Date.now() + 60 * 60 * 1000), //milliseconds
+      httpOnly: true,
+      secure: false,
+    });
+    console.log("\n", "redirecting to create account page with email token");
     res.redirect(`${process.env.UI_ROOT_URI}/createAccount`);
+  }
 
+  //if exist then redirect to home page with login
+  else {
+    console.log("\nUser exists");
+    const userData = {
+      userEmail: existingUser.email,
+      userName: existingUser.username,
+      password: existingUser.password,
+    };
 
-}
+    //creating jwt token
+    const token = jwt.sign(userData, process.env.JWT_SECRET);
 
-const loginVerifyEmailGoogle = async (req,res, next) =>{
-
+    //sending cookies to client side
+    console.log("\nCreating login token");
+    res.cookie(process.env.LOGIN_COOKIE_NAME, token, {
+      maxAge: 10 * 24 * 60 * 60 * 1000,
+      httpOnly: true,
+      secure: false,
+    });
+    console.log("\nredirecting to home page with login token");
+    res.redirect(`${process.env.UI_ROOT_URI}`);
+  }
 };
+
+const createOtp = async (req,res,next) =>{};
+
+const verifyOpt = async (req, res, next) => {};
+
+const changePassword = async (req,res,next) => {};
+
+const verifyLoginToken = async (req,res,next)=>{};
 
 exports.googleAuthPage = googleAuthPage;
 exports.redirectGoogleEmail = redirectGoogleEmail;
-exports.loginVerifyEmailGoogle = loginVerifyEmailGoogle;
-
+exports.verifyOpt = verifyOpt;
