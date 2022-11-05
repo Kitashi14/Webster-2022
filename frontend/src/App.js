@@ -10,18 +10,26 @@ function App() {
   return (
     <>
       <Routes>
-        <Route exact path="/" element={<><Navbar login={true} /><LandingPage /></>} />
+        <Route
+          exact
+          path="/"
+          element={
+            <>
+              <Navbar login={true} />
+              <LandingPage />
+            </>
+          }
+        />
 
         <Route exact path="/login" element={<LoginPage />} />
 
-        <Route exact path="/verifyEmail" element={<EmailVerifyPage />}/>
+        <Route exact path="/verifyEmail" element={<EmailVerifyPage />} />
 
-        <Route exact path="/verifyOtp" element={<VerifyOTP />}/>
+        <Route exact path="/verifyOtp" element={<VerifyOTP />} />
 
         <Route exact path="/createAccount" element={<CreateAccountPage />} />
 
         <Route exact path="/forgotPassword"></Route>
-
       </Routes>
     </>
   );
