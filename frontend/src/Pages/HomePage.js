@@ -1,17 +1,19 @@
+import { Link } from "react-router-dom";
 import Container from "../Components/Shared/Container";
 
-const LandingPage = () => {
+const HomePage = () => {
   console.log("Landing page entered.");
 
   return (
     <>
-      <div>sldfjsld</div>
+      <div>HomePage</div>
       <Container>
-        <div>djfls</div>
+        <div>Complains</div>
         <div>gsdfhei</div>
       </Container>
+      <Link to="/login">Login</Link>
     </>
   );
 };
 
-export default LandingPage;
+export default HomePage;

@@ -15,7 +15,7 @@ const CreateAccountPage = () => {
   const locationXInputRef = useRef();
   const locationYInputRef = useRef();
 
-  const submitButtonHandler = (event) => {
+  const submitButtonHandler = async (event) => {
     event.preventDefault();
 
     const age = ageInputRef.current.value;
@@ -36,9 +36,8 @@ const CreateAccountPage = () => {
       alert("Enter a valid first name");
     else if (lastName.length > 50) alert("Enter a valid last name");
     else if (address.length < 5) alert("Enter a valid address");
-    else if (phonenum.length !== 10 ) alert("Enter a valid Phone No.");  
+    else if (phonenum.length !== 10) alert("Enter a valid Phone No.");
     else {
-      
       const locationX = locationXInputRef.current.value;
       const locationY = locationYInputRef.current.value;
 
@@ -46,15 +45,46 @@ const CreateAccountPage = () => {
         firstName: firstName,
         lastName: lastName,
         password: password,
+        phonenum: phonenum,
         address: address,
         age: age,
         locationX: locationX,
         locationY: locationY,
       };
+      try {
+        console.log("got user data");
+        const userData = JSON.stringify(data);
 
-      console.log(data);
+        const response = await fetch(
+          `${process.env.REACT_APP_SERVER_ROOT_URI}/api/user/createAccount`,
+          {
+            method: "POST",
+            headers: {
+              "Content-type": "application/json",
+            },
+            body: userData,
+            credentials: "include"
+          }
+        );
 
-      navigate("/login");
+        const responseData = await response.json();
+        console.log("response status:", response.status);
+
+        if (response.status === 200) {
+          console.log(responseData.message);
+          alert("Account Created");
+          navigate("/login");
+          return;
+        } else {
+          console.log(responseData.error);
+          alert("Looks like there is some issue. Please verify again.");
+        }
+      } catch (err) {
+        console.log(err);
+        alert("Failed to create account");
+        return;
+      }
+      navigate("/verifyEmail");
     }
   };
 
@@ -94,7 +124,7 @@ const CreateAccountPage = () => {
         </div>
 
         <div>
-          <input ref={confirmPasswordInputRef} type="" required />
+          <input ref={confirmPasswordInputRef} type="password" required />
           <label>Confirm Password</label>
         </div>
 

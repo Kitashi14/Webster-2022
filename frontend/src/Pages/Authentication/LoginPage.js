@@ -4,9 +4,24 @@ import Container from "../../Components/Shared/Container";
 
 const LoginPage = ()=>{
 
-
     console.log("login page");
+    
+    const loginGoogleButtonHandler = async ()=>{
 
+        try{
+            console.log("fetching google auth link")
+            const response = await fetch(`${process.env.REACT_APP_SERVER_ROOT_URI}/api/auth/googleAuthlink`);
+
+            const responseData = await response.json();
+            
+            const googleAuthUrl = responseData.url;
+
+            window.location.replace(googleAuthUrl);
+
+        }catch(err){
+            console.log(err);
+        }
+    }
     return(
         <>
         <Container>
@@ -22,6 +37,9 @@ const LoginPage = ()=>{
 
             <div>
                 <Link to="/verifyEmail">Create Account</Link> 
+            </div>
+            <div>
+                <button onClick={loginGoogleButtonHandler}>Login with Google</button>
             </div>
 
         </Container>
