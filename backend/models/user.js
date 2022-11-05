@@ -48,7 +48,7 @@ const userSchema = new mongoose.Schema({
     type: Number,
     require: [true, "Please enter age"],
   },
-  dateCreated: {
+  creationTime: {
     type: Date,
     required: true,
   },
