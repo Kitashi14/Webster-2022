@@ -25,13 +25,13 @@ app.use(express.static("public"));
 
 //for allowing cors request from client side
 app.use(
-    cors({
-        //Sets Access-Control-Allow-Origin to the UI URI
-        origin: process.env.UI_ROOT_URI,
-        //Sets Access-Control-Allow-Credentials to true to recieve cookies
-        credentials: true
-    })
-)
+  cors({
+    //Sets Access-Control-Allow-Origin to the UI URI
+    origin: process.env.UI_ROOT_URI,
+    //Sets Access-Control-Allow-Credentials to true to recieve cookies
+    credentials: true,
+  })
+);
 
 //for allowing cors request from any server
 // app.use(cors());
@@ -39,10 +39,14 @@ app.use(
 //connecting to mongobd database server
 const mongoose = require("mongoose");
 const dbName = process.env.DBNAME;
-// mongoose.connect(
-//   `mongodb+srv://${process.env.DATABASE_USERNAME}:${process.env.DATABASE_PASSWORD}@cluster0.rhccnpx.mongodb.net/?retryWrites=true&w=majority/${dbName}`
-// );
-mongoose.connect(`mongodb://localhost:${process.env.LOCAL_DATABASE_PORT}/${dbName}`);
+mongoose
+  .connect(
+    `mongodb+srv://${process.env.DATABASE_USERNAME}:${process.env.DATABASE_PASSWORD}@cluster0.rhccnpx.mongodb.net/${dbName}?retryWrites=true&w=majority`
+  )
+  .then(() => {
+    console.log("Connected to database\n");
+  });
+// mongoose.connect(`mongodb://localhost:${process.env.LOCAL_DATABASE_PORT}/${dbName}`);
 
 //setting api
 app.use("/api/auth", authRouters);
