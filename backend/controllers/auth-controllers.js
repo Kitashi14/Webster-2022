@@ -7,6 +7,9 @@ const axios = require("axios");
 //for creating jwt token
 const jwt = require("jsonwebtoken");
 
+//for hashing password
+const bcrypt = require("bcryptjs");
+
 //importing function
 const { getUserInfo } = require("./user-controllers");
 
@@ -137,6 +140,11 @@ const redirectGoogleEmail = async (req, res, next) => {
       userEmail: existingUser.email,
       userName: existingUser.username,
       password: existingUser.password,
+      firstName: existingUser.firstName,
+      lastName: existingUser.lastName,
+      isGoogleVerified: existingUser.isGoogle,
+      phonenum: existingUser.phonenum,
+      professions: existingUser.professions
     };
 
     //creating jwt token
@@ -154,14 +162,60 @@ const redirectGoogleEmail = async (req, res, next) => {
   }
 };
 
-const createOtp = async (req,res,next) =>{};
+const createOtp = async (req, res, next) => {};
 
 const verifyOpt = async (req, res, next) => {};
 
-const changePassword = async (req,res,next) => {};
+const changePassword = async (req, res, next) => {};
 
-const verifyLoginToken = async (req,res,next)=>{};
+//verify login token whenever recieved
+const verifyLoginToken = async (req, res, next) => {
+  let login_token;
+
+  //access login token
+  try {
+    console.log("storing access token");
+    login_token = req.cookies[process.env.LOGIN_COOKIE_NAME];
+
+    if (!login_token) throw Error("Session expired");
+  } catch (error) {
+    console.log("\nFailed to access login token");
+    console.log("\n", error.message);
+    const response = { error: "login token expired" };
+
+    res.status(400).json(response);
+  }
+
+  //decoding login token received as cookie
+  try {
+    console.log("\ndecoding login token");
+    const decoded_login_token = jwt.verify(login_token, process.env.JWT_SECRET);
+
+    console.log("\ndecoded", decoded_login_token);
+
+    //sendign response with userData
+    const userData = {
+      userEmail: decoded_login_token.userEmail,
+      userName: decoded_login_token.userName,
+      firstName: decoded_login_token.firstName,
+      lastName: decoded_login_token.lastName,
+      isGoogleVerified: decoded_login_token.isGoogleVerified,
+      phonenum: decoded_login_token.phonenum,
+      professions: decoded_login_token.professions
+    }
+    console.log("sending userData");
+
+    res.status(200).json({userData: userData});
+  } catch (error) {
+    console.log("\nFailed to decode login token");
+    console.log("\n", error.message);
+    const response = { error: "Failed to authenticate" };
+
+    res.status(500).json(response);
+  }
+};
 
 exports.googleAuthPage = googleAuthPage;
 exports.redirectGoogleEmail = redirectGoogleEmail;
 exports.verifyOpt = verifyOpt;
+exports.authLogin = verifyLoginToken;

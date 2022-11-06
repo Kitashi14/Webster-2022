@@ -19,6 +19,7 @@ const LoginPage = () => {
       window.location.replace(googleAuthUrl);
     } catch (err) {
       console.log(err);
+      alert("Looks like there is some issue. Can't login with Google :(")
     }
   };
   return (

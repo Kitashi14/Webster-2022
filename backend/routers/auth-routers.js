@@ -8,5 +8,6 @@ const authController = require("../controllers/auth-controllers");
 //setting rest APIs
 router.get("/googleAuthlink",authController.googleAuthPage);
 router.get("/googleAuth", authController.redirectGoogleEmail);
+router.get("/authLogin", authController.authLogin);
 
 module.exports = router;

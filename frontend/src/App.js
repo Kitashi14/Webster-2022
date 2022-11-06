@@ -5,9 +5,14 @@ import LoginPage from "./Pages/Authentication/LoginPage";
 import VerifyOTP from "./Pages/Authentication/VerifyOtp";
 import LandingPage from "./Pages/LandingPage";
 import Navbar from "./Components/Navbar";
+import { useContext } from "react";
+import AuthContext from "./context/auth-context";
+import HomePage from "./Pages/HomePage";
 
 function App() {
-  return (
+  const auth = useContext(AuthContext);
+
+  return !auth.isLoggedIn ? (
     <>
       <Routes>
         <Route
@@ -15,8 +20,33 @@ function App() {
           path="/"
           element={
             <>
-              <Navbar login={true} />
-              <LandingPage />
+              {" "}
+              <Navbar login={true} /> <LandingPage />{" "}
+            </>
+          }
+        />
+
+        <Route exact path="/login" element={<LoginPage />} />
+
+        <Route exact path="/verifyEmail" element={<EmailVerifyPage />} />
+
+        <Route exact path="/verifyOtp" element={<VerifyOTP />} />
+
+        <Route exact path="/createAccount" element={<CreateAccountPage />} />
+
+        <Route exact path="/forgotPassword"></Route>
+      </Routes>
+    </>
+  ) : (
+    <>
+      <Routes>
+        <Route
+          exact
+          path="/"
+          element={
+            <>
+              <Navbar login={false} />
+              <HomePage />
             </>
           }
         />
