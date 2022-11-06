@@ -50,16 +50,6 @@ function App() {
             </>
           }
         />
-
-        <Route exact path="/login" element={<LoginPage />} />
-
-        <Route exact path="/verifyEmail" element={<EmailVerifyPage />} />
-
-        <Route exact path="/verifyOtp" element={<VerifyOTP />} />
-
-        <Route exact path="/createAccount" element={<CreateAccountPage />} />
-
-        <Route exact path="/forgotPassword"></Route>
       </Routes>
     </>
   );
