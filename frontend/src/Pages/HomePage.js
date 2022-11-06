@@ -1,7 +1,7 @@
 import Container from "../Components/Shared/Container";
 
 const HomePage = () => {
-  console.log("Landing page entered.");
+  console.log("Home page entered.");
 
   return (
     <>
