@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 // import { Link } from "react-router-dom";
 
 const Hero = () => {
@@ -14,8 +15,8 @@ const Hero = () => {
               From plumbing to global sales tax compliance, companies around the
               world use Complain Box to simplify their complaint process.
             </p>
-            <a
-              href="/"
+            <Link
+              to="/login"
               className="inline-flex items-center justify-center px-5 py-3 mr-3 text-base font-medium text-center text-white rounded-lg bg-tc hover:bg-tc-100 focus:ring-4 focus:ring-tc-300 dark:focus:ring-primary-900"
             >
               Get started
@@ -31,7 +32,7 @@ const Hero = () => {
                   clipRule="evenodd"
                 ></path>
               </svg>
-            </a>
+            </Link>
           </div>
           <div className="hidden lg:mt-0 lg:col-span-5 lg:flex">
             {/* <img src="https://flowbite.s3.amazonaws.com/blocks/marketing-ui/hero/phone-mockup.png" alt="mockup"> */}

@@ -1,4 +1,3 @@
-import { Link } from "react-router-dom";
 import Container from "../Components/Shared/Container";
 
 const HomePage = () => {
@@ -11,7 +10,6 @@ const HomePage = () => {
         <div>Complains</div>
         <div>gsdfhei</div>
       </Container>
-      <Link to="/login">Login</Link>
     </>
   );
 };

@@ -11,12 +11,12 @@ const Navbar = (props) => {
     <>
       <nav className=" bg-tc px-2 sm:px-4 py-2.5  dark:bg-pc">
         <div className="container flex flex-wrap justify-between items-center mx-auto">
-          <a href="/" className="flex items-center">
+          <Link to="/" className="flex items-center">
             {/* <img src="" className="mr-3 h-6 sm:h-9" alt="Logo"> */}
             <span className="text-sc self-center text-xl font-semibold whitespace-nowrap dark:text-sc">
               Complain Box
             </span>
-          </a>
+          </Link>
           <button
             data-collapse-toggle="navbar-default"
             type="button"
@@ -42,21 +42,21 @@ const Navbar = (props) => {
           <div className="hidden w-full md:block md:w-auto" id="navbar-default">
             <ul className="flex flex-col p-4 mt-4  rounded-lg border  md:flex-row md:space-x-8 md:mt-0 md:text-sm md:font-medium md:border-0  ">
               <li>
-                <a
-                  href="/"
+                <Link
+                  to="/"
                   className="block py-2 pr-4 pl-3 text-white  rounded md:bg-transparent md:text-sc  hover:text-gray-500  md:p-0 dark:text-white"
                   aria-current="page"
                 >
                   Home
-                </a>
+                </Link>
               </li>
               <li>
-                <a
-                  href="/"
+                <Link
+                  to="/about"
                   className="block py-2 pr-4 pl-3 text-sc  hover:text-gray-500  md:border-0  md:p-0 dark:text-gray-400 "
                 >
                   About
-                </a>
+                </Link>
               </li>
               <li>
                 {props.login ? (
