@@ -1,10 +1,12 @@
 import { Link } from "react-router-dom";
-import React from "react";
+import React, { useContext } from "react";
+import AuthContext from "../context/auth-context";
 
 const Navbar = (props) => {
+  const auth = useContext(AuthContext);
   const submitLogout = () => {
     console.log("logout function called");
-    //auth.logout();
+    auth.logout();
   };
 
   return (
