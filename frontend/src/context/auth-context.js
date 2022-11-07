@@ -20,25 +20,43 @@ export const AuthContextProvider = (props) => {
     setIsLoggedIn(true);
   };
 
-  const logout = () => {
+  const logout = async () => {
+    try {
+      //sending request to server
+      const response = await fetch(
+        `${process.env.REACT_APP_SERVER_ROOT_URI}/api/auth/logout`,
+        {
+          credentials: "include",
+        }
+      );
+      const responseData = await response.json();
+
+      if (response.status === 200) console.log("logged out");
+      else throw Error(responseData.error);
+    } catch (err) {
+      console.log(err);
+      alert("Can't delete logout token");
+      return;
+    }
     localStorage.removeItem("user");
     setIsLoggedIn(false);
     setUserName(null);
     setUser(null);
   };
 
-  console.log("userName:",userName);
-  
+  console.log("userName:", userName);
+
   console.log("isLogin:", isLoggedIn);
   useEffect(() => {
     const authLogin = async () => {
-      console.log("sending check token api request");
+      console.log("sending request to access token check api");
 
       //fetch request
       try {
         const response = await fetch(
-          `${process.env.REACT_APP_SERVER_ROOT_URI}/api/auth/authLogin`,{
-            credentials: "include"
+          `${process.env.REACT_APP_SERVER_ROOT_URI}/api/auth/authLogin`,
+          {
+            credentials: "include",
           }
         );
 
@@ -47,11 +65,11 @@ export const AuthContextProvider = (props) => {
 
         if (response.status === 200) {
           console.log("access token verified successfully");
-        //   console.log(responseData.userData);
+          //   console.log(responseData.userData);
           login(responseData.userData);
         } else if (response.status === 400) {
           console.log(responseData.error);
-          alert("Session timeout. Please login again");
+          if(isLoggedIn)alert("Session timeout. Please login again");
           logout();
           return;
         } else {
@@ -65,7 +83,7 @@ export const AuthContextProvider = (props) => {
     };
 
     authLogin();
-  }, []);
+  }, [isLoggedIn]);
 
   const context = {
     isLoggedIn: isLoggedIn,

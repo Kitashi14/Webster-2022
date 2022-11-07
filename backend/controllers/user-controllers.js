@@ -43,15 +43,11 @@ const addUser = async (req, res, next) => {
   let isVerified;
 
   const email_token = req.cookies[process.env.EMAIL_COOKIE_NAME];
-  res.clearCookie(process.env.EMAIL_COOKIE_NAME);
 
   //decoding email token recieved as cookie
   try {
     console.log("\ndecoding email token");
-    const decoded_email_token = jwt.verify(
-      email_token,
-      process.env.JWT_SECRET
-    );
+    const decoded_email_token = jwt.verify(email_token, process.env.JWT_SECRET);
     console.log("\ndecoded", decoded_email_token);
     email = decoded_email_token.userEmail;
     isGoogle = decoded_email_token.isGoogleVerified;
@@ -67,7 +63,7 @@ const addUser = async (req, res, next) => {
   if (!isVerified) {
     console.log("\nemail not verified");
     res
-      .status(401)
+      .status(422)
       .json({ error: "Email not verified. Please verify your email." });
   }
 
@@ -80,7 +76,7 @@ const addUser = async (req, res, next) => {
     if (existingUserEmail) {
       console.log("A user with this email already exists");
       console.log(existingUserEmail);
-      res.status(400).json({ error: "A user with this email already exists" });
+      res.status(422).json({ error: "A user with this email already exists" });
     }
   } catch (err) {
     console.log(err.message);
@@ -132,7 +128,7 @@ const addUser = async (req, res, next) => {
 
   //creating newUser object
   const newUser = new User({
-    username: "@"+firstName + phonenum,
+    username: "@" + firstName + phonenum,
     email,
     firstName,
     lastName,
@@ -155,6 +151,7 @@ const addUser = async (req, res, next) => {
     await newUser.save();
     console.log("User added");
     console.log(newUser);
+    res.clearCookie(process.env.EMAIL_COOKIE_NAME);
     res.status(200).json({ message: "Account created successfully" });
   } catch (err) {
     console.log(err.message);

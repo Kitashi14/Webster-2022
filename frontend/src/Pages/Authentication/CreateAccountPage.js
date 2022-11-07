@@ -63,7 +63,7 @@ const CreateAccountPage = () => {
               "Content-type": "application/json",
             },
             body: userData,
-            credentials: "include"
+            credentials: "include",
           }
         );
 
@@ -75,16 +75,21 @@ const CreateAccountPage = () => {
           alert("Account Created");
           navigate("/login");
           return;
+        } else if (response.status === 422) {
+          console.log(responseData.error);
+          alert(responseData.error);
         } else {
           console.log(responseData.error);
           alert("Looks like there is some issue. Please verify again.");
+          navigate("/verifyEmail");
         }
       } catch (err) {
         console.log(err);
         alert("Failed to create account");
+        navigate("/verifyEmail");
+
         return;
       }
-      navigate("/verifyEmail");
     }
   };
 

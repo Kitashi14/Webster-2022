@@ -144,7 +144,7 @@ const redirectGoogleEmail = async (req, res, next) => {
       lastName: existingUser.lastName,
       isGoogleVerified: existingUser.isGoogle,
       phonenum: existingUser.phonenum,
-      professions: existingUser.professions
+      professions: existingUser.professions,
     };
 
     //creating jwt token
@@ -174,7 +174,7 @@ const verifyLoginToken = async (req, res, next) => {
 
   //access login token
   try {
-    console.log("storing access token");
+    console.log("\nstoring access token");
     login_token = req.cookies[process.env.LOGIN_COOKIE_NAME];
 
     if (!login_token) throw Error("Session expired");
@@ -201,11 +201,11 @@ const verifyLoginToken = async (req, res, next) => {
       lastName: decoded_login_token.lastName,
       isGoogleVerified: decoded_login_token.isGoogleVerified,
       phonenum: decoded_login_token.phonenum,
-      professions: decoded_login_token.professions
-    }
-    console.log("sending userData");
+      professions: decoded_login_token.professions,
+    };
+    console.log("\nsending userData");
 
-    res.status(200).json({userData: userData});
+    res.status(200).json({ userData: userData });
   } catch (error) {
     console.log("\nFailed to decode login token");
     console.log("\n", error.message);
@@ -215,7 +215,22 @@ const verifyLoginToken = async (req, res, next) => {
   }
 };
 
+//logout function
+const authLogout = async (req, res, next) => {
+  //remove login token
+  console.log("\nremoving login token");
+  try {
+    res.clearCookie(process.env.LOGIN_COOKIE_NAME);
+    console.log("\nremoved login token");
+    res.status(200).json({message: "logged out"});
+  } catch (err) {
+    console.log(err.message);
+    res.status(500).json({error: err.message});
+  }
+};
+
 exports.googleAuthPage = googleAuthPage;
 exports.redirectGoogleEmail = redirectGoogleEmail;
 exports.verifyOpt = verifyOpt;
 exports.authLogin = verifyLoginToken;
+exports.authLogout = authLogout;
