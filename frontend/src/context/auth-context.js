@@ -69,8 +69,10 @@ export const AuthContextProvider = (props) => {
           login(responseData.userData);
         } else if (response.status === 400) {
           console.log(responseData.error);
-          if(isLoggedIn)alert("Session timeout. Please login again");
-          logout();
+          if (isLoggedIn) {
+            alert("Session timeout. Please login again");
+            logout();
+          }
           return;
         } else {
           throw Error(responseData.error);
@@ -83,7 +85,8 @@ export const AuthContextProvider = (props) => {
     };
 
     authLogin();
-  }, [isLoggedIn]);
+    // eslint-disable-next-line
+  }, []);
 
   const context = {
     isLoggedIn: isLoggedIn,

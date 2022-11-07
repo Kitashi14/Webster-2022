@@ -39,13 +39,13 @@ function App() {
     </>
   ) : (
     <>
+      <Navbar login={false} />
       <Routes>
         <Route
           exact
           path="/"
           element={
             <>
-              <Navbar login={false} />
               <HomePage />
             </>
           }
