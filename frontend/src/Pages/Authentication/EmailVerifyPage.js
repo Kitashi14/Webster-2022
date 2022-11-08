@@ -12,12 +12,45 @@ const EmailVerifyPage = () => {
 
   const submitButtonHandler = async (event) => {
     event.preventDefault();
-    const Email = emailInputRef.current.value;
+    const email = emailInputRef.current.value;
 
-    if(!ValidateEmail(Email)) alert("Enter a Valid Email!");
-    else{
-        console.log(Email);
-        navigate("/verifyOtp")
+    if (!ValidateEmail(email)) alert("Enter a Valid Email!");
+    else {
+      try {
+        const data = {
+          email: email,
+          createAccount: true,
+        };
+
+        const response = await fetch(
+          `${process.env.REACT_APP_SERVER_ROOT_URI}/api/auth/getOtp`,
+          {
+            method: "POST",
+            headers: {
+              "Content-type": "application/json",
+            },
+            body: JSON.stringify(data),
+            credentials: "include"
+          }
+        );
+
+        console.log(response.status);
+        const responseData = await response.json();
+
+        if (response.status === 200) {
+          console.log(responseData.message);
+          alert("OTP sent to your email");
+          // navigate("/verifyOtp");
+        } else if (response.status === 400) {
+          console.log(responseData.error);
+          alert(responseData.error);
+        } else {
+          throw Error("couldn't able to send otp");
+        }
+      } catch (err) {
+        console.log(err);
+        alert("Failed to send otp");
+      }
     }
   };
 
@@ -30,8 +63,6 @@ const EmailVerifyPage = () => {
         </div>
         <button onClick={submitButtonHandler}>Enter</button>
       </form>
-
-      
     </Container>
   );
 };

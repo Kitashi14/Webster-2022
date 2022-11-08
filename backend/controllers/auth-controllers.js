@@ -4,6 +4,21 @@ const querystring = require("querystring");
 //axios for sending api requests
 const axios = require("axios");
 
+//nodemailer for sending otp
+const nodemailer = require("nodemailer");
+
+// create reusable transporter object using the default SMTP transport
+let transporter = nodemailer.createTransport({
+  service: "gmail",
+  auth: {
+    user:process.env.EMAIL_NODEMAILER,
+    pass: process.env.PASSWORD_NODEMAILER,
+  },
+  port: 465,
+  host: 'smtp.gmail.com',
+  // proxy: 'http://172.31.102.29:3128/'
+});
+
 //for creating jwt token
 const jwt = require("jsonwebtoken");
 
@@ -104,65 +119,156 @@ const redirectGoogleEmail = async (req, res, next) => {
       res.status(500).json(response);
     });
 
-  console.log("\n", "checking if the user exist");
-  //check if a user exist with this google email
-  const existingUser = await getUserInfo(googleUser.email);
+  try {
+    console.log("\n", "checking if the user exist");
+    //check if a user exist with this google email
+    const existingUser = await getUserInfo(googleUser.email);
 
-  console.log("\n", "existingUser : ", existingUser);
+    console.log("\n", "existingUser : ", existingUser);
 
-  //if doesn't exist then redirect to create account page
-  if (!existingUser) {
-    console.log("\n", "user is new");
-    const userData = {
-      userEmail: googleUser.email,
-      isVerified: googleUser.verified_email,
-      isGoogleVerified: true,
-    };
+    //if doesn't exist then redirect to create account page
+    if (!existingUser) {
+      console.log("\n", "user is new");
+      const userData = {
+        userEmail: googleUser.email,
+        isVerified: googleUser.verified_email,
+        isGoogleVerified: true,
+      };
 
-    //creating jwt token
-    const token = jwt.sign(userData, process.env.JWT_SECRET);
+      //creating jwt token
+      const token = jwt.sign(userData, process.env.JWT_SECRET);
 
-    //sending cookies to client side
-    console.log("\ncreating email token");
-    res.cookie(process.env.EMAIL_COOKIE_NAME, token, {
-      expires: new Date(Date.now() + 60 * 60 * 1000), //milliseconds
-      httpOnly: true,
-      secure: false,
-    });
-    console.log("\n", "redirecting to create account page with email token");
-    res.redirect(`${process.env.UI_ROOT_URI}/createAccount`);
-  }
+      //sending cookies to client side
+      console.log("\ncreating email token");
+      res.cookie(process.env.EMAIL_COOKIE_NAME, token, {
+        expires: new Date(Date.now() + 60 * 60 * 1000), //milliseconds
+        httpOnly: true,
+        secure: false,
+      });
+      console.log("\n", "redirecting to create account page with email token");
+      res.redirect(`${process.env.UI_ROOT_URI}/createAccount`);
+    }
 
-  //if exist then redirect to home page with login
-  else {
-    console.log("\nUser exists");
-    const userData = {
-      userEmail: existingUser.email,
-      userName: existingUser.username,
-      password: existingUser.password,
-      firstName: existingUser.firstName,
-      lastName: existingUser.lastName,
-      isGoogleVerified: existingUser.isGoogle,
-      phonenum: existingUser.phonenum,
-      professions: existingUser.professions,
-    };
+    //if exist then redirect to home page with login
+    else {
+      console.log("\nUser exists");
+      const userData = {
+        userEmail: existingUser.email,
+        userName: existingUser.username,
+        password: existingUser.password,
+        firstName: existingUser.firstName,
+        lastName: existingUser.lastName,
+        isGoogleVerified: existingUser.isGoogle,
+        phonenum: existingUser.phonenum,
+        professions: existingUser.professions,
+      };
 
-    //creating jwt token
-    const token = jwt.sign(userData, process.env.JWT_SECRET);
+      //creating jwt token
+      const token = jwt.sign(userData, process.env.JWT_SECRET);
 
-    //sending cookies to client side
-    console.log("\nCreating login token");
-    res.cookie(process.env.LOGIN_COOKIE_NAME, token, {
-      maxAge: 10 * 24 * 60 * 60 * 1000,
-      httpOnly: true,
-      secure: false,
-    });
-    console.log("\nredirecting to home page with login token");
-    res.redirect(`${process.env.UI_ROOT_URI}`);
+      //sending cookies to client side
+      console.log("\nCreating login token");
+      res.cookie(process.env.LOGIN_COOKIE_NAME, token, {
+        maxAge: 10 * 24 * 60 * 60 * 1000,
+        httpOnly: true,
+        secure: false,
+      });
+      console.log("\nredirecting to home page with login token");
+      res.redirect(`${process.env.UI_ROOT_URI}`);
+    }
+  } catch (error) {
+    console.log("\n", error.message);
+    const response = { error: "Failed to create email token data" };
+    res.status(500).json(response);
   }
 };
 
-const createOtp = async (req, res, next) => {};
+const createOtp = async (req, res, next) => {
+  console.log("\nreceived email for otp");
+  const email = req.body.email;
+  const isCreatingAccount = req.body.createAccount;
+
+  console.log(req.body);
+
+  if (isCreatingAccount) {
+    try {
+      console.log("\n", "checking if the user exist");
+      //check if a user exist with this google email
+      const existingUser = await getUserInfo(email);
+
+      console.log("\n", "existingUser : ", existingUser);
+
+      //if doesn't exist then redirect to create account page
+      if (!existingUser) {
+        console.log("\n", "user is new");
+        const userData = {
+          userEmail: email,
+          isVerified: false,
+          isGoogleVerified: false,
+        };
+
+        //creating jwt token
+        const token = jwt.sign(userData, process.env.JWT_SECRET);
+
+        console.log(token);
+        //sending cookies to client side
+        console.log("\ncreating and sending email token");
+        res.cookie(process.env.EMAIL_COOKIE_NAME, token, {
+          expires: new Date(Date.now() + 60 * 60 * 1000), //milliseconds
+          httpOnly: true,
+          secure: false,
+        }); 
+        console.log("\nsent email-token for otp verification");
+
+        try {
+          console.log(
+            "\ncreating mail for email verification with nodemailer\n"
+          );
+
+          // send mail with defined transport object
+          transporter.sendMail(
+            {
+              from: process.env.EMAIL_NODEMAILER, // sender address
+              to: email, // list of receivers
+              subject: "Hello ✔", // Subject line
+              text: "Hello world?", // plain text body
+              html: "<b>Hello world?</b>", // html body
+            },
+            (err) => {
+          if (err) {
+            console.log(err);
+            console.log(err.message);
+            res
+              .status(501)
+              .json({ error: "Can't send otp for creating account" });
+            return;
+          } else {
+            console.log("email has sent !");
+            console.log(`sent otp to ${email}`);
+
+            res.status(200).json({ message: "Sent otp successfully" });
+          }
+            }
+          );
+
+        } catch (err) {
+          console.log(err.message);
+          res
+            .status(501)
+            .json({ error: "Can't send otp for creating account" });
+        }
+      }
+
+      //if exist then send bad request response
+      else {
+        res.status(400).json({ error: "email already in use" });
+      }
+    } catch (err) {
+      console.log(err.message);
+      res.status(501).json({ error: "Can't send otp for creating account" });
+    }
+  }
+};
 
 const verifyOpt = async (req, res, next) => {};
 
@@ -170,6 +276,7 @@ const changePassword = async (req, res, next) => {};
 
 //verify login token whenever recieved
 const verifyLoginToken = async (req, res, next) => {
+  console.log("\nverify login token api hit");
   let login_token;
 
   //access login token
@@ -177,13 +284,13 @@ const verifyLoginToken = async (req, res, next) => {
     console.log("\nstoring access token");
     login_token = req.cookies[process.env.LOGIN_COOKIE_NAME];
 
-    if (!login_token) throw Error("Session expired");
+    if (!login_token) throw Error("\nSession expired");
   } catch (error) {
-    console.log("\nFailed to access login token");
-    console.log("\n", error.message);
+    console.log(error.message);
     const response = { error: "login token expired" };
 
     res.status(400).json(response);
+    return;
   }
 
   //decoding login token received as cookie
@@ -222,10 +329,10 @@ const authLogout = async (req, res, next) => {
   try {
     res.clearCookie(process.env.LOGIN_COOKIE_NAME);
     console.log("\nremoved login token");
-    res.status(200).json({message: "logged out"});
+    res.status(200).json({ message: "logged out" });
   } catch (err) {
     console.log(err.message);
-    res.status(500).json({error: err.message});
+    res.status(500).json({ error: err.message });
   }
 };
 
@@ -234,3 +341,5 @@ exports.redirectGoogleEmail = redirectGoogleEmail;
 exports.verifyOpt = verifyOpt;
 exports.authLogin = verifyLoginToken;
 exports.authLogout = authLogout;
+exports.verifyOpt = verifyOpt;
+exports.createOtp = createOtp;

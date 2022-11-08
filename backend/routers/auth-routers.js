@@ -10,5 +10,6 @@ router.get("/googleAuthlink",authController.googleAuthPage);
 router.get("/googleAuth", authController.redirectGoogleEmail);
 router.get("/authLogin", authController.authLogin);
 router.get("/logout",authController.authLogout);
+router.post("/getOtp", authController.createOtp);
 
 module.exports = router;
