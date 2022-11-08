@@ -30,7 +30,7 @@ const EmailVerifyPage = () => {
               "Content-type": "application/json",
             },
             body: JSON.stringify(data),
-            credentials: "include"
+            credentials: "include",
           }
         );
 
@@ -40,7 +40,7 @@ const EmailVerifyPage = () => {
         if (response.status === 200) {
           console.log(responseData.message);
           alert("OTP sent to your email");
-          // navigate("/verifyOtp");
+          navigate("/verifyOtp");
         } else if (response.status === 400) {
           console.log(responseData.error);
           alert(responseData.error);

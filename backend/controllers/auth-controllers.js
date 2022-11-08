@@ -11,11 +11,11 @@ const nodemailer = require("nodemailer");
 let transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
-    user:process.env.EMAIL_NODEMAILER,
+    user: process.env.EMAIL_NODEMAILER,
     pass: process.env.PASSWORD_NODEMAILER,
   },
   port: 465,
-  host: 'smtp.gmail.com',
+  host: "smtp.gmail.com",
   // proxy: 'http://172.31.102.29:3128/'
 });
 
@@ -25,8 +25,9 @@ const jwt = require("jsonwebtoken");
 //for hashing password
 const bcrypt = require("bcryptjs");
 
-//importing function
+//importing function and Token modal
 const { getUserInfo } = require("./user-controllers");
+const Token = require("../models/token");
 
 const redirectURI = process.env.GOOGLE_AUTH_REDIRECT_URI;
 
@@ -183,13 +184,16 @@ const redirectGoogleEmail = async (req, res, next) => {
   }
 };
 
+//created otp
 const createOtp = async (req, res, next) => {
   console.log("\nreceived email for otp");
   const email = req.body.email;
   const isCreatingAccount = req.body.createAccount;
 
+  //received email for otp
   console.log(req.body);
 
+  //for creating account
   if (isCreatingAccount) {
     try {
       console.log("\n", "checking if the user exist");
@@ -208,6 +212,7 @@ const createOtp = async (req, res, next) => {
         };
 
         //creating jwt token
+        console.log("\ncreating email token");
         const token = jwt.sign(userData, process.env.JWT_SECRET);
 
         console.log(token);
@@ -217,7 +222,7 @@ const createOtp = async (req, res, next) => {
           expires: new Date(Date.now() + 60 * 60 * 1000), //milliseconds
           httpOnly: true,
           secure: false,
-        }); 
+        });
         console.log("\nsent email-token for otp verification");
 
         try {
@@ -230,27 +235,66 @@ const createOtp = async (req, res, next) => {
             {
               from: process.env.EMAIL_NODEMAILER, // sender address
               to: email, // list of receivers
-              subject: "Hello ✔", // Subject line
-              text: "Hello world?", // plain text body
-              html: "<b>Hello world?</b>", // html body
+              subject: "Verification for Complain Box", // Subject line
+              html: `<p>Enter <b>${otp}</b> to verify your email.</p><p>This code <b>expires in 1 hour.</b></p>`, // html body
             },
             (err) => {
-          if (err) {
-            console.log(err);
-            console.log(err.message);
-            res
-              .status(501)
-              .json({ error: "Can't send otp for creating account" });
-            return;
-          } else {
-            console.log("email has sent !");
-            console.log(`sent otp to ${email}`);
+              if (err) {
+                console.log(err);
+                console.log(err.message);
+                res
+                  .status(501)
+                  .json({ error: "Can't send otp for creating account" });
+                return;
+              } else {
+                try {
+                  const otp = `${Math.floor(1000 + Math.random() * 9000)}`;
+                  console.log("\ncreated otp");
 
-            res.status(200).json({ message: "Sent otp successfully" });
-          }
+                  const addToken = async () => {
+
+                    //encrypting otp using bcryptjs
+                    const saltRounds = 10;
+                    const hashedOTP = await bcrypt.hash(otp, saltRounds);
+                    console.log("\nhashedOtp",hashedOTP);
+
+                    //checking for previous existing otp for the same email
+                    const preToken = await Token.deleteAll({ email: email});
+
+                    if(preToken){
+                      console.log("\ntoken for this email already exist");
+                      console.log(preToken);
+                      console.log("\ndeleting existing tokens"); 
+                    }
+                    //creating new token
+                    console.log("\ncreating new token for token-list");
+                    const newToken = new Token({
+                      email: email,
+                      otp: hashedOTP,
+                      createdAt: Date.now(),
+                      expiresAt: Date.now() + 60 * 60 * 1000,
+                    });
+
+                    //adding new token in database
+                    await newToken.save();
+                    console.log("\nToken saved in database");
+                    console.log(newToken);
+                  };
+
+                  addToken();
+                } catch (err) {
+                  console.log(err.message);
+                  res.status(500).json({ error: err.message });
+                  return;
+                }
+
+                console.log("email has sent !");
+                console.log(`sent otp to ${email}`);
+
+                res.status(200).json({ message: "Sent otp successfully" });
+              }
             }
           );
-
         } catch (err) {
           console.log(err.message);
           res
@@ -268,9 +312,16 @@ const createOtp = async (req, res, next) => {
       res.status(501).json({ error: "Can't send otp for creating account" });
     }
   }
+  //for forget-password request
+  else{
+    //function
+  }
 };
 
-const verifyOpt = async (req, res, next) => {};
+const verifyOpt = async (req, res, next) => {
+
+  
+};
 
 const changePassword = async (req, res, next) => {};
 

@@ -6,7 +6,7 @@ const VerifyOTP = () => {
   const navigate = useNavigate();
 
   const otpInputRef = useRef();
-  const submitButtonHandler = (event) => {
+  const submitButtonHandler = async (event) => {
     event.preventDefault();
 
     const otp = otpInputRef.current.value;
@@ -15,7 +15,17 @@ const VerifyOTP = () => {
     else {
       console.log(otp);
 
-      navigate("/createAccount");
+      try{
+
+        //verify api
+
+      }catch(err){
+        console.log(err);
+        alert("can't verify OTP");
+        return;
+      }
+
+      // navigate("/createAccount");
     }
   };
 
