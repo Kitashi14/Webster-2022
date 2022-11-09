@@ -232,7 +232,7 @@ const createOtp = async (req, res, next) => {
           let otp;
 
           try {
-            otp = `${Math.floor(1000 + Math.random() * 9000)}`;
+            otp = `${Math.floor(999 + Math.random() * 9000)}`;
             console.log("\ncreated otp");
 
             //encrypting otp using bcryptjs
