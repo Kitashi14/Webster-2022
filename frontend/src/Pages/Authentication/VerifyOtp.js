@@ -41,7 +41,7 @@ const VerifyOTP = () => {
           console.log(responseData.message);
           console.log(responseData.isCreatingAccount);
           if (responseData.isCreatingAccount) navigate("/createAccount");
-          else navigate("/forgotPassword");
+          else navigate("/resetPassword");
           return;
         } else if (response.status === 400) {
           console.log(responseData.error);

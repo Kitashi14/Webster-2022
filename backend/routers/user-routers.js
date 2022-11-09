@@ -7,5 +7,7 @@ const userController = require("../controllers/user-controllers");
 
 //setting rest APIs
 router.post("/createAccount",userController.createAccount);
+router.post("/resetPassword",userController.resetPassword);
 
 module.exports = router;
+

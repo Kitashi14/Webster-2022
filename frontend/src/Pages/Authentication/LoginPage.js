@@ -75,6 +75,61 @@ const LoginPage = () => {
       alert("Looks like there is some issue. Can't login with Google :(");
     }
   };
+
+  var enteredEmail;
+  var isButtonOn = true;
+
+  const sumbmitForgetPass = async (event) => {
+    event.preventDefault();
+    const email = emailInputRef.current.value;
+
+    if (!ValidateEmail(email)) alert("Enter a Valid Email!");
+    else {
+      if (enteredEmail === email && !isButtonOn) {
+        alert("Requesting for otp to verify email");
+        return;
+      }
+
+      enteredEmail = email;
+      isButtonOn = false;
+
+      try {
+        const data = {
+          email: email,
+          createAccount: false,
+        };
+        const response = await fetch(
+          `${process.env.REACT_APP_SERVER_ROOT_URI}/api/auth/getOtp`,
+          {
+            method: "POST",
+            headers: {
+              "Content-type": "application/json",
+            },
+            body: JSON.stringify(data),
+            credentials: "include",
+          }
+        );
+        isButtonOn = true;
+
+        console.log(response.status);
+        const responseData = await response.json();
+
+        if (response.status === 200) {
+          console.log(responseData.message);
+          alert("OTP sent to your email");
+          navigate("/verifyOtp");
+        } else if (response.status === 400) {
+          console.log(responseData.error);
+          alert(responseData.error);
+        } else {
+          throw Error("couldn't able to send otp");
+        }
+      } catch (err) {
+        console.log(err);
+        alert("Failed to send otp");
+      }
+    }
+  };
   return (
     <>
       <Container>
@@ -94,6 +149,7 @@ const LoginPage = () => {
           <input type="password" ref={passwordInputRef} required />
           <label>Password</label>
         </div>
+        <button onClick={sumbmitForgetPass}>forgot password</button><br/>
 
         <button onClick={sumbitLoginButtonHandler}>Login</button>
 

@@ -8,6 +8,7 @@ import Navbar from "./Components/Navbar";
 import { useContext } from "react";
 import AuthContext from "./context/auth-context";
 import HomePage from "./Pages/HomePage";
+import ResetPage from "./Pages/Authentication/ResetPage";
 
 function App() {
   const auth = useContext(AuthContext);
@@ -34,7 +35,7 @@ function App() {
 
         <Route exact path="/createAccount" element={<CreateAccountPage />} />
 
-        <Route exact path="/forgotPassword"></Route>
+        <Route exact path="/resetPassword" element={<ResetPage />} ></Route>
       </Routes>
     </>
   ) : (

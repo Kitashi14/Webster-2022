@@ -65,6 +65,7 @@ const addUser = async (req, res, next) => {
     res
       .status(422)
       .json({ error: "Email not verified. Please verify your email." });
+    return;
   }
 
   //finding existing user with same email;
@@ -81,6 +82,7 @@ const addUser = async (req, res, next) => {
   } catch (err) {
     console.log(err.message);
     res.status(500).json({ error: err.message });
+    return;
   }
 
   //finding existing user with same Phonenum;
@@ -94,10 +96,12 @@ const addUser = async (req, res, next) => {
       res
         .status(422)
         .json({ error: "A user with this phone no. already exists" });
+      return;
     }
   } catch (err) {
     console.log(err.message);
     res.status(500).json({ error: err.message });
+    return;
   }
 
   //creating hash of the password
@@ -119,6 +123,7 @@ const addUser = async (req, res, next) => {
   } catch (err) {
     console.log(err.message);
     res.status(500).json({ error: err.message });
+    return;
   }
 
   //noting current time
@@ -159,5 +164,89 @@ const addUser = async (req, res, next) => {
   }
 };
 
+//resetting user password
+const resetPassword = async (req, res, next) => {
+  console.log("\nreset password api hit");
+  const newPassword = req.body.password;
+  let email_token;
+
+  //finding email token
+  try {
+    console.log("\nstoring email token");
+    email_token = req.cookies[process.env.EMAIL_COOKIE_NAME];
+
+    if (!email_token) throw Error("\nSession expired");
+  } catch (error) {
+    console.log(error.message);
+    const response = { error: "email-token expired" };
+
+    res.status(400).json(response);
+    return;
+  }
+
+  try {
+    //decoding email-token
+    console.log("\ndecoding email-token");
+    const decoded_email_token = jwt.verify(email_token, process.env.JWT_SECRET);
+
+    console.log("\ndecoded", decoded_email_token);
+
+    //checking email-token request type
+    if (decoded_email_token.isCreatingAccout) {
+      console.log("\ncreate account token found\ncan't reset password");
+
+      res
+        .status(400)
+        .json({ error: "Token sent to create account, can't reset password" });
+      return;
+    }
+
+    //checking if the token is verified or not
+    else if (!decoded_email_token.isVerified) {
+      console.log("\nemail is not verified");
+      res.status(400).json({ error: "Email not verified" });
+      return;
+    } else {
+      //encrypting password using bcryptjs
+      const saltRounds = 10;
+      const hashedPassword = await bcrypt.hash(newPassword, saltRounds);
+      console.log("\nhashedOtp", hashedPassword);
+
+      try {
+        console.log("\nupdating user data");
+        const user = await User.updateOne(
+          {
+            email: decoded_email_token.userEmail,
+          },
+          {
+            $set: {
+              password: hashedPassword,
+            },
+          }
+        );
+
+        console.log("\npassword updated");
+        console.log(user);
+
+        //delete email token
+        res.clearCookie(process.env.EMAIL_COOKIE_NAME);
+        console.log("\ndeleted email token");
+
+        res.status(200).json({ message: "user-password updated" });
+      } catch (err) {
+        console.log("\nfailed to reset password");
+        console.log(err.message);
+        res.status(500).json({ error: err.message });
+        return;
+      }
+    }
+  } catch (err) {
+    console.log(err.message);
+    res.status(500).json({ error: err.message });
+    return;
+  }
+};
+
 exports.getUserInfo = getUserWithEmail;
 exports.createAccount = addUser;
+exports.resetPassword = resetPassword;

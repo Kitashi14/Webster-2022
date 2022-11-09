@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import Container from "../../Components/Shared/Container";
 import { ValidateEmail } from "../../Helper/EmailHelper";
@@ -8,9 +8,8 @@ const EmailVerifyPage = () => {
 
   const navigate = useNavigate();
 
-  
-var enteredEmail;
-var isButtonOn = true;
+  var enteredEmail;
+  var isButtonOn = true;
 
   const submitButtonHandler = async (event) => {
     event.preventDefault();
@@ -18,8 +17,7 @@ var isButtonOn = true;
 
     if (!ValidateEmail(email)) alert("Enter a Valid Email!");
     else {
-
-      if(enteredEmail === email && !isButtonOn){
+      if (enteredEmail === email && !isButtonOn) {
         alert("Requesting for otp");
         return;
       }

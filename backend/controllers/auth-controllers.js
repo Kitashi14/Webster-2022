@@ -195,6 +195,7 @@ const createOtp = async (req, res, next) => {
 
   //for creating account
   if (isCreatingAccount) {
+    console.log("\nfor creating account");
     try {
       console.log("\n", "checking if the user exist");
       //check if a user exist with this google email
@@ -275,7 +276,7 @@ const createOtp = async (req, res, next) => {
               from: process.env.EMAIL_NODEMAILER, // sender address
               to: email, // list of receivers
               subject: "Verification for Complain Box", // Subject line
-              html: `<p>Enter <b>${otp}</b> to verify your email.</p><p>This code <b>expires in 1 hour.</b></p>`, // html body
+              html: `<p>Enter <b>${otp}</b> to verify your email to creating your account.</p><p>This code <b>expires in 1 hour.</b></p>`, // html body
             },
             (err) => {
               if (err) {
@@ -286,7 +287,7 @@ const createOtp = async (req, res, next) => {
                   .json({ error: "Can't send otp for creating account" });
                 return;
               } else {
-                console.log("\nemail has sent !");
+                console.log("\nemail has been sent");
                 console.log(`\nsent otp to ${email}`);
 
                 res.status(200).json({ message: "Sent otp successfully" });
@@ -307,12 +308,127 @@ const createOtp = async (req, res, next) => {
       }
     } catch (err) {
       console.log(err.message);
-      res.status(501).json({ error: "Can't send otp for creating account" });
+      res.status(500).json({ error: "Can't send otp for creating account" });
     }
   }
   //for forget-password request
   else {
-    //function
+    console.log("\nfor resetting password");
+    try{
+      console.log("\n", "checking if the user exist");
+      //check if a user exist with this google email
+      const existingUser = await getUserInfo(email);
+
+      console.log("\n", "existingUser : ", existingUser);
+
+      //if doesn't exist then redirect to create account page
+      if (!existingUser){
+        res.status(400).json({ error: "No user exist with this email" });
+        return;
+      }
+      else{
+        
+        const userData = {
+          userEmail: email,
+          isVerified: false,
+          isGoogleVerified: false,
+          isCreatingAccount: isCreatingAccount,
+        };
+
+        //creating jwt token
+        console.log("\ncreating email token");
+        const token = jwt.sign(userData, process.env.JWT_SECRET);
+
+        console.log(token);
+        //sending cookies to client side
+        console.log("\ncreating and sending email-token");
+        res.cookie(process.env.EMAIL_COOKIE_NAME, token, {
+          expires: new Date(Date.now() + 60 * 60 * 1000), //milliseconds
+          httpOnly: true,
+          secure: false,
+        });
+        console.log("\nsent email-token for otp verification");
+
+        try {
+          console.log("\nadding new otp-token in token-list");
+          let otp;
+
+          try {
+            otp = `${Math.floor(1000 + Math.random() * 9000)}`;
+            console.log("\ncreated otp");
+
+            //encrypting otp using bcryptjs
+            const saltRounds = 10;
+            const hashedOTP = await bcrypt.hash(otp, saltRounds);
+            console.log("\nhashedOtp", hashedOTP);
+
+            //checking for previous existing otp for the same email
+            const preToken = await Token.deleteMany({ email: email });
+
+            if (preToken) {
+              console.log("\notp-token for this email already exist");
+              console.log(preToken);
+              console.log("\ndeleting existing otp-tokens");
+            }
+            //creating new token
+            console.log("\ncreating new otp-token for this email");
+            const newToken = new Token({
+              email: email,
+              otp: hashedOTP,
+              createdAt: Date.now(),
+              expiresAt: Date.now() + 60 * 60 * 1000,
+            });
+
+            //adding new token in database
+            await newToken.save();
+            console.log("\nToken saved in database");
+            console.log(newToken);
+          } catch (err) {
+            console.log(err.message);
+            res.status(500).json({ error: err.message });
+            return;
+          }
+
+          console.log(
+            "\ncreating mail for email-verification with nodemailer\n"
+          );
+          // send mail with defined transport object
+          transporter.sendMail(
+            {
+              from: process.env.EMAIL_NODEMAILER, // sender address
+              to: email, // list of receivers
+              subject: "Verification for Complain Box", // Subject line
+              html: `<p>Enter <b>${otp}</b> to verify your email for password reset.</p><p>This code <b>expires in 1 hour.</b></p>`, // html body
+            },
+            (err) => {
+              if (err) {
+                console.log(err);
+                console.log(err.message);
+                res
+                  .status(501)
+                  .json({ error: "Can't send otp for email verification" });
+                return;
+              } else {
+                console.log("\nemail has been sent");
+                console.log(`\nsent otp to ${email}`);
+
+                res.status(200).json({ message: "Sent otp successfully" });
+              }
+            }
+          );
+        } catch (err) {
+          console.log(err.message);
+          res
+            .status(501)
+            .json({ error: "Can't send otp for email verification" });
+        }
+      }
+
+    }catch(err){
+      console.log(err.message);
+      res.status(500).json({ error: "Can't send otp for email verification" });
+    }
+
   }
 };
 
@@ -321,6 +437,8 @@ const verifyOpt = async (req, res, next) => {
   console.log("\nreceived otp for verification");
   const receivedOtp = req.body.otp;
   console.log("\nreceivedOtp", receivedOtp);
+
+  let email_token;
 
   //finding email token
   try {
@@ -354,6 +472,7 @@ const verifyOpt = async (req, res, next) => {
       res
         .status(500)
         .json({ error: "Email verification failed, please try again later" });
+        return;
     }
 
     //when no token found
@@ -406,14 +525,15 @@ const verifyOpt = async (req, res, next) => {
     }
 
     //when otp matched
-    // console.log("deleting the otp-token");
-    // await Token.deleteMany({email: decoded_email_token.userEmail});
+    console.log("deleting the otp-token");
+    await Token.deleteMany({email: decoded_email_token.userEmail});
 
     //creating jwt token
     const userData = {
       userEmail: decoded_email_token.userEmail,
       isVerified: true,
       isGoogleVerified: decoded_email_token.isGoogleVerified,
+      isCreatingAccount: decoded_email_token.isCreatingAccount,
     };
     const token = jwt.sign(userData, process.env.JWT_SECRET);
 
@@ -432,7 +552,7 @@ const verifyOpt = async (req, res, next) => {
     });
     return;
   } catch (error) {
-    console.log("\nFailed to decode login token");
+    console.log("\nFailed to authenticate");
     console.log("\n", error.message);
     const response = { error: "Failed to authenticate" };
 
@@ -440,7 +560,6 @@ const verifyOpt = async (req, res, next) => {
   }
 };
 
-const changePassword = async (req, res, next) => {};
 
 //verify login token whenever recieved
 const verifyLoginToken = async (req, res, next) => {
@@ -473,6 +592,7 @@ const verifyLoginToken = async (req, res, next) => {
     const password = decoded_login_token.password;
 
     console.log("\n", "checking if the user exist");
+
     //check if a user exist with this email
     let existingUser;
 
