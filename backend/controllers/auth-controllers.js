@@ -184,7 +184,7 @@ const redirectGoogleEmail = async (req, res, next) => {
   }
 };
 
-//created otp
+//create otp-token for adding user and updating user-password
 const createOtp = async (req, res, next) => {
   console.log("\nreceived email for otp");
   const email = req.body.email;
@@ -209,6 +209,7 @@ const createOtp = async (req, res, next) => {
           userEmail: email,
           isVerified: false,
           isGoogleVerified: false,
+          isCreatingAccount: isCreatingAccount,
         };
 
         //creating jwt token
@@ -217,7 +218,7 @@ const createOtp = async (req, res, next) => {
 
         console.log(token);
         //sending cookies to client side
-        console.log("\ncreating and sending email token");
+        console.log("\ncreating and sending email-token");
         res.cookie(process.env.EMAIL_COOKIE_NAME, token, {
           expires: new Date(Date.now() + 60 * 60 * 1000), //milliseconds
           httpOnly: true,
@@ -226,10 +227,48 @@ const createOtp = async (req, res, next) => {
         console.log("\nsent email-token for otp verification");
 
         try {
-          console.log(
-            "\ncreating mail for email verification with nodemailer\n"
-          );
+          console.log("\nadding new otp-token in token-list");
+          let otp;
 
+          try {
+            otp = `${Math.floor(1000 + Math.random() * 9000)}`;
+            console.log("\ncreated otp");
+
+            //encrypting otp using bcryptjs
+            const saltRounds = 10;
+            const hashedOTP = await bcrypt.hash(otp, saltRounds);
+            console.log("\nhashedOtp", hashedOTP);
+
+            //checking for previous existing otp for the same email
+            const preToken = await Token.deleteMany({ email: email });
+
+            if (preToken) {
+              console.log("\notp-token for this email already exist");
+              console.log(preToken);
+              console.log("\ndeleting existing otp-tokens");
+            }
+            //creating new token
+            console.log("\ncreating new otp-token for this email");
+            const newToken = new Token({
+              email: email,
+              otp: hashedOTP,
+              createdAt: Date.now(),
+              expiresAt: Date.now() + 60 * 60 * 1000,
+            });
+
+            //adding new token in database
+            await newToken.save();
+            console.log("\nToken saved in database");
+            console.log(newToken);
+          } catch (err) {
+            console.log(err.message);
+            res.status(500).json({ error: err.message });
+            return;
+          }
+
+          console.log(
+            "\ncreating mail for email-verification with nodemailer\n"
+          );
           // send mail with defined transport object
           transporter.sendMail(
             {
@@ -247,47 +286,6 @@ const createOtp = async (req, res, next) => {
                   .json({ error: "Can't send otp for creating account" });
                 return;
               } else {
-                try {
-                  const otp = `${Math.floor(1000 + Math.random() * 9000)}`;
-                  console.log("\ncreated otp");
-
-                  const addToken = async () => {
-
-                    //encrypting otp using bcryptjs
-                    const saltRounds = 10;
-                    const hashedOTP = await bcrypt.hash(otp, saltRounds);
-                    console.log("\nhashedOtp",hashedOTP);
-
-                    //checking for previous existing otp for the same email
-                    const preToken = await Token.deleteAll({ email: email});
-
-                    if(preToken){
-                      console.log("\ntoken for this email already exist");
-                      console.log(preToken);
-                      console.log("\ndeleting existing tokens"); 
-                    }
-                    //creating new token
-                    console.log("\ncreating new token for token-list");
-                    const newToken = new Token({
-                      email: email,
-                      otp: hashedOTP,
-                      createdAt: Date.now(),
-                      expiresAt: Date.now() + 60 * 60 * 1000,
-                    });
-
-                    //adding new token in database
-                    await newToken.save();
-                    console.log("\nToken saved in database");
-                    console.log(newToken);
-                  };
-
-                  addToken();
-                } catch (err) {
-                  console.log(err.message);
-                  res.status(500).json({ error: err.message });
-                  return;
-                }
-
                 console.log("email has sent !");
                 console.log(`sent otp to ${email}`);
 
@@ -313,14 +311,130 @@ const createOtp = async (req, res, next) => {
     }
   }
   //for forget-password request
-  else{
+  else {
     //function
   }
 };
 
+//verifying received otp
 const verifyOpt = async (req, res, next) => {
+  console.log("\nreceived otp for verification");
+  const receivedOtp = req.body.otp;
+  console.log("\nreceivedOtp", receivedOtp);
 
-  
+  //finding email token
+  try {
+    console.log("\nstoring email token");
+    email_token = req.cookies[process.env.EMAIL_COOKIE_NAME];
+
+    if (!email_token) throw Error("\nSession expired");
+  } catch (error) {
+    console.log(error.message);
+    const response = { error: "email-token expired" };
+
+    res.status(400).json(response);
+    return;
+  }
+
+  //decoding email token
+  try {
+    console.log("\ndecoding email-token");
+    const decoded_email_token = jwt.verify(email_token, process.env.JWT_SECRET);
+
+    console.log("\ndecoded", decoded_email_token);
+
+    //fetching token from token-list with received email
+    try {
+      console.log("\nfinding otp-token for received email");
+      existingToken = await Token.findOne({
+        email: decoded_email_token.userEmail,
+      });
+    } catch (err) {
+      console.log(err.message);
+      res
+        .status(500)
+        .json({ error: "Email verification failed, please try again later" });
+    }
+
+    //when no token found
+    if (!existingToken) {
+      console.log("\nno otp found for this email in database");
+      res.status(400).json({ error: "please send an otp request first" });
+      return;
+    }
+
+    //token found for received
+    console.log("\ntoken", existingToken);
+
+    //checking expiry
+    if (existingToken.expiresAt < Date.now()) {
+      console.log("\nreceived expired otp");
+      res.status(400).json({ error: "Opt is expired already" });
+      return;
+    }
+
+    console.log("\ntoken is not expired");
+
+    //matching otp from saved hashPassword
+    async function checkHashedOtp() {
+      const isMatching = await new Promise((resolve, reject) => {
+        bcrypt.compare(
+          receivedOtp,
+          existingToken.otp,
+          function (error, isMatch) {
+            if (error) reject(error);
+            resolve(isMatch);
+          }
+        );
+      });
+
+      return isMatching;
+    }
+
+    console.log("\ncomparing received otp with hashedOtp");
+    const isOtpMatching = await checkHashedOtp();
+
+    console.log("isOtpMatching", isOtpMatching);
+
+    //when otp didn't matched
+    if (!isOtpMatching) {
+      console.log("\notp didn't matched");
+      res
+        .status(400)
+        .json({ error: "Invalid otp, could not verify your email" });
+      return;
+    }
+
+    //when otp matched
+    // console.log("deleting the otp-token");
+    // await Token.deleteMany({email: decoded_email_token.userEmail});
+
+    //creating jwt token
+    const userData = {
+      userEmail: decoded_email_token.userEmail,
+      isVerified: true,
+      isGoogleVerified: decoded_email_token.isGoogleVerified,
+    };
+    const token = jwt.sign(userData, process.env.JWT_SECRET);
+
+    //sending cookies to client side
+    console.log("\ncreating new modified email token");
+    console.log("sending modified email-token");
+    res.cookie(process.env.EMAIL_COOKIE_NAME, token, {
+      expires: new Date(Date.now() + 60 * 60 * 1000), //milliseconds
+      httpOnly: true,
+      secure: false,
+    });
+
+    res.status(200).json({ message: "otp matched", isCreatingAccount: decoded_email_token.isCreatingAccount });
+    return;
+  } catch (error) {
+    console.log("\nFailed to decode login token");
+    console.log("\n", error.message);
+    const response = { error: "Failed to authenticate" };
+
+    res.status(500).json(response);
+  }
 };
 
 const changePassword = async (req, res, next) => {};
@@ -372,6 +486,13 @@ const verifyLoginToken = async (req, res, next) => {
     res.status(500).json(response);
   }
 };
+
+//api for checking the basic login
+const verifyUser = async (req,res,next)=>{
+
+  // const {email , password} = req.body;
+
+}
 
 //logout function
 const authLogout = async (req, res, next) => {

@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Container from "../../Components/Shared/Container";
 import { ValidateEmail } from "../../Helper/EmailHelper";
@@ -8,9 +8,7 @@ const EmailVerifyPage = () => {
 
   const navigate = useNavigate();
 
-  const emailInputRef = useRef();
-
-  const submitButtonHandler = async (event) => {
+  const submitFunction = async (event) => {
     event.preventDefault();
     const email = emailInputRef.current.value;
 
@@ -21,7 +19,9 @@ const EmailVerifyPage = () => {
           email: email,
           createAccount: true,
         };
-
+        setSubmitButtonHandler(() => {
+          alert("Request for otp already sent");
+        });
         const response = await fetch(
           `${process.env.REACT_APP_SERVER_ROOT_URI}/api/auth/getOtp`,
           {
@@ -33,6 +33,8 @@ const EmailVerifyPage = () => {
             credentials: "include",
           }
         );
+
+        setSubmitButtonHandler(submitFunction);
 
         console.log(response.status);
         const responseData = await response.json();
@@ -53,6 +55,10 @@ const EmailVerifyPage = () => {
       }
     }
   };
+
+  const emailInputRef = useRef();
+  const [submitButtonHandler, setSubmitButtonHandler] =
+    useState(submitFunction);
 
   return (
     <Container>
