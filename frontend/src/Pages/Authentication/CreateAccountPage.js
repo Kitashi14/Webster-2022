@@ -72,7 +72,7 @@ const CreateAccountPage = () => {
 
         if (response.status === 200) {
           console.log(responseData.message);
-          alert("Account Created");
+          alert("Account created. Please login.");
           navigate("/login");
           return;
         } else if (response.status === 422) {

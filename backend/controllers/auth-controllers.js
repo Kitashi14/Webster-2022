@@ -286,8 +286,8 @@ const createOtp = async (req, res, next) => {
                   .json({ error: "Can't send otp for creating account" });
                 return;
               } else {
-                console.log("email has sent !");
-                console.log(`sent otp to ${email}`);
+                console.log("\nemail has sent !");
+                console.log(`\nsent otp to ${email}`);
 
                 res.status(200).json({ message: "Sent otp successfully" });
               }
@@ -394,7 +394,7 @@ const verifyOpt = async (req, res, next) => {
     console.log("\ncomparing received otp with hashedOtp");
     const isOtpMatching = await checkHashedOtp();
 
-    console.log("isOtpMatching", isOtpMatching);
+    console.log("\nisOtpMatching", isOtpMatching);
 
     //when otp didn't matched
     if (!isOtpMatching) {
@@ -419,14 +419,17 @@ const verifyOpt = async (req, res, next) => {
 
     //sending cookies to client side
     console.log("\ncreating new modified email token");
-    console.log("sending modified email-token");
+    console.log("\nsending modified email-token");
     res.cookie(process.env.EMAIL_COOKIE_NAME, token, {
       expires: new Date(Date.now() + 60 * 60 * 1000), //milliseconds
       httpOnly: true,
       secure: false,
     });
 
-    res.status(200).json({ message: "otp matched", isCreatingAccount: decoded_email_token.isCreatingAccount });
+    res.status(200).json({
+      message: "otp matched",
+      isCreatingAccount: decoded_email_token.isCreatingAccount,
+    });
     return;
   } catch (error) {
     console.log("\nFailed to decode login token");
@@ -441,7 +444,7 @@ const changePassword = async (req, res, next) => {};
 
 //verify login token whenever recieved
 const verifyLoginToken = async (req, res, next) => {
-  console.log("\nverify login token api hit");
+  console.log("\nverify login-token api hit");
   let login_token;
 
   //access login token
@@ -465,12 +468,46 @@ const verifyLoginToken = async (req, res, next) => {
 
     console.log("\ndecoded", decoded_login_token);
 
-    //sendign response with userData
+    //after decoding check the password with database
+    const email = decoded_login_token.userEmail;
+    const password = decoded_login_token.password;
+
+    console.log("\n", "checking if the user exist");
+    //check if a user exist with this email
+    let existingUser;
+
+    try {
+      existingUser = await getUserInfo(email);
+    } catch (err) {
+      console.log(err.message);
+      res
+        .status(500)
+        .json({ error: "Loggin in failed, please try again later" });
+      return;
+    }
+
+    //when no user exist
+    if (!existingUser) {
+      console.log("\nNo user exists with this email, please sign up");
+      res
+        .status(400)
+        .json({ error: "No user exists with this email, please sign up" });
+      return;
+    } else if (existingUser.password !== password) {
+      console.log("\nInvalid credentials, could not log you in.");
+      res
+        .status(400)
+        .json({ error: "Invalid credentials, could not log you in" });
+      return;
+    }
+
+    //sending response with userData
     const userData = {
       userEmail: decoded_login_token.userEmail,
       userName: decoded_login_token.userName,
       firstName: decoded_login_token.firstName,
       lastName: decoded_login_token.lastName,
+      password: decoded_login_token.password,
       isGoogleVerified: decoded_login_token.isGoogleVerified,
       phonenum: decoded_login_token.phonenum,
       professions: decoded_login_token.professions,
@@ -488,11 +525,100 @@ const verifyLoginToken = async (req, res, next) => {
 };
 
 //api for checking the basic login
-const verifyUser = async (req,res,next)=>{
+const verifyUser = async (req, res, next) => {
+  console.log("\nverifyUser login api hit");
+  const { email, password } = req.body;
 
-  // const {email , password} = req.body;
+  console.log(req.body);
 
-}
+  let existingUser;
+
+  try {
+    existingUser = await getUserInfo(email);
+  } catch (err) {
+    console.log(err.message);
+    res.status(500).json({ error: "Loggin in failed, please try again later" });
+    return;
+  }
+
+  //when no user exist
+  if (!existingUser) {
+    console.log("\nNo user exists with this email, please sign up");
+    res
+      .status(400)
+      .json({ error: "No user exists with this email, please sign up" });
+    return;
+  }
+
+  try {
+    //when user exist then check for password
+    async function checkHashPassword() {
+      const isMatching = await new Promise((resolve, reject) => {
+        console.log(password, existingUser.password);
+        bcrypt.compare(
+          password,
+          existingUser.password,
+          function (error, isMatch) {
+            if (error) reject(error);
+            resolve(isMatch);
+          }
+        );
+      });
+
+      return isMatching;
+    }
+
+    console.log("\nchecking password");
+    const isPassMatching = await checkHashPassword();
+    console.log("\nisPassMatching", isPassMatching);
+
+    //when password doesn't matches
+    if (!isPassMatching) {
+      console.log("\nInvalid credentials, could not log you in.");
+      res
+        .status(400)
+        .json({ error: "Invalid credentials, could not log you in" });
+      return;
+    }
+
+    //when user matches
+    console.log("\nUser found");
+    console.log(existingUser);
+
+    const userData = {
+      userEmail: existingUser.email,
+      userName: existingUser.username,
+      password: existingUser.password,
+      firstName: existingUser.firstName,
+      lastName: existingUser.lastName,
+      isGoogleVerified: existingUser.isGoogle,
+      phonenum: existingUser.phonenum,
+      professions: existingUser.professions,
+    };
+
+    //creating jwt token
+    const token = jwt.sign(userData, process.env.JWT_SECRET);
+
+    //sending cookies to client side
+    console.log("\nCreating login token");
+    res.cookie(process.env.LOGIN_COOKIE_NAME, token, {
+      maxAge: 10 * 24 * 60 * 60 * 1000,
+      httpOnly: true,
+      secure: false,
+    });
+    console.log("\nsent login token");
+
+    res.status(200).json({
+      message: "Logged in!",
+      userData: userData,
+    });
+    return;
+  } catch (err) {
+    console.log(err.message);
+    res.status(500).json({ error: err.message });
+    return;
+  }
+};
 
 //logout function
 const authLogout = async (req, res, next) => {
@@ -513,5 +639,5 @@ exports.redirectGoogleEmail = redirectGoogleEmail;
 exports.verifyOpt = verifyOpt;
 exports.authLogin = verifyLoginToken;
 exports.authLogout = authLogout;
-exports.verifyOpt = verifyOpt;
 exports.createOtp = createOtp;
+exports.verifyUser = verifyUser;

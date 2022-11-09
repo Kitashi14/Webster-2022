@@ -12,5 +12,6 @@ router.get("/authLogin", authController.authLogin);
 router.get("/logout",authController.authLogout);
 router.post("/getOtp", authController.createOtp);
 router.post("/verifyOtp",authController.verifyOpt);
+router.post("/login",authController.verifyUser);
 
 module.exports = router;

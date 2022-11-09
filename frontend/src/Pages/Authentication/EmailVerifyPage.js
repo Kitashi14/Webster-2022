@@ -8,20 +8,30 @@ const EmailVerifyPage = () => {
 
   const navigate = useNavigate();
 
-  const submitFunction = async (event) => {
+  
+var enteredEmail;
+var isButtonOn = true;
+
+  const submitButtonHandler = async (event) => {
     event.preventDefault();
     const email = emailInputRef.current.value;
 
     if (!ValidateEmail(email)) alert("Enter a Valid Email!");
     else {
+
+      if(enteredEmail === email && !isButtonOn){
+        alert("Requesting for otp");
+        return;
+      }
+
+      enteredEmail = email;
+      isButtonOn = false;
+
       try {
         const data = {
           email: email,
           createAccount: true,
         };
-        setSubmitButtonHandler(() => {
-          alert("Request for otp already sent");
-        });
         const response = await fetch(
           `${process.env.REACT_APP_SERVER_ROOT_URI}/api/auth/getOtp`,
           {
@@ -33,8 +43,7 @@ const EmailVerifyPage = () => {
             credentials: "include",
           }
         );
-
-        setSubmitButtonHandler(submitFunction);
+        isButtonOn = true;
 
         console.log(response.status);
         const responseData = await response.json();
@@ -57,18 +66,18 @@ const EmailVerifyPage = () => {
   };
 
   const emailInputRef = useRef();
-  const [submitButtonHandler, setSubmitButtonHandler] =
-    useState(submitFunction);
+  // const [submitButtonHandler, setSubmitButtonHandler] =
+  //   useState(submitFunction);
 
   return (
     <Container>
-      <form method="post">
-        <div>
-          <input type="email" ref={emailInputRef} required />
-          <label>Email</label>
-        </div>
-        <button onClick={submitButtonHandler}>Enter</button>
-      </form>
+      {/* <form method="post"> */}
+      <div>
+        <input type="email" id="email" ref={emailInputRef} required />
+        <label>Email</label>
+      </div>
+      <button onClick={submitButtonHandler}>Enter</button>
+      {/* </form> */}
     </Container>
   );
 };
