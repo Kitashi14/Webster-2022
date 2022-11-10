@@ -9,6 +9,7 @@ import { useContext } from "react";
 import AuthContext from "./context/auth-context";
 import HomePage from "./Pages/HomePage";
 import ResetPage from "./Pages/Authentication/ResetPage";
+import About from "./Pages/AboutUs";
 
 function App() {
   const auth = useContext(AuthContext);
@@ -37,6 +38,8 @@ function App() {
         <Route exact path="/createAccount" element={<CreateAccountPage />} />
 
         <Route exact path="/resetPassword" element={<ResetPage />}></Route>
+
+        <Route exact path="/about" element={<About/>}></Route>
       </Routes>
     </>
   ) : (
