@@ -19,7 +19,7 @@ let transporter = nodemailer.createTransport({
   // proxy: 'http://172.31.102.29:3128/'
 });
 
-//for creating jwt token
+//for creating-checking jwt token
 const jwt = require("jsonwebtoken");
 
 //for hashing password

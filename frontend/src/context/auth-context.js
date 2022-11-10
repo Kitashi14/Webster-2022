@@ -79,8 +79,8 @@ export const AuthContextProvider = (props) => {
         }
       } catch (err) {
         console.log(err);
-        alert("Failed to authenticate");
         if (isLoggedIn) {
+          alert("Failed to authenticate");
           logout();
         }
       }

@@ -1,7 +1,7 @@
 //extracting the user modal
 const User = require("../models/user");
 
-//for creating jwt token
+//for creating-checking jwt token
 const jwt = require("jsonwebtoken");
 
 //for hashing password
