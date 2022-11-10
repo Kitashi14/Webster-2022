@@ -1,5 +1,7 @@
 //extracting the user modal
 const User = require("../models/user");
+const Complain = require("../models/complain");
+const Worker = require("../models/worker");
 
 //for creating-checking jwt token
 const jwt = require("jsonwebtoken");
@@ -246,6 +248,11 @@ const resetPassword = async (req, res, next) => {
     return;
   }
 };
+
+//get user details with complain and professions
+const getUserDetail = async(req,res,next)=>{
+  console.log()
+}
 
 exports.getUserInfo = getUserWithEmail;
 exports.createAccount = addUser;
