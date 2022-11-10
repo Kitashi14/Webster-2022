@@ -37,20 +37,21 @@ const userSchema = new mongoose.Schema({
   },
   address: {
     type: String,
-    require: [true, "Please enter address"],
+    required: [true, "Please enter address"],
+    maxlength: 500
   },
   phonenum: {
     type: Number,
-    require: [true, "Please enter phone no."],
+    required: [true, "Please enter phone no."],
     unique: true,
   },
   age: {
     type: Number,
-    require: [true, "Please enter age"],
+    required: [true, "Please enter age"],
   },
   creationTime: {
     type: Date,
-    required: true,
+    requiredd: true,
   },
   location: {
     lat: { type: Number },
@@ -68,11 +69,11 @@ const userSchema = new mongoose.Schema({
             required: true
         },
         workerRating:{
-            type: String,
+            type: Number,
             required: true
         },
         wokerScore: {
-            type: String,
+            type: Number,
             required: true
         }
     })
