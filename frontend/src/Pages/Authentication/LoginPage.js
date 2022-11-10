@@ -17,6 +17,8 @@ const LoginPage = () => {
     const password = passwordInputRef.current.value;
 
     if (!ValidateEmail(email)) alert("Enter a Valid Email!");
+    else if (password.length ===0)
+      alert("Enter password");
     else {
       try {
         const userData = {
