@@ -12,6 +12,7 @@ const app = express();
 //extracting routers
 const authRouters = require("./routers/auth-routers");
 const userRouters = require("./routers/user-routers");
+const complainRouters = require("./routers/complain-routers");
 
 //for reading cookies while getting requests
 app.use(cookieParser());
@@ -54,6 +55,7 @@ mongoose.connect(`mongodb://localhost:${process.env.LOCAL_DATABASE_PORT}/${dbNam
 //setting api
 app.use("/api/auth", authRouters);
 app.use("/api/user", userRouters);
+app.use("/api/complain",complainRouters);
 
 //setting the server port
 const port = process.env.PORT;

@@ -198,6 +198,11 @@ const filterComplain = async (req, res, next) => {
   }
 };
 
+//get complain details
+const complainDetails= async(req,res,next)=>{
+  
+}
+
 exports.latestComplain = latestComplain;
 exports.addComplain = addComplain;
 exports.userComplain = userComplain;
