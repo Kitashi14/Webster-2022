@@ -36,6 +36,7 @@ const CreateAccountPage = () => {
       alert("Enter a valid first name");
     else if (lastName.length > 50) alert("Enter a valid last name");
     else if (address.length < 5) alert("Enter a valid address");
+    else if (address.length > 500) alert("Address too long");
     else if (phonenum.length !== 10) alert("Phone no. should be of 10 digits");
     else {
       const locationX = locationXInputRef.current.value;
