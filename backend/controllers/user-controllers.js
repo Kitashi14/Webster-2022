@@ -194,7 +194,7 @@ const resetPassword = async (req, res, next) => {
     console.log("\ndecoded", decoded_email_token);
 
     //checking email-token request type
-    if (decoded_email_token.isCreatingAccout) {
+    if (decoded_email_token.isCreatingAccount) {
       console.log("\ncreate account token found\ncan't reset password");
 
       res
@@ -250,10 +250,70 @@ const resetPassword = async (req, res, next) => {
 };
 
 //get user details with complain and professions
-const getUserDetail = async(req,res,next)=>{
-  console.log()
-}
+const getUserDetail = async (req, res, next) => {
+  console.log("\nget user details api hit");
+
+  const userName = req.params.uid;
+  console.log("\nuser", userName);
+
+  let login_token;
+  let isVerifiedUser = false;
+
+  let decoded_login_token;
+  //verifying login token
+  try {
+    //accessing login token
+    console.log("\nstoring access token");
+    login_token = req.cookies[process.env.LOGIN_COOKIE_NAME];
+
+    if (!login_token) {
+      throw Error("\nsession expired");
+    }
+
+    //decoding login token
+    try {
+      console.log("\ndecoding login token");
+      decoded_login_token = jwt.verify(login_token, process.env.JWT_SECRET);
+      console.log("\ndecoded", decoded_login_token);
+      if (decoded_login_token.userName === userName) {
+        isVerifiedUser = true;
+      }
+    } catch (err) {
+      console.log("\ncan't able to decode login token");
+      console.log(err.message);
+    }
+  } catch (error) {
+    console.log(error.message);
+  }
+  console.log("isUserVerified", isVerifiedUser);
+
+  //fetch user-details from database
+  try {
+    const userDetails = User.find({ username: userName });
+
+    const userRegComplains = Complain.find({ creatorUsername: userName });
+
+    const userResolvedComplains = Complain.find({ workerUsername: userName });
+
+    const profileDetails = {
+      userDetails,
+      regComplains: userRegComplains,
+      resComplains: userResolvedComplains,
+      isVerifiedUser
+    };
+    console.log("got user details from database");
+    //sending details
+    console.log("\nsent user details");
+    res.status(200).json({data: profileDetails});
+
+  } catch (err) {
+    console.log("\ncan't fetch from database");
+    console.log(err.message);
+    res.status(500).json({ error: "can't able to fetch user details" });
+  }
+};
 
 exports.getUserInfo = getUserWithEmail;
 exports.createAccount = addUser;
 exports.resetPassword = resetPassword;
+exports.getUserDetail = getUserDetail;
