@@ -15,14 +15,15 @@ function App() {
 
   return !auth.isLoggedIn ? (
     <>
+      <Navbar login={true} />
+
       <Routes>
         <Route
           exact
           path="/"
           element={
             <>
-              {" "}
-              <Navbar login={true} /> <LandingPage />{" "}
+              <LandingPage />
             </>
           }
         />
@@ -35,7 +36,7 @@ function App() {
 
         <Route exact path="/createAccount" element={<CreateAccountPage />} />
 
-        <Route exact path="/resetPassword" element={<ResetPage />} ></Route>
+        <Route exact path="/resetPassword" element={<ResetPage />}></Route>
       </Routes>
     </>
   ) : (
