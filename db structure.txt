@@ -36,7 +36,6 @@ token-list{
 complain-list{
 
     id;
-    creator-id (user-id);
     creator (user-username);
     title;
     description;
@@ -86,7 +85,6 @@ notification-list{
 worker-list{
 
     id;
-    user-id;
     user-username;
     user-firstname;
     user-secondname;
@@ -99,5 +97,6 @@ worker-list{
     date-created;
     profession;
     rating;
+    TCR;
     score;
 }
