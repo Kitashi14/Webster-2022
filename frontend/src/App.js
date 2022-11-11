@@ -10,13 +10,14 @@ import AuthContext from "./context/auth-context";
 import HomePage from "./Pages/HomePage";
 import ResetPage from "./Pages/Authentication/ResetPage";
 import About from "./Pages/AboutUs";
+import Form from "./Pages/ComplainForm";
 
 function App() {
   const auth = useContext(AuthContext);
 
   return !auth.isLoggedIn ? (
     <>
-      <Navbar login={true} />
+      <Navbar login={false} />
 
       <Routes>
         <Route
@@ -40,11 +41,15 @@ function App() {
         <Route exact path="/resetPassword" element={<ResetPage />}></Route>
 
         <Route exact path="/about" element={<About/>}></Route>
+
+        <Route exact path="/forgetpassword" element={<ResetPage/>}></Route>
+
+        
       </Routes>
     </>
   ) : (
     <>
-      <Navbar login={false} />
+      <Navbar login={true} />
       <Routes>
         <Route
           exact
@@ -55,6 +60,7 @@ function App() {
             </>
           }
         />
+        <Route exact path="/registerComplain" element={<Form />}></Route>
       </Routes>
     </>
   );

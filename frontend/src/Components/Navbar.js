@@ -61,7 +61,7 @@ const Navbar = (props) => {
                 </Link>
               </li>
               <li>
-                {props.login ? (
+                {!props.login ? (
                   <>
                     <Link to="./login">
                       <div className="block py-2 pr-4 pl-3 text-sc  hover:text-gray-500  md:border-0  md:p-0 dark:text-gray-400">
