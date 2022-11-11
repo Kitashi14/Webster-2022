@@ -2,6 +2,9 @@
 import React from "react";
 // import ComplainBox from "../Components/ComplainBox";
 import ComplainBoxes from "../Components/ComplainBoxes";
+import Hero from "../Components/Hero";
+
+
 
 const HomePage = () => {
   console.log("Home page entered.");
@@ -9,7 +12,8 @@ const HomePage = () => {
   return (
     <>
       <div className="bg-gray-200">
-      <ComplainBoxes/>
+        <Hero/>
+        <ComplainBoxes/>
 
       </div>
       {/* <Container>
