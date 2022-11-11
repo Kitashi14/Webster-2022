@@ -15,6 +15,7 @@ const HomePage = () => {
         <Hero/>
         <ComplainBoxes/>
 
+
       </div>
       {/* <Container>
         <div>Complains</div>

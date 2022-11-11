@@ -110,9 +110,9 @@ const Form = () => {
           </p>  --> */}
         </div>
 
-        {/* <!-- Login  --> */}
+        {/* <!-- complain  --> */}
         <div className="px-8 mb-4 text-center">
-          <h2 className="pt-4 mb-2 text-2xl">Log In</h2>
+          <h2 className="pt-4 mb-2 text-2xl leading-tight">Complain Form</h2>
           {/* <!-- 							<p className="mb-4 text-sm text-gray-700">
            Enter your email address below and we'll send you a
             link to reset your password!
@@ -120,102 +120,68 @@ const Form = () => {
         </div>
         <form className="px-8 pt-6 pb-8 mb-4 bg-white rounded">
 
-          {/* <!-- Enter Name --> */}
+          {/* <!-- Enter Title --> */}
           <div className="mb-4">
             <label className="block mb-2 text-sm font-bold text-gray-700" htmlFor="email">
-              First Name
+              Title
             </label>
             <input
-              ref={firstNameInputRef} type="text" required
+              type="text" required
               className="w-full px-3 py-2 text-sm leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
-              id="firstname"
-              placeholder="Enter your first name..."
+              id="title"
+              placeholder="Title of complain..."
             />
           </div>
 
 
 
-          {/* <!-- Enter Last Name btn --> */}
+          {/* <!-- Enter Description --> */}
           <div className="mb-4">
             <label className="block mb-2 text-sm font-bold text-gray-700" htmlFor="email">
-              Last Name
+              Enter Description
             </label>
-            <input
-              ref={lastNameInputRef} type="text"
-              className="w-full px-3 py-2 text-sm leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
-              id="lastname"
-              placeholder="Enter your last name..."
-            />
-          </div>
-
-          {/* <!-- Enter Age btn --> */}
-          <div className="mb-4">
-            <label className="block mb-2 text-sm font-bold text-gray-700" htmlFor="age">
-              Age
-            </label>
-            <input
-              ref={ageInputRef} type="number" required
-              className="w-full px-3 py-2 text-sm leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
-              id="age"
-              placeholder="Enter your age..."
-            />
-          </div>
-
-          {/* <!-- Enter Address --> */}
-          <div className="mb-4 large-input block text-sm font-bold text-gray-700">
-
-            Address
-
             <textarea
-              ref={addressInputRef} 
+              type="text"
+              row='10'
+              className="w-full px-3 py-2 text-sm leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
+              id="description"
+              placeholder="Write your description..."
+            />
+          </div>
+
+          {/* <!-- Enter profession --> */}
+          <div className="mb-4">
+            <label className="block mb-2 text-sm font-bold text-gray-700" htmlFor="profession">
+              Profession
+            </label>
+            <button
+              type="dropbox" required
+              className="w-full px-3 py-2 text-sm leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
+              id="profession"
+              
+            />
+          </div>
+
+          {/* <!-- Enter Phone no --> */}
+          <div className="mb-4 large-input block text-sm font-bold text-gray-700">
+          <label className="block mb-2 text-sm font-bold text-gray-700" htmlFor="phoneno">
+              Phone No.
+            </label>
+            <textarea
+               
               className="w-full px-3 py-2 text-sm  text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
               required
               
-              rows="4"
-
-              id="address"
-              placeholder="Enter your address..."
+              
+              id="phoneno"
+              placeholder="Enter your phone no..."
             />
           </div>
 
-          {/* <!-- Enter PhoneNo --> */}
-          <div className="mb-4">
-            <label className="block mb-2 text-sm font-bold text-gray-700" htmlFor="phoneNo">
-              Phone No.
-            </label>
-            <input
-              ref={phonenumInputRef} type="text" required
-              className="w-full px-3 py-2 text-sm leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
-              id="phoneNo"
-              placeholder="Enter Phone no..."
-            />
-          </div>
+          
 
-          {/* <!-- Enter Password --> */}
-          <div className="mb-4">
-            <label className="block mb-2 text-sm font-bold text-gray-700" htmlFor="password">
-              Password
-            </label>
-            <input
-              ref={passwordInputRef} type="password" required
-              className="w-full px-3 py-2 text-sm leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
-              id="password"
-              placeholder="Enter password..."
-            />
-          </div>
-
-          {/* <!-- Confirm Password --> */}
-          <div className="mb-4">
-            <label className="block mb-2 text-sm font-bold text-gray-700" htmlFor="phoneNo">
-              Confirm Password
-            </label>
-            <input
-              ref={confirmPasswordInputRef} type="password" required
-              className="w-full px-3 py-2 text-sm leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
-              id="confirmPassword"
-              placeholder="Confirm Password..."
-            />
-          </div>
+          
+         
 
       {/* <!--Forget Password --> */}
       <div className="mb-6">
@@ -237,10 +203,10 @@ const Form = () => {
           className="w-full px-4 py-2 font-bold text-white bg-red-500 rounded-full hover:bg-red-700 focus:outline-none focus:shadow-outline"
           type="button"
         >
-          Create Account
+          Register Complain
         </button>
       </div>
-      <hr className="mb-6 border-t" />
+      {/* <hr className="mb-6 border-t" />
       <div className="text-center mb-2">
         Sign in with<a
           className="inline-block text-sm text-blue-500 align-middle hover:text-blue-800"
@@ -256,7 +222,7 @@ const Form = () => {
         >
           Sign Up
         </a>
-      </div>
+      </div> */}
     </form>
   </div>
 

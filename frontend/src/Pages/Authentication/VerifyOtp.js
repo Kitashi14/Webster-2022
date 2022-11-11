@@ -1,6 +1,6 @@
 import { useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import Container from "../../Components/Shared/Container";
+// import Container from "../../Components/Shared/Container";
 
 const VerifyOTP = () => {
   const navigate = useNavigate();
@@ -61,10 +61,66 @@ const VerifyOTP = () => {
   };
 
   return (
+    <>
+       
 
+<div class="container mx-auto">
+  <div class="flex justify-center mb-2 px-6 my-12 ">
+    
+      {/* <!-- Col --> */}
+      <div class="w-1/2 bg-white p-5 mb-2 rounded-lg border ">
+        <div class="mb-4">
+          <h1 class=" text-center text-xl pt-4 mb-2">Verify OTP</h1>
+        </div>
+          
+        <form class="px-8 pt-6 pb-8 bg-white rounded mb-2 d-flex flex-column">
+          <h2 class="pt-4 mb-2 text-sm"><em>Enter 4 digit code sent to your email</em></h2>
+          <div class="mb-4">
+            <label class="block text-sm font-bold text-gray-700" for="password">
 
+            </label>
+            <input
+            ref={otpInputRef} type="text" required 
+              class="w-full px-3 py-2 text-sm leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
+              id="otp"
+              
+              placeholder="Enter OTP..."
+            />
+          </div>
 
+          <div class="mb-2 text-center">
+            <button
+            onClick={submitButtonHandler}
+              class="w-full px-4 py-2 font-bold text-white bg-red-500 rounded-full hover:bg-red-700 focus:outline-none focus:shadow-outline"
+              type="button"
+            >
+              Submit
+            </button>
+          </div>
+{/* <!-- 							<hr class="mb-6 border-t" />
+          <div class="text-center">
+            <a
+              class="inline-block text-sm text-blue-500 align-baseline hover:text-blue-800"
+              href="./register.html"
+            >
+              Create an Account!
+            </a>
+          </div>--> */}
+          <div class="text-center mt-2">
+            <a
+              class="inline-block text-sm text-blue-500 align-baseline hover:text-blue-800"
+              href="./index.html"
+            >
+              Resend OTP
+            </a> 
+          </div>
+        </form>
+      </div>
+    
+  </div>
+</div>
 
+    </>
 
 
 
