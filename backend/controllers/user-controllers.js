@@ -249,7 +249,7 @@ const resetPassword = async (req, res, next) => {
   }
 };
 
-//get user details with complain and professions
+//get user profile = user details with complain and professions
 const getUserDetail = async (req, res, next) => {
   console.log("\nget user details api hit");
 
@@ -291,6 +291,11 @@ const getUserDetail = async (req, res, next) => {
   try {
     const userDetails = User.find({ username: userName });
 
+    if(!userDetails){
+      console.log("user not found with this username");
+      res.status(400).json({error: "user not found"});
+    }
+
     const userRegComplains = Complain.find({ creatorUsername: userName });
 
     const userResolvedComplains = Complain.find({ workerUsername: userName });
@@ -312,6 +317,10 @@ const getUserDetail = async (req, res, next) => {
     res.status(500).json({ error: "can't able to fetch user details" });
   }
 };
+
+//update profile 
+
+
 
 exports.getUserInfo = getUserWithEmail;
 exports.createAccount = addUser;
