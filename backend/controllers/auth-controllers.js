@@ -631,6 +631,7 @@ const verifyLoginToken = async (req, res, next) => {
       isGoogleVerified: decoded_login_token.isGoogleVerified,
       phonenum: decoded_login_token.phonenum,
       professions: decoded_login_token.professions,
+      address: existingUser.address
     };
     console.log("\nsending userData");
 
@@ -714,6 +715,7 @@ const verifyUser = async (req, res, next) => {
       isGoogleVerified: existingUser.isGoogle,
       phonenum: existingUser.phonenum,
       professions: existingUser.professions,
+      address : existingUser.address
     };
 
     //creating jwt token
