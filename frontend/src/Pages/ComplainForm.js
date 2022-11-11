@@ -1,5 +1,8 @@
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+
+import { profession } from "../Helper/Profession";
+
 
 const Form = () => {
   const navigate = useNavigate();
@@ -93,12 +96,16 @@ const Form = () => {
     }
   };
 
+  let optionItems = profession.map((item) => (
+        <option value={item.id} key={item.name}>{item.name}</option>
+    )
+  );
   
   return (
     
 
     <div className="container mx-auto">
-    <div className="flex justify-center px-6 my-12 ">
+    <div className="flex justify-center px-6 my-6 ">
 
       {/* <!-- Col --> */}
       <div className="w-1/2 bg-white p-5 rounded-lg border ">
@@ -137,8 +144,8 @@ const Form = () => {
 
           {/* <!-- Enter Description --> */}
           <div className="mb-4">
-            <label className="block mb-2 text-sm font-bold text-gray-700" htmlFor="email">
-              Enter Description
+            <label className="block mb-2 text-sm font-bold text-gray-700" htmlFor="description">
+              Description
             </label>
             <textarea
               type="text"
@@ -149,17 +156,27 @@ const Form = () => {
             />
           </div>
 
+{/* <div className="grid grid-cols-2 grid-flow-row md:grid-flow-col d-flex md:flex-col-1 w-full justify-between mb-4"> */}
           {/* <!-- Enter profession --> */}
+
           <div className="mb-4">
             <label className="block mb-2 text-sm font-bold text-gray-700" htmlFor="profession">
               Profession
             </label>
-            <button
+            <select
+              className="block md:w-1/2 w-full form-controls place-content-center  text-center border-2 border-black rounded-md p-1"
+              name="Professions"
+              id="Professions"
+            >
+              <option value="" selected   > --Select Profession--</option>
+              {optionItems}
+            </select>
+            {/* <button
               type="dropbox" required
               className="w-full px-3 py-2 text-sm leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
               id="profession"
               
-            />
+            /> */}
           </div>
 
           {/* <!-- Enter Phone no --> */}
@@ -167,7 +184,7 @@ const Form = () => {
           <label className="block mb-2 text-sm font-bold text-gray-700" htmlFor="phoneno">
               Phone No.
             </label>
-            <textarea
+            <input
                
               className="w-full px-3 py-2 text-sm  text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
               required
@@ -178,13 +195,8 @@ const Form = () => {
             />
           </div>
 
-          
-
-          
-         
-
       {/* <!--Forget Password --> */}
-      <div className="mb-6">
+      {/* <div className="mb-6">
         <Link
           className="ml-1  p-2 inline-block text-sm text-blue-500 align-baseline hover:text-blue-800 px-2 py-2 font-semibold  bg-white shadow-sm"
           to="/forgetPassword"
@@ -193,11 +205,24 @@ const Form = () => {
           Forget Password?
         </Link>
 
-      </div>
+      </div> */}
 
+      {/* <!-- Enter Description --> */}
+      <div className="mb-4">
+            <label className="block mb-2 text-sm font-bold text-gray-700" htmlFor="address">
+              Address
+            </label>
+            <textarea
+              type="text"
+              row='10'
+              className="w-full px-3 py-2 text-sm leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
+              id="description"
+              placeholder="Your Address..."
+            />
+          </div>
 
       {/* <!-- Create button --> */}
-      <div className="mb-6 text-center">
+      <div className="mb-2 text-center">
         <button
           onClick={submitButtonHandler}
           className="w-full px-4 py-2 font-bold text-white bg-red-500 rounded-full hover:bg-red-700 focus:outline-none focus:shadow-outline"

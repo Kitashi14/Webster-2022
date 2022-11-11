@@ -51,7 +51,7 @@ const HomePage = () => {
         <Hero />
         <ComplainBoxes complains={complainsData} />
 
-
+        
       </div>
       {/* <Container>
         <div>Complains</div>
