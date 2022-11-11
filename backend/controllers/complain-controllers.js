@@ -199,11 +199,213 @@ const filterComplain = async (req, res, next) => {
 };
 
 //get complain details
-const complainDetails= async(req,res,next)=>{
-  
-}
+const getComplainDetails = async (req, res, next) => {
+  console.log("\nget complain details api hit");
+
+  const complainId = req.params.cid;
+  console.log("complain id", complainId);
+
+  let login_token;
+  let isVerifiedUser = false;
+
+  let decoded_login_token;
+  //verifying login token
+  try {
+    //accessing login token
+    console.log("\nstoring access token");
+    login_token = req.cookies[process.env.LOGIN_COOKIE_NAME];
+
+    if (!login_token) {
+      throw Error("\nsession expired");
+    }
+
+    //decoding login token
+    try {
+      console.log("\ndecoding login token");
+      decoded_login_token = jwt.verify(login_token, process.env.JWT_SECRET);
+      console.log("\ndecoded", decoded_login_token);
+      if (decoded_login_token.userName === userName) {
+        isVerifiedUser = true;
+      }
+    } catch (err) {
+      console.log("\ncan't able to decode login token");
+      console.log(err.message);
+    }
+  } catch (error) {
+    console.log(error.message);
+  }
+  console.log("\nisUserVerified", isVerifiedUser);
+
+  //fetching complain details from database
+  try {
+    console.log("\nfetching complain from database");
+    const complainDetails = await Complain.find({ _id: complainId });
+
+    console.log("\nfetched complain from database");
+    console.log(complainDetails);
+
+    if (!complainDetails) {
+      console.log("\nno complain exists with this complain id");
+      res.status(400).json({ error: "Complain doesn't exists" });
+    }
+    res.status(200).json({ data: { ...complainDetails, isVerifiedUser } });
+  } catch (err) {
+    console.log("\ncan't fetch complain from database");
+    console.log(err.message);
+    res.status(500).json({ error: err.message });
+  }
+};
+
+//delete complain
+const deleteComplain = async (req, res, next) => {
+  console.log("\ndelete complain api hit");
+
+  const complainId = req.params.cid;
+
+  //verifying login token
+  let login_token;
+
+  //access login token
+  try {
+    console.log("\nstoring access token");
+    login_token = req.cookies[process.env.LOGIN_COOKIE_NAME];
+
+    if (!login_token) throw Error("\nSession expired");
+  } catch (error) {
+    console.log(error.message);
+    const response = { error: "Please login to delete complain" };
+
+    res.status(400).json(response);
+    return;
+  }
+
+  //decoding login token
+  let decoded_login_token;
+  try {
+    console.log("\ndecoding login token");
+    decoded_login_token = jwt.verify(login_token, process.env.JWT_SECRET);
+
+    console.log("\ndecoded", decoded_login_token);
+  } catch (err) {
+    console.log("\ncan't able to decode login token");
+    console.log(err.message);
+    res.status(500).json({ error: err.message });
+    return;
+  }
+
+  //deleting complain from database
+  try {
+    console.log("\ndeleting complain from database");
+
+    const deletedComplain = await Complain.deleteOne({ _id: complainId });
+
+    console.log("\ndeleted complain from database");
+    console.log("\ndeleted complain", deletedComplain);
+    if (!deletedComplain) {
+      console.log("\nno complain exists with this complain id");
+      res.status(400).json({ error: "Complain doesn't exists" });
+      return;
+    }
+    res.status(200).json({ message: "deleted complain successfully" });
+  } catch (err) {
+    console.log("\ncan't delete complain from database");
+    console.log(err.message);
+    res.status(500).json({ error: err.message });
+  }
+};
+
+//update complain
+const updateComplain = async (req, res, next) => {
+  console.log("\nupdate complain api hit");
+
+  //verifying login token
+  let login_token;
+
+  //access login token
+  try {
+    console.log("\nstoring access token");
+    login_token = req.cookies[process.env.LOGIN_COOKIE_NAME];
+
+    if (!login_token) throw Error("\nSession expired");
+  } catch (error) {
+    console.log(error.message);
+    const response = { error: "Please login to delete complain" };
+
+    res.status(400).json(response);
+    return;
+  }
+
+  //decoding login token
+  let decoded_login_token;
+  try {
+    console.log("\ndecoding login token");
+    decoded_login_token = jwt.verify(login_token, process.env.JWT_SECRET);
+
+    console.log("\ndecoded", decoded_login_token);
+  } catch (err) {
+    console.log("\ncan't able to decode login token");
+    console.log(err.message);
+    res.status(500).json({ error: err.message });
+    return;
+  }
+
+  console.log("\ndestructing request data");
+  const {
+    complainId,
+    title,
+    discription,
+    profession,
+    address,
+    phonenum,
+    locationX,
+    locationY,
+  } = req.body;
+
+  console.log(req.body);
+
+  //updating complain in database
+  try {
+    const updatedComplain = await Complain.updateOne(
+      { _id: complainId },
+      {
+        $set: {
+          title,
+          discription,
+          profession,
+          address,
+          phonenum,
+          location: {
+            lat: locationX,
+            lng: locationY,
+          },
+        },
+      }
+    );
+
+    if(!updatedComplain){
+      console.log("\nno complain exists with this complain id");
+      res.status(400).json({error: "Complain not found"});
+    }
+
+    console.log("\ncomplain updated");
+    console.log("\ncomplain", updatedComplain);
+
+    console.log("\nsent updated complain");
+    res.status(200).json({data: updatedComplain});
+
+  } catch (err) {
+    console.log("\ncan't update complain in database");
+    console.log(err.message);
+    res.status(500).json({ error: err.message });
+  }
+};
+
+
 
 exports.latestComplain = latestComplain;
 exports.addComplain = addComplain;
 exports.userComplain = userComplain;
 exports.filterComplain = filterComplain;
+exports.deleteComplain = deleteComplain;
+exports.getComplainDetails = getComplainDetails;
+exports.updateComplain = updateComplain;

@@ -74,8 +74,7 @@ const complainSchema = new mongoose.Schema({
     required: true
   },
   comment: {
-    type: String,
-    required: true,
+    type: String, 
     maxlength: 1000
   },
   resolvedDate: {
