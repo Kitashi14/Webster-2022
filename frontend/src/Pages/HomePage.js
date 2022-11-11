@@ -50,6 +50,8 @@ const HomePage = () => {
       <div className="bg-gray-200">
         <Hero />
         <ComplainBoxes complains={complainsData} />
+
+
       </div>
       {/* <Container>
         <div>Complains</div>
