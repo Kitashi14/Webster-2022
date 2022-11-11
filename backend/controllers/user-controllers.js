@@ -289,7 +289,7 @@ const getUserDetail = async (req, res, next) => {
 
   //fetch user-details from database
   try {
-    const userDetails = User.find({ username: userName });
+    const userDetails = User.findOne({ username: userName });
 
     if(!userDetails){
       console.log("user not found with this username");

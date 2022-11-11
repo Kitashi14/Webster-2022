@@ -239,7 +239,7 @@ const getComplainDetails = async (req, res, next) => {
   //fetching complain details from database
   try {
     console.log("\nfetching complain from database");
-    const complainDetails = await Complain.find({ _id: complainId });
+    const complainDetails = await Complain.findOne({ _id: complainId });
 
     console.log("\nfetched complain from database");
     console.log(complainDetails);
