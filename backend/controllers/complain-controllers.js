@@ -96,7 +96,7 @@ const addComplain = async (req, res, next) => {
     workerId: null,
     workerUsername: null,
     acceptedWorkers: [],
-    status: "Not Accepted",
+    status: "Not Approved",
     rating: 0,
     comment: "",
     resolvedDate: null,
@@ -158,11 +158,13 @@ const filterComplain = async (req, res, next) => {
           return;
         } else {
           //based on distance
+          console.log("\nnot a valid filter");
+          res.status(400).json({ error: "Select a valid filter" });
         }
       } else {
         if (!distance) {
           //based on profession
-          filteredComplains = Complain.find({ profession: profession });
+          filteredComplains = await Complain.find({ profession: profession });
         } else {
           //based on distance-profession
         }
@@ -171,14 +173,14 @@ const filterComplain = async (req, res, next) => {
       if (!profession) {
         if (!distance) {
           //based on status
-          filteredComplains = Complain.find({ status: status });
+          filteredComplains = await Complain.find({ status: status });
         } else {
           //based on distance-status
         }
       } else {
         if (!distance) {
           //based on profession-status
-          filteredComplains = Complain.find({
+          filteredComplains = await Complain.find({
             status: status,
             profession: profession,
           });
@@ -382,25 +384,22 @@ const updateComplain = async (req, res, next) => {
       }
     );
 
-    if(!updatedComplain){
+    if (!updatedComplain) {
       console.log("\nno complain exists with this complain id");
-      res.status(400).json({error: "Complain not found"});
+      res.status(400).json({ error: "Complain not found" });
     }
 
     console.log("\ncomplain updated");
     console.log("\ncomplain", updatedComplain);
 
     console.log("\nsent updated complain");
-    res.status(200).json({data: updatedComplain});
-
+    res.status(200).json({ data: updatedComplain });
   } catch (err) {
     console.log("\ncan't update complain in database");
     console.log(err.message);
     res.status(500).json({ error: err.message });
   }
 };
-
-
 
 exports.latestComplain = latestComplain;
 exports.addComplain = addComplain;

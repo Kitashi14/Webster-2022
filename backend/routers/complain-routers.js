@@ -6,7 +6,7 @@ const router = express.Router();
 const complainController  = require("../controllers/complain-controllers");
 
 //setting res APIs
-router.get("/:uid",complainController.userComplain);
+router.get("/username/:uid",complainController.userComplain);
 router.post("/filter",complainController.filterComplain);
 router.post("/add",complainController.addComplain);
 router.post("/update",complainController.updateComplain);
