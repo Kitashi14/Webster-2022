@@ -61,15 +61,22 @@ const VerifyOTP = () => {
   };
 
   return (
-    <Container>
-      <form>
-        <div>
-          <input ref={otpInputRef} type="text" required />
-          <label>Enter OTP</label>
-        </div>
-        <button onClick={submitButtonHandler}>Submit</button>
-      </form>
-    </Container>
+
+
+
+
+
+
+
+    // <Container>
+    //   <form>
+    //     <div>
+    //       <input ref={otpInputRef} type="text" required />
+    //       <label>Enter OTP</label>
+    //     </div>
+    //     <button onClick={submitButtonHandler}>Submit</button>
+    //   </form>
+    // </Container>
   );
 };
 

@@ -175,7 +175,7 @@ const LoginPage = () => {
         
               {/* <!--Enter Password --> */}
               	<div className="mb-6">
-								<label className="block mb-2 text-sm font-bold text-gray-700" htmlFor="email">
+								<label className="block mb-2 text-sm font-bold text-gray-700" htmlFor="password">
 									Password
 								</label>
 								<input
@@ -184,7 +184,7 @@ const LoginPage = () => {
                   
                   ref={passwordInputRef}
 									type="password"
-									placeholder="Enter Email Address..."
+									placeholder="Enter password..."
 								/>
                  <button
 									className="ml-1  p-2 inline-block text-sm text-blue-500 align-baseline hover:text-blue-800 px-2 py-2 font-semibold text-sm bg-white  text-slate-700 shadow-sm"
@@ -218,8 +218,8 @@ const LoginPage = () => {
 							</div>
 							<div className="text-center">
 								Create Account<Link
-									className="ml-1  p-2 inline-block text-sm text-blue-500 align-baseline hover:text-blue-800 px-2 py-2 font-semibold text-sm bg-white  text-slate-700 shadow-sm"
-									to="/verifyEmail"
+									className="ml-1  p-2 inline-block text-sm text-blue-500 align-baseline hover:text-blue-800 px-2 py-2 font-semibold bg-white   shadow-sm"
+									to="/createAccount"
 								>
 									 Sign Up
 								</Link>

@@ -1,6 +1,6 @@
 import { useRef } from "react";
-import { useNavigate } from "react-router-dom";
-import Container from "../../Components/Shared/Container";
+import { Link, useNavigate } from "react-router-dom";
+// import Container from "../../Components/Shared/Container";
 
 const CreateAccountPage = () => {
   const navigate = useNavigate();
@@ -95,48 +95,237 @@ const CreateAccountPage = () => {
   };
 
   return (
-    <Container>
-      <form>
-        <div>
-          <input ref={firstNameInputRef} type="text" required />
-          <label>First Name</label>
-        </div>
+    <>
 
-        <div>
-          <input ref={lastNameInputRef} type="text" />
-          <label>Last Name</label>
-        </div>
 
-        <div>
-          <input ref={ageInputRef} type="number" required />
-          <label>Age</label>
-        </div>
+      <div className="container mx-auto">
+        <div className="flex justify-center px-6 my-12 ">
 
-        <div>
-          <input ref={addressInputRef} type="text" required />
-          <label>Address</label>
-        </div>
-        <div>
-          <input ref={phonenumInputRef} type="text" required />
-          <label>Phone No.</label>
-        </div>
+          {/* <!-- Col --> */}
+          <div className="w-1/2 bg-white p-5 rounded-lg border ">
+            <div className="px-8 mb-4 text-center">
+              <img src="https://w7.pngwing.com/pngs/178/595/png-transparent-user-profile-computer-icons-login-user-avatars.png" className="h-10 w-10 inline-block rounded-full border" alt='' />
+              {/* <!-- 						<p className="mb-4 text-sm text-gray-700">
+							 Enter your email address below and we'll send you a
+								link to reset your password!
+							</p>  --> */}
+            </div>
 
-        <input ref={locationXInputRef} type="text" required />
-        <input ref={locationYInputRef} type="text" required />
+            {/* <!-- Login  --> */}
+            <div className="px-8 mb-4 text-center">
+              <h2 className="pt-4 mb-2 text-2xl">Log In</h2>
+              {/* <!-- 							<p className="mb-4 text-sm text-gray-700">
+							 Enter your email address below and we'll send you a
+								link to reset your password!
+							</p> --> */}
+            </div>
+            <form className="px-8 pt-6 pb-8 mb-4 bg-white rounded">
 
-        <div>
-          <input ref={passwordInputRef} type="password" required />
-          <label>Password</label>
-        </div>
+              {/* <!-- Enter Name --> */}
+              <div className="mb-4">
+                <label className="block mb-2 text-sm font-bold text-gray-700" htmlFor="email">
+                  First Name
+                </label>
+                <input
+                  ref={firstNameInputRef} type="text" required
+                  className="w-full px-3 py-2 text-sm leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
+                  id="firstname"
+                  placeholder="Enter your first name..."
+                />
+              </div>
 
-        <div>
-          <input ref={confirmPasswordInputRef} type="password" required />
-          <label>Confirm Password</label>
-        </div>
 
-        <button onClick={submitButtonHandler}>Create</button>
-      </form>
-    </Container>
+
+              {/* <!-- Enter Last Name btn --> */}
+              <div className="mb-4">
+                <label className="block mb-2 text-sm font-bold text-gray-700" htmlFor="email">
+                  Last Name
+                </label>
+                <input
+                  ref={lastNameInputRef} type="text"
+                  className="w-full px-3 py-2 text-sm leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
+                  id="lastname"
+                  placeholder="Enter your last name..."
+                />
+              </div>
+
+              {/* <!-- Enter Age btn --> */}
+              <div className="mb-4">
+                <label className="block mb-2 text-sm font-bold text-gray-700" htmlFor="age">
+                  Age
+                </label>
+                <input
+                  ref={ageInputRef} type="number" required
+                  className="w-full px-3 py-2 text-sm leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
+                  id="age"
+                  placeholder="Enter your age..."
+                />
+              </div>
+
+              {/* <!-- Enter Address --> */}
+              <div className="mb-4 large-input block text-sm font-bold text-gray-700">
+
+                Address
+
+                <textarea
+                  ref={addressInputRef} 
+                  className="w-full px-3 py-2 text-sm  text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
+                  required
+                  
+                  rows="4"
+
+                  id="address"
+                  placeholder="Enter your address..."
+                />
+              </div>
+
+              {/* <!-- Enter PhoneNo --> */}
+              <div className="mb-4">
+                <label className="block mb-2 text-sm font-bold text-gray-700" htmlFor="phoneNo">
+                  Phone No.
+                </label>
+                <input
+                  ref={phonenumInputRef} type="text" required
+                  className="w-full px-3 py-2 text-sm leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
+                  id="phoneNo"
+                  placeholder="Enter Phone no..."
+                />
+              </div>
+
+              {/* <!-- Enter Password --> */}
+              <div className="mb-4">
+                <label className="block mb-2 text-sm font-bold text-gray-700" htmlFor="password">
+                  Password
+                </label>
+                <input
+                  ref={passwordInputRef} type="password" required
+                  className="w-full px-3 py-2 text-sm leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
+                  id="password"
+                  placeholder="Enter password..."
+                />
+              </div>
+
+              {/* <!-- Confirm Password --> */}
+              <div className="mb-4">
+                <label className="block mb-2 text-sm font-bold text-gray-700" htmlFor="phoneNo">
+                  Confirm Password
+                </label>
+                <input
+                  ref={confirmPasswordInputRef} type="password" required
+                  className="w-full px-3 py-2 text-sm leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
+                  id="confirmPassword"
+                  placeholder="Confirm Password..."
+                />
+              </div>
+
+          {/* <!--Forget Password --> */}
+          <div className="mb-6">
+            <Link
+              className="ml-1  p-2 inline-block text-sm text-blue-500 align-baseline hover:text-blue-800 px-2 py-2 font-semibold  bg-white shadow-sm"
+              to="/forgetPassword"
+              // onClick={forgetPassword}
+            >
+              Forget Password?
+            </Link>
+
+          </div>
+
+
+          {/* <!-- Create button --> */}
+          <div className="mb-6 text-center">
+            <button
+              onClick={submitButtonHandler}
+              className="w-full px-4 py-2 font-bold text-white bg-red-500 rounded-full hover:bg-red-700 focus:outline-none focus:shadow-outline"
+              type="button"
+            >
+              Create Account
+            </button>
+          </div>
+          <hr className="mb-6 border-t" />
+          <div className="text-center mb-2">
+            Sign in with<a
+              className="inline-block text-sm text-blue-500 align-middle hover:text-blue-800"
+              href="./register.html"
+            >
+              <img src="https://qotoqot.com/sad-animations/img/100/sigh/sigh.png" className="h-6 rounded-full border mx-2 w-6 d-flex" alt='' />
+            </a>
+          </div>
+          <div className="text-center">
+            Create Account<a
+              className="ml-1  p-2 inline-block text-sm text-blue-500 align-baseline hover:text-blue-800 px-2 py-2 font-semibold  bg-white  shadow-sm"
+              href="./index.html"
+            >
+              Sign Up
+            </a>
+          </div>
+        </form>
+      </div>
+
+    </div>
+		</div >
+	
+
+</>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// <Container>
+//       <form>
+//         <div>
+//           <input ref={firstNameInputRef} type="text" required />
+//           <label>First Name</label>
+//         </div>
+
+//         <div>
+//           <input ref={lastNameInputRef} type="text" />
+//           <label>Last Name</label>
+//         </div>
+
+//         <div>
+//           <input ref={ageInputRef} type="number" required />
+//           <label>Age</label>
+//         </div>
+
+//         <div>
+//           <input ref={addressInputRef} type="text" required />
+//           <label>Address</label>
+//         </div>
+//         <div>
+//           <input ref={phonenumInputRef} type="text" required />
+//           <label>Phone No.</label>
+//         </div>
+
+//         <input ref={locationXInputRef} type="text" required />
+//         <input ref={locationYInputRef} type="text" required />
+
+//         <div>
+//           <input ref={passwordInputRef} type="password" required />
+//           <label>Password</label>
+//         </div>
+
+//         <div>
+//           <input ref={confirmPasswordInputRef} type="password" required />
+//           <label>Confirm Password</label>
+//         </div>
+
+//         <button onClick={submitButtonHandler}>Create</button>
+//       </form>
+//     </Container>
   );
 };
 
