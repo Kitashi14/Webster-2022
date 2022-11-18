@@ -93,8 +93,8 @@ const addComplain = async (req, res, next) => {
       lng: locationY,
     },
     creationTime,
-    workerId: null,
-    workerUsername: null,
+    workerId: "N/A",
+    workerUsername: "N/A",
     acceptedWorkers: [],
     status: "Not Approved",
     rating: 0,
@@ -103,12 +103,38 @@ const addComplain = async (req, res, next) => {
     approvedDate: null,
   });
 
+  //checking if a complain with same title and creator exists
+  try {
+    const existingComplain =await Complain.findOne({
+      creatorUsername: decoded_login_token.userName,
+      title,
+    });
+
+    if(existingComplain){
+      console.log("\ncomplain with same title and creator exists\n",existingComplain);
+      console.log("\nsending error message");
+      res.status(422).json({error: "You already have a complain with same title. Can't register."});
+      return;
+    }
+
+  } catch (err) {
+    console.log("\ncan't fetch from database");
+    console.log(err.message);
+    res.status(500).json({ error: err.message });
+    return;
+  }
+
   //adding user
   try {
     await newComplain.save();
     console.log("\ncomplain added in database");
     console.log(newComplain);
-    res.status(200).json({ message: "Complain added successfully" });
+    const response = {
+      message: "Complain added successfully",
+      data: { complainId: newComplain._id },
+    };
+    console.log("\nsending response", response);
+    res.status(200).json(response);
   } catch (err) {
     console.log("\ncan't add complain in database");
     console.log(err.message);
