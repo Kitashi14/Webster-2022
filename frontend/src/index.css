@@ -32,3 +32,8 @@ input[type="number"] {
   --secondary-color: #fff;
   --tertiary-color: red;
 }
+
+
+.invisible{
+  display: none;
+}
