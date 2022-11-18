@@ -14,7 +14,7 @@ const complainSchema = new mongoose.Schema({
     required: true,
     maxlength: 100,
   },
-  discription: {
+  description: {
     type: String,
     maxlength: 1000,
   },

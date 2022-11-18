@@ -68,7 +68,7 @@ const addComplain = async (req, res, next) => {
   console.log("\ndestructing request data");
   const {
     title,
-    discription,
+    description,
     profession,
     address,
     phonenum,
@@ -84,7 +84,7 @@ const addComplain = async (req, res, next) => {
   const newComplain = new Complain({
     creatorUsername: decoded_login_token.userName,
     title,
-    discription,
+    description,
     profession,
     address,
     phonenum,
@@ -355,7 +355,7 @@ const updateComplain = async (req, res, next) => {
   const {
     complainId,
     title,
-    discription,
+    description,
     profession,
     address,
     phonenum,
@@ -372,7 +372,7 @@ const updateComplain = async (req, res, next) => {
       {
         $set: {
           title,
-          discription,
+          description,
           profession,
           address,
           phonenum,
