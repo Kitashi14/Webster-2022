@@ -40,17 +40,19 @@ app.use(
 //connecting to mongobd database server
 const mongoose = require("mongoose");
 const dbName = process.env.DBNAME;
-// mongoose
-//   .connect(
-//     `mongodb+srv://${process.env.DATABASE_USERNAME}:${process.env.DATABASE_PASSWORD}@cluster0.rhccnpx.mongodb.net/${dbName}?retryWrites=true&w=majority`
-//   )
+mongoose
+  .connect(
+    `mongodb+srv://${process.env.DATABASE_USERNAME}:${process.env.DATABASE_PASSWORD}@cluster0.rhccnpx.mongodb.net/${dbName}?retryWrites=true&w=majority`
+  )
+  .then(() => {
+    console.log("Connected to database\n");
+  }).catch((err)=>{
+    console.log(err.message);
+  });
+// mongoose.connect(`mongodb://localhost:${process.env.LOCAL_DATABASE_PORT}/${dbName}`)
 //   .then(() => {
 //     console.log("Connected to database\n");
 //   });
-mongoose.connect(`mongodb://localhost:${process.env.LOCAL_DATABASE_PORT}/${dbName}`)
-  .then(() => {
-    console.log("Connected to database\n");
-  });
 
 //setting api
 app.use("/api/auth", authRouters);

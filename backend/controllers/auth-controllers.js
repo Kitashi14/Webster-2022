@@ -65,123 +65,137 @@ const redirectGoogleEmail = async (req, res, next) => {
   const code = req.query.code;
 
   //fetching access token and id token of user form google server with user code
-  function getTokens({ code, clientId, clientSecret, redirectUri }) {
-    const url = "https://oauth2.googleapis.com/token";
-    const values = {
-      code,
-      client_id: clientId,
-      client_secret: clientSecret,
-      redirect_uri: redirectUri,
-      grant_type: "authorization_code",
-    };
 
-    return axios
-      .post(url, querystring.stringify(values), {
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-        },
-      })
+  try {
+    function getTokens({ code, clientId, clientSecret, redirectUri }) {
+      const url = "https://oauth2.googleapis.com/token";
+      const values = {
+        code,
+        client_id: clientId,
+        client_secret: clientSecret,
+        redirect_uri: redirectUri,
+        grant_type: "authorization_code",
+      };
+  
+      return axios
+        .post(url, querystring.stringify(values), {
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+        })
+        .then((res) => {
+          console.log("\n", "got the access-token of the google user");
+          return res.data;
+        })
+        .catch((error) => {
+          console.error(`\nFailed to axios auth tokens`);
+          console.log("\n", error.message);
+          
+          throw Error("Failed to axios auth tokens");
+        });
+    }
+    const { id_token, access_token } = await getTokens({
+      code,
+      clientId: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      redirectUri: `${process.env.SERVER_ROOT_URI}/${redirectURI}`,
+    });
+  
+    // Fetch the user's profile with the access token and bearer
+    const googleUser = await axios
+      .get(
+        `https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=${access_token}`,
+        {
+          headers: {
+            Authorization: `Bearer ${id_token}`,
+          },
+        }
+      )
       .then((res) => {
-        console.log("\n", "got the access-token of the google user");
+        console.log("\n", "got the user data from google auth");
         return res.data;
       })
       .catch((error) => {
-        console.error(`\nFailed to axios auth tokens`);
+        console.error(`\nFailed to axios user`);
         console.log("\n", error.message);
-        const response = { error: "Google Authentication error" };
+        throw Error("Failed to axios user data");
+      });
+
+      try {
+        console.log("\n", "checking if the user exist");
+        //check if a user exist with this google email
+        const existingUser = await getUserInfo(googleUser.email);
+    
+        console.log("\n", "existingUser : ", existingUser);
+    
+        //if doesn't exist then redirect to create account page
+        if (!existingUser) {
+          console.log("\n", "user is new");
+          const userData = {
+            userEmail: googleUser.email,
+            isVerified: googleUser.verified_email,
+            isGoogleVerified: true,
+          };
+    
+          //creating jwt token
+          const token = jwt.sign(userData, process.env.JWT_SECRET);
+    
+          //sending cookies to client side
+          console.log("\ncreating email token");
+          res.cookie(process.env.EMAIL_COOKIE_NAME, token, {
+            expires: new Date(Date.now() + 60 * 60 * 1000), //milliseconds
+            httpOnly: true,
+            secure: false,
+          });
+          console.log("\n", "redirecting to create account page with email token");
+          res.redirect(`${process.env.UI_ROOT_URI}/createAccount`);
+          return;
+        }
+    
+        //if exist then redirect to home page with login
+        else {
+          console.log("\nUser exists");
+          const userData = {
+            userEmail: existingUser.email,
+            userName: existingUser.username,
+            password: existingUser.password,
+            firstName: existingUser.firstName,
+            lastName: existingUser.lastName,
+            isGoogleVerified: existingUser.isGoogle,
+            phonenum: existingUser.phonenum,
+            professions: existingUser.professions,
+          };
+    
+          //creating jwt token
+          const token = jwt.sign(userData, process.env.JWT_SECRET);
+    
+          //sending cookies to client side
+          console.log("\nCreating login token");
+          res.cookie(process.env.LOGIN_COOKIE_NAME, token, {
+            maxAge: 10 * 24 * 60 * 60 * 1000,
+            httpOnly: true,
+            secure: false,
+          });
+          console.log("\nredirecting to home page with login token");
+          res.redirect(`${process.env.UI_ROOT_URI}`);
+          return;
+        }
+      } catch (error) {
+        console.log("\n", error.message);
+        console.log("\nsending error");
+        const response = { error: "Failed to create email token data" };
         res.status(500).json(response);
-      });
-  }
-  const { id_token, access_token } = await getTokens({
-    code,
-    clientId: process.env.GOOGLE_CLIENT_ID,
-    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    redirectUri: `${process.env.SERVER_ROOT_URI}/${redirectURI}`,
-  });
-
-  // Fetch the user's profile with the access token and bearer
-  const googleUser = await axios
-    .get(
-      `https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=${access_token}`,
-      {
-        headers: {
-          Authorization: `Bearer ${id_token}`,
-        },
+        return;
       }
-    )
-    .then((res) => {
-      console.log("\n", "got the user data from google auth");
-      return res.data;
-    })
-    .catch((error) => {
-      console.error(`\nFailed to axios user`);
-      console.log("\n", error.message);
-      const response = { error: "Failed to find user data" };
-      res.status(500).json(response);
-    });
-
-  try {
-    console.log("\n", "checking if the user exist");
-    //check if a user exist with this google email
-    const existingUser = await getUserInfo(googleUser.email);
-
-    console.log("\n", "existingUser : ", existingUser);
-
-    //if doesn't exist then redirect to create account page
-    if (!existingUser) {
-      console.log("\n", "user is new");
-      const userData = {
-        userEmail: googleUser.email,
-        isVerified: googleUser.verified_email,
-        isGoogleVerified: true,
-      };
-
-      //creating jwt token
-      const token = jwt.sign(userData, process.env.JWT_SECRET);
-
-      //sending cookies to client side
-      console.log("\ncreating email token");
-      res.cookie(process.env.EMAIL_COOKIE_NAME, token, {
-        expires: new Date(Date.now() + 60 * 60 * 1000), //milliseconds
-        httpOnly: true,
-        secure: false,
-      });
-      console.log("\n", "redirecting to create account page with email token");
-      res.redirect(`${process.env.UI_ROOT_URI}/createAccount`);
-    }
-
-    //if exist then redirect to home page with login
-    else {
-      console.log("\nUser exists");
-      const userData = {
-        userEmail: existingUser.email,
-        userName: existingUser.username,
-        password: existingUser.password,
-        firstName: existingUser.firstName,
-        lastName: existingUser.lastName,
-        isGoogleVerified: existingUser.isGoogle,
-        phonenum: existingUser.phonenum,
-        professions: existingUser.professions,
-      };
-
-      //creating jwt token
-      const token = jwt.sign(userData, process.env.JWT_SECRET);
-
-      //sending cookies to client side
-      console.log("\nCreating login token");
-      res.cookie(process.env.LOGIN_COOKIE_NAME, token, {
-        maxAge: 10 * 24 * 60 * 60 * 1000,
-        httpOnly: true,
-        secure: false,
-      });
-      console.log("\nredirecting to home page with login token");
-      res.redirect(`${process.env.UI_ROOT_URI}`);
-    }
-  } catch (error) {
-    console.log("\n", error.message);
-    const response = { error: "Failed to create email token data" };
-    res.status(500).json(response);
+  } catch (err) {
+    console.log(err.message);
+    console.log("\nsending error");
+    res.status(500).json({error: "Google Authentication error"});
+    return;
   }
+  
+
+  
 };
 
 //create otp-token for adding user and updating user-password
@@ -314,7 +328,7 @@ const createOtp = async (req, res, next) => {
   //for forget-password request
   else {
     console.log("\nfor resetting password");
-    try{
+    try {
       console.log("\n", "checking if the user exist");
       //check if a user exist with this google email
       const existingUser = await getUserInfo(email);
@@ -322,12 +336,10 @@ const createOtp = async (req, res, next) => {
       console.log("\n", "existingUser : ", existingUser);
 
       //if doesn't exist then redirect to create account page
-      if (!existingUser){
+      if (!existingUser) {
         res.status(400).json({ error: "No user exist with this email" });
         return;
-      }
-      else{
-        
+      } else {
         const userData = {
           userEmail: email,
           isVerified: false,
@@ -423,12 +435,10 @@ const createOtp = async (req, res, next) => {
             .json({ error: "Can't send otp for email verification" });
         }
       }
-
-    }catch(err){
+    } catch (err) {
       console.log(err.message);
       res.status(500).json({ error: "Can't send otp for email verification" });
     }
-
   }
 };
 
@@ -472,7 +482,7 @@ const verifyOpt = async (req, res, next) => {
       res
         .status(500)
         .json({ error: "Email verification failed, please try again later" });
-        return;
+      return;
     }
 
     //when no token found
@@ -526,7 +536,7 @@ const verifyOpt = async (req, res, next) => {
 
     //when otp matched
     console.log("deleting the otp-token");
-    await Token.deleteMany({email: decoded_email_token.userEmail});
+    await Token.deleteMany({ email: decoded_email_token.userEmail });
 
     //creating jwt token
     const userData = {
@@ -559,7 +569,6 @@ const verifyOpt = async (req, res, next) => {
     res.status(500).json(response);
   }
 };
-
 
 //verify login token whenever recieved
 const verifyLoginToken = async (req, res, next) => {
@@ -631,7 +640,7 @@ const verifyLoginToken = async (req, res, next) => {
       isGoogleVerified: decoded_login_token.isGoogleVerified,
       phonenum: decoded_login_token.phonenum,
       professions: decoded_login_token.professions,
-      address: existingUser.address
+      address: existingUser.address,
     };
     console.log("\nsending userData");
 
@@ -715,7 +724,7 @@ const verifyUser = async (req, res, next) => {
       isGoogleVerified: existingUser.isGoogle,
       phonenum: existingUser.phonenum,
       professions: existingUser.professions,
-      address : existingUser.address
+      address: existingUser.address,
     };
 
     //creating jwt token
