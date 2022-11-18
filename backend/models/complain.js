@@ -31,7 +31,7 @@ const complainSchema = new mongoose.Schema({
   phonenum: {
     type: Number,
     require: [true, "Please enter phone no."],
-    unique: true,
+    unique: false,
   },
   location: {
     lat: { type: Number },
