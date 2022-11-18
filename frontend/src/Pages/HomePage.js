@@ -1,5 +1,6 @@
 // import Container from "../Components/Shared/Container";
 import React, { useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 // import ComplainBox from "../Components/ComplainBox";
 import ComplainBoxes from "../Components/ComplainBoxes";
 import Hero from "../Components/Hero";
@@ -8,9 +9,12 @@ import { profession } from "../Helper/Profession";
 const HomePage = () => {
   const [complainsData, setComplainsData] = useState([]);
 
+  const navigate = useNavigate();
+
   const professionInputRef = useRef();
   const statusInputRef = useRef();
   const userNameInputRef = useRef();
+  const [fcomplain,setfcomplain] = useState(false);
 
   useEffect(() => {
     const getComplainData = async () => {
@@ -42,7 +46,7 @@ const HomePage = () => {
       }
     };
     getComplainData();
-  }, []);
+  }, [fcomplain]);
 
   console.log("Home page entered.");
 
@@ -52,6 +56,11 @@ const HomePage = () => {
 
     if (status === "Any") status = null;
     if (profession === "Any") profession = null;
+    if(status === profession) {
+      alert("Select a valid filter");
+      setfcomplain(!fcomplain);
+      return;
+    }
     
     try {
       console.log("sending request to filter complain");
