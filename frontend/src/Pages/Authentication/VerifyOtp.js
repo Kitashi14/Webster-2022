@@ -106,14 +106,14 @@ const VerifyOTP = () => {
               Create an Account!
             </a>
           </div>--> */}
-          <div class="text-center mt-2">
+          {/* <div class="text-center mt-2">
             <a
               class="inline-block text-sm text-blue-500 align-baseline hover:text-blue-800"
               href="./index.html"
             >
               Resend OTP
             </a> 
-          </div>
+          </div> */}
         </form>
       </div>
     

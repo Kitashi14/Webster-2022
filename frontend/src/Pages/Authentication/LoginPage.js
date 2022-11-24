@@ -88,7 +88,7 @@ const LoginPage = () => {
     if (!ValidateEmail(email)) alert("Enter a Valid Email!");
     else {
       if (enteredEmail === email && !isButtonOn) {
-        alert("Requesting for otp to verify email");
+        alert("Requesting for otp to verify email. Please wait!");
         return;
       }
 
@@ -187,7 +187,7 @@ const LoginPage = () => {
 									placeholder="Enter password..."
 								/>
                  <button
-									className="ml-1  p-2 inline-block text-sm text-blue-500 align-baseline hover:text-blue-800 px-2 py-2 font-semibold text-sm bg-white  text-slate-700 shadow-sm"
+									className="ml-1  p-2 inline-block text-sm text-blue-500 align-baseline hover:text-blue-800 px-2 py-2 font-semibold  bg-white shadow-sm"
 									
                   onClick={sumbmitForgetPass}
 								>
