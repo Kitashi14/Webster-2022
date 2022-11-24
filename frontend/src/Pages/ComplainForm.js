@@ -129,7 +129,7 @@ const Form = () => {
                 type="text"
                 required
                 ref={titleInputRef}
-                className="w-full px-3 py-2 text-sm leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
+                className="w-full px-3 py-2 text-sm leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline focus:border-blue-400"
                 id="title"
                 placeholder="Title of complain..."
               />
@@ -147,7 +147,7 @@ const Form = () => {
                 type="text"
                 row="10"
                 ref={descriptionInputRef}
-                className="w-full px-3 py-2 text-sm leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
+                className="w-full px-3 py-2 text-sm leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline focus:border-blue-400"
                 id="description"
                 placeholder="Write your description..."
               />
@@ -164,7 +164,7 @@ const Form = () => {
                 Profession
               </label>
               <select
-                className="block md:w-1/2 w-full form-controls place-content-center  text-center border-2 border-black rounded-md p-1"
+                className="block md:w-1/2 w-full form-controls place-content-center  text-center border-2 border-black rounded-md p-1 focus:border-blue-400 focus:outline-none"
                 name="Professions"
                 id="Professions"
                 ref={professionInputRef}
@@ -190,7 +190,7 @@ const Form = () => {
                 Phone No.
               </label>
               <input
-                className="w-full px-3 py-2 text-sm  text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
+                className="w-full px-3 py-2 text-sm  text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline focus:border-blue-400 "
                 required
                 ref={phonenumInputRef}
                 id="phoneno"
@@ -224,7 +224,7 @@ const Form = () => {
                 type="text"
                 row="10"
                 ref={addressInputRef}
-                className="w-full px-3 py-2 text-sm leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
+                className="w-full px-3 py-2 text-sm leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline focus:border-blue-400"
                 id="description"
                 placeholder="Your Address..."
               />
@@ -234,7 +234,7 @@ const Form = () => {
             <div className="mb-2 text-center">
               <button
                 onClick={submitButtonHandler}
-                className="w-full px-4 py-2 font-bold text-white bg-red-500 rounded-full hover:bg-red-700 focus:outline-none focus:shadow-outline"
+                className="w-full px-4 py-2 font-bold text-white bg-red-500 rounded-full hover:bg-red-700 focus:outline focus:shadow-outline "
                 type="button"
               >
                 Register Complain
