@@ -6,7 +6,7 @@ const ComplainBoxes = (props) => {
 
   return (
     <>
-      <div className="d-flex p-4 justify-content-space-between place-content-center h-screen ">
+      <div className="d-flex p-4 justify-content-space-between place-content-center h-full ">
         {props.complains.length ? (
           props.complains.map((complain) => {
             const imageUrl = profession.filter(
@@ -21,7 +21,7 @@ const ComplainBoxes = (props) => {
           })
         ) : (
           <>
-            <div className="container justify-center place-content-center" >No Complains Found</div>
+            <div className="container justify-center place-content-center bg-gray-200 h-44 align-middle" >No Complains Found</div>
           </>
         )}
       </div>

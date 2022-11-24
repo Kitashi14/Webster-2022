@@ -144,7 +144,7 @@ const HomePage = () => {
 
   return (
     <>
-      <div className="bg-gray-200">
+      <div className="bg-gray-200 h-full">
         <Hero />
         <div>
           <select ref={professionInputRef}>
