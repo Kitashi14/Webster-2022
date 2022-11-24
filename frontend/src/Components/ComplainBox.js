@@ -1,7 +1,27 @@
 import React from "react";
 
 const ComplainBox = (props) => {
-  console.log(props.item.creationTime);
+  const locatDate = new Date(props.item.creationTime);
+  const day = locatDate.getDate();
+  const year = locatDate.getFullYear();
+  const months = [
+    "Jan.",
+    "Feb.",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "Aug.",
+    "Sept.",
+    "Oct.",
+    "Nov.",
+    "Dec.",
+  ];
+  const month = months[locatDate.getMonth()];
+
+  const date = day + " " + month + " " + year;
+
   return (
     <>
       <section>
@@ -19,7 +39,7 @@ const ComplainBox = (props) => {
                   Profession: {props.item.profession}
                 </p>
                 <p className="leading-relaxed mt-5 p-0 text-base">
-                  Date: {props.item.date}
+                  Date: {date}
                 </p>
                 <p className="leading-relaxed mt-0 p-0 text-base">
                   By - {props.item.creatorUsername}
