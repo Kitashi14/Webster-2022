@@ -43,7 +43,7 @@ export const profession = [
     {
         id:"18",
         name:"Plumber",
-        logo:"Plumbing"
+        logo:"https://i.pinimg.com/originals/04/b6/7b/04b67b34060a5704eb3edad0d294e914.png"
     },
     {
         id:"19",
