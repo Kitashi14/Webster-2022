@@ -111,10 +111,11 @@ const LoginPage = () => {
             credentials: "include",
           }
         );
-        isButtonOn = true;
+        
 
         console.log(response.status);
         const responseData = await response.json();
+        isButtonOn = true;
 
         if (response.status === 200) {
           console.log(responseData.message);

@@ -18,7 +18,7 @@ const EmailVerifyPage = () => {
     if (!ValidateEmail(email)) alert("Enter a Valid Email!");
     else {
       if (enteredEmail === email && !isButtonOn) {
-        alert("Requesting for otp");
+        alert("Requesting for otp. Please wait!");
         return;
       }
 
@@ -41,10 +41,11 @@ const EmailVerifyPage = () => {
             credentials: "include",
           }
         );
-        isButtonOn = true;
+        
 
         console.log(response.status);
         const responseData = await response.json();
+        isButtonOn = true;
 
         if (response.status === 200) {
           console.log(responseData.message);
