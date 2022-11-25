@@ -3,6 +3,9 @@ const Worker = require("../models/worker");
 const Complain = require("../models/complain");
 const User = require("../models/user");
 
+//for creating-checking jwt token
+const jwt = require("jsonwebtoken");
+
 //add worker
 const addWorker = async (req, res) => {
   console.log("\nadd worker/profession api hit");

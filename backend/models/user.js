@@ -57,19 +57,7 @@ const userSchema = new mongoose.Schema({
     lat: { type: Number },
     lng: { type: Number },
   },
-  professions: [
-    new mongoose.Schema(
-    {
-        wokerId:{
-            type: String,
-            required: true
-        },
-        wokerProfession:{
-            type: String,
-            required: true
-        }
-    })
-  ]
+  professions: []
 });
 
 
