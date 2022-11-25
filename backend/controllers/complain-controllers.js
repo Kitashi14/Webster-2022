@@ -5,6 +5,7 @@ const User = require("../models/user");
 
 //for creating-checking jwt token
 const jwt = require("jsonwebtoken");
+const { removeSpaces } = require("./helper");
 
 //fetching latest complains
 const latestComplain = async (req, res, next) => {
@@ -66,7 +67,7 @@ const addComplain = async (req, res, next) => {
   }
 
   console.log("\ndestructing request data");
-  const {
+  let {
     title,
     description,
     profession,
@@ -78,6 +79,19 @@ const addComplain = async (req, res, next) => {
   } = req.body;
 
   console.log(req.body);
+
+  //check for correction in data
+
+  //remove spaces at start and end in title, discription & address
+  console.log("\ntitle :", title);
+  console.log("\ndescription :", description);
+  console.log("\naddress :", address);
+  title = removeSpaces(title);
+  description = removeSpaces(description);
+  address = removeSpaces(address);
+  console.log("\ntitle :", title);
+  console.log("\ndescription :", description);
+  console.log("\naddress :", address);
 
   //creating new complain document
   console.log("\ncreating new complain");
@@ -105,18 +119,24 @@ const addComplain = async (req, res, next) => {
 
   //checking if a complain with same title and creator exists
   try {
-    const existingComplain =await Complain.findOne({
+    const existingComplain = await Complain.findOne({
       creatorUsername: decoded_login_token.userName,
       title,
     });
 
-    if(existingComplain){
-      console.log("\ncomplain with same title and creator exists\n",existingComplain);
+    if (existingComplain) {
+      console.log(
+        "\ncomplain with same title and creator exists\n",
+        existingComplain
+      );
       console.log("\nsending error message");
-      res.status(422).json({error: "You already have a complain with same title. Can't register."});
+      res
+        .status(422)
+        .json({
+          error: "You already have a complain with same title. Can't register.",
+        });
       return;
     }
-
   } catch (err) {
     console.log("\ncan't fetch from database");
     console.log(err.message);
@@ -231,7 +251,7 @@ const getComplainDetails = async (req, res, next) => {
   console.log("\nget complain details api hit");
 
   const complainId = req.params.cid;
-  console.log("complain id", complainId);
+  console.log("\ncomplain id", complainId);
 
   let login_token;
   let isVerifiedUser = false;
@@ -288,7 +308,7 @@ const getComplainDetails = async (req, res, next) => {
   console.log("\nisUserVerified", isVerifiedUser);
 
   //sending response
-  res.status(200).json({data: {complain: complainDetails, isVerifiedUser}});
+  res.status(200).json({ data: { complain: complainDetails, isVerifiedUser } });
   return;
 };
 
@@ -343,10 +363,12 @@ const deleteComplain = async (req, res, next) => {
       return;
     }
     res.status(200).json({ message: "deleted complain successfully" });
+    return;
   } catch (err) {
     console.log("\ncan't delete complain from database");
     console.log(err.message);
     res.status(500).json({ error: err.message });
+    return;
   }
 };
 
