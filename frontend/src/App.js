@@ -11,6 +11,7 @@ import HomePage from "./Pages/HomePage";
 import ResetPage from "./Pages/Authentication/ResetPage";
 import About from "./Pages/AboutUs";
 import Form from "./Pages/ComplainForm";
+import ComplainDetails from "./Pages/ComplainDetails";
 
 function App() {
   const auth = useContext(AuthContext);
@@ -61,6 +62,7 @@ function App() {
           }
         />
         <Route exact path="/registerComplain" element={<Form />}></Route>
+        <Route exact path="/complain/:cid" element={<ComplainDetails />}></Route>
       </Routes>
     </>
   );

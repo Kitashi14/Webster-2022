@@ -236,6 +236,29 @@ const getComplainDetails = async (req, res, next) => {
   let login_token;
   let isVerifiedUser = false;
 
+  //fetching complain details from database
+  let complainDetails;
+  try {
+    console.log("\nfetching complain from database");
+    complainDetails = await Complain.findOne({ _id: complainId });
+
+    console.log("\nfetched complain from database");
+    console.log(complainDetails);
+
+    if (!complainDetails) {
+      console.log("\nno complain exists with this complain id");
+      res.status(400).json({ error: "Complain doesn't exists" });
+      return;
+    }
+  } catch (err) {
+    console.log("\ncan't fetch complain from database");
+    console.log(err.message);
+    res.status(500).json({ error: err.message });
+    return;
+  }
+
+  const userName = complainDetails.creatorUsername;
+
   let decoded_login_token;
   //verifying login token
   try {
@@ -264,24 +287,9 @@ const getComplainDetails = async (req, res, next) => {
   }
   console.log("\nisUserVerified", isVerifiedUser);
 
-  //fetching complain details from database
-  try {
-    console.log("\nfetching complain from database");
-    const complainDetails = await Complain.findOne({ _id: complainId });
-
-    console.log("\nfetched complain from database");
-    console.log(complainDetails);
-
-    if (!complainDetails) {
-      console.log("\nno complain exists with this complain id");
-      res.status(400).json({ error: "Complain doesn't exists" });
-    }
-    res.status(200).json({ data: { ...complainDetails, isVerifiedUser } });
-  } catch (err) {
-    console.log("\ncan't fetch complain from database");
-    console.log(err.message);
-    res.status(500).json({ error: err.message });
-  }
+  //sending response
+  res.status(200).json({data: {complain: complainDetails, isVerifiedUser}});
+  return;
 };
 
 //delete complain
