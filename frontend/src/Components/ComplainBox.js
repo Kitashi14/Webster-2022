@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 const ComplainBox = (props) => {
   const locatDate = new Date(props.item.creationTime);
@@ -27,6 +28,7 @@ const ComplainBox = (props) => {
       <section>
         <section className="text-gray-600 body-font">
           <div className="mx-8 mt-4 mb-8 ">
+            <Link to={`/complain/${props.item._id}`}>
             <div className="p-5 bg-white flex items-center mx-auto border-b border-gray-200 rounded-lg sm:flex-row flex-col">
               <div className="sm:w-32 sm:h-32 h-20 w-20 sm:mr-10 inline-flex border-2 border-gray-200 rounded-full items-center justify-center  flex-shrink-0">
                 <img src={props.item.img} className="h-3/4 w-3/4 " alt="" />
@@ -47,6 +49,8 @@ const ComplainBox = (props) => {
               </div>
               <div>{props.item.status}</div>
             </div>
+            </Link>
+            
           </div>
         </section>
       </section>
