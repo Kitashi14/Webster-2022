@@ -13,6 +13,7 @@ const app = express();
 const authRouters = require("./routers/auth-routers");
 const userRouters = require("./routers/user-routers");
 const complainRouters = require("./routers/complain-routers");
+const workerRouters = require("./routers/worker-routers");
 
 //for reading cookies while getting requests
 app.use(cookieParser());
@@ -58,6 +59,7 @@ mongoose
 app.use("/api/auth", authRouters);
 app.use("/api/user", userRouters);
 app.use("/api/complain",complainRouters);
+app.use("/api/worker",workerRouters);
 
 //setting the server port
 const port = process.env.PORT;
