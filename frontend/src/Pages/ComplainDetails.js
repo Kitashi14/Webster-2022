@@ -35,6 +35,7 @@ const ComplainDetails = () => {
                 }
                 else if(response.status===400){
                     alert(responseData.error);
+                    navigate("/");
                     return;
                 }
                 else if(response.status ===500){

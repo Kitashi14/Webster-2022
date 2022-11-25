@@ -312,20 +312,20 @@ const getUserDetail = async (req, res, next) => {
   } catch (error) {
     console.log(error.message);
   }
-  console.log("isUserVerified", isVerifiedUser);
+  console.log("\nisUserVerified", isVerifiedUser);
 
   //fetch user-details from database
   try {
-    const userDetails = User.findOne({ username: userName });
+    const userDetails = await User.findOne({ username: userName });
 
     if (!userDetails) {
-      console.log("user not found with this username");
+      console.log("\nuser not found with this username");
       res.status(400).json({ error: "user not found" });
     }
 
-    const userRegComplains = Complain.find({ creatorUsername: userName });
+    const userRegComplains = await Complain.find({ creatorUsername: userName });
 
-    const userApprovedComplains = Complain.find({ workerUsername: userName });
+    const userApprovedComplains = await Complain.find({ workerUsername: userName });
 
     const profileDetails = {
       userDetails,
@@ -333,7 +333,8 @@ const getUserDetail = async (req, res, next) => {
       aprvComplains: userApprovedComplains,
       isVerifiedUser,
     };
-    console.log("got user details from database");
+    console.log("\ngot user details from database");
+    console.log("\nprofile: ",profileDetails);
     //sending details
     console.log("\nsent user details");
     res.status(200).json({ data: profileDetails });
