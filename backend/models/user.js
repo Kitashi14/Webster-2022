@@ -67,14 +67,6 @@ const userSchema = new mongoose.Schema({
         wokerProfession:{
             type: String,
             required: true
-        },
-        workerRating:{
-            type: Number,
-            required: true
-        },
-        wokerScore: {
-            type: Number,
-            required: true
         }
     })
   ]
