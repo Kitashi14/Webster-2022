@@ -82,12 +82,10 @@ const CreateAccountPage = () => {
         } else {
           console.log(responseData.error);
           alert("Looks like there is some issue. Please verify again.");
-          navigate("/verifyEmail");
         }
       } catch (err) {
         console.log(err);
         alert("Failed to create account");
-        navigate("/verifyEmail");
 
         return;
       }
@@ -114,7 +112,7 @@ const CreateAccountPage = () => {
 
             {/* <!-- Login  --> */}
             <div className="px-8 mb-4 text-center">
-              <h2 className="pt-4 mb-2 text-2xl">Log In</h2>
+              <h2 className="pt-4 mb-2 text-2xl">Create Account</h2>
               {/* <!-- 							<p className="mb-4 text-sm text-gray-700">
 							 Enter your email address below and we'll send you a
 								link to reset your password!

@@ -11,6 +11,7 @@ const bcrypt = require("bcryptjs");
 
 //for formatting date and time
 const date = require("date-and-time");
+const { removeSpaces } = require("./helper");
 
 //find data using email
 const getUserWithEmail = async (email) => {
@@ -30,7 +31,7 @@ const getUserWithEmail = async (email) => {
 const addUser = async (req, res, next) => {
   console.log("\nadd user api hit");
   //destructuring and storing requested data
-  const {
+  let {
     firstName,
     lastName,
     password,
@@ -133,16 +134,42 @@ const addUser = async (req, res, next) => {
   creationTime = date.format(now, "YYYY/MM/DD HH:mm:ss");
   console.log(creationTime);
 
+  //checking for correction in data
+
+  //for first-name
+  console.log("\nfirstName :", firstName);
+  //removing spaces at start and end
+  let updatedFirstName = removeSpaces(firstName);
+
+  firstName = updatedFirstName;
+  console.log("\nfirstName :", firstName);
+
+  //changing spaces in between to underscore
+  updatedFirstName = updatedFirstName.replace(/ /g,"_");
+  console.log("\nupdatedUserFirstName :", updatedFirstName);
+
+  //for last-name
+  console.log("\nlastName :", lastName);
+  //removing spaces at start and end
+  let updatedLastName = removeSpaces(lastName);
+  console.log("\nupdatedLastName :", updatedLastName);
+
+  //for address
+  console.log("\naddress :", address);
+  //removing spaces at start and end
+  let updatedAddress = removeSpaces(address);
+  console.log("\nupdatedLastName :", updatedAddress);
+
   //creating newUser object
   const newUser = new User({
-    username: "@" + firstName + phonenum,
+    username: "@" + updatedFirstName + phonenum,
     email,
     firstName,
-    lastName,
+    lastName: updatedLastName,
     isGoogle,
     isVerified,
     password: hashedPassword,
-    address,
+    address: updatedAddress,
     phonenum,
     age,
     creationTime,
@@ -291,26 +318,25 @@ const getUserDetail = async (req, res, next) => {
   try {
     const userDetails = User.findOne({ username: userName });
 
-    if(!userDetails){
+    if (!userDetails) {
       console.log("user not found with this username");
-      res.status(400).json({error: "user not found"});
+      res.status(400).json({ error: "user not found" });
     }
 
     const userRegComplains = Complain.find({ creatorUsername: userName });
 
-    const userResolvedComplains = Complain.find({ workerUsername: userName });
+    const userApprovedComplains = Complain.find({ workerUsername: userName });
 
     const profileDetails = {
       userDetails,
       regComplains: userRegComplains,
-      resComplains: userResolvedComplains,
-      isVerifiedUser
+      aprvComplains: userApprovedComplains,
+      isVerifiedUser,
     };
     console.log("got user details from database");
     //sending details
     console.log("\nsent user details");
-    res.status(200).json({data: profileDetails});
-
+    res.status(200).json({ data: profileDetails });
   } catch (err) {
     console.log("\ncan't fetch from database");
     console.log(err.message);
@@ -318,9 +344,7 @@ const getUserDetail = async (req, res, next) => {
   }
 };
 
-//update profile 
-
-
+//update profile
 
 exports.getUserInfo = getUserWithEmail;
 exports.createAccount = addUser;
