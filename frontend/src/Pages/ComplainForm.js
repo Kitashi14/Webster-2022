@@ -1,10 +1,12 @@
-import React, { useRef } from "react";
+import React, { useContext, useRef } from "react";
 import {  useNavigate } from "react-router-dom";
+import AuthContext from "../context/auth-context";
 
 import { profession } from "../Helper/Profession";
 
 const Form = () => {
   const navigate = useNavigate();
+  const auth = useContext(AuthContext);
 
   const titleInputRef = useRef();
   const descriptionInputRef = useRef();
@@ -195,6 +197,7 @@ const Form = () => {
                 ref={phonenumInputRef}
                 id="phoneno"
                 placeholder="Enter your phone no..."
+                defaultValue={auth.user.phonenum}
               />
             </div>
             <input ref={locationXInputRef} className="invisible" type="text" required />
@@ -227,6 +230,7 @@ const Form = () => {
                 className="w-full px-3 py-2 text-sm leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline focus:border-blue-400"
                 id="description"
                 placeholder="Your Address..."
+                defaultValue={auth.user.address}
               />
             </div>
 
