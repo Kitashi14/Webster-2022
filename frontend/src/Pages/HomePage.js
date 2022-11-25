@@ -166,8 +166,8 @@ const HomePage = () => {
             </div>
             <div>
               <select ref={statusInputRef}>
-                <option value="Not Approved">Not Approved</option>
-                <option value="Approved">Approved</option>
+                <option value="Not Assigned">Not Assigned</option>
+                <option value="Assigned">Assigned</option>
                 <option value="Resolved">Resolved</option>
                 <option value="Any">Any</option>
               </select>
