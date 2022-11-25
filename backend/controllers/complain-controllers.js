@@ -110,7 +110,7 @@ const addComplain = async (req, res, next) => {
     workerId: "N/A",
     workerUsername: "N/A",
     acceptedWorkers: [],
-    status: "Not Approved",
+    status: "Not Assigned",
     rating: 0,
     comment: "",
     resolvedDate: null,

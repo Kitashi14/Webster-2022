@@ -80,7 +80,7 @@ const complainSchema = new mongoose.Schema({
   resolvedDate: {
     type: Date,
   },
-  approvedDate:{
+  assignedDate:{
     type: Date
   }
 });

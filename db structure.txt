@@ -53,13 +53,13 @@ complain-list{
         worker-username;
         accepted-date;
     }
-    status (approved/not-approved/resolved); 
+    status (assigned/not-assigned/resolved); 
     
     (if resolved) rating;
     (if resolved) comment;
     (if resolved) resolved-date;
 
-    (if approved) approved-date;
+    (if assigned) assigned-date;
 
 
 }
