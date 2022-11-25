@@ -14,7 +14,7 @@ const HomePage = () => {
   const professionInputRef = useRef();
   const statusInputRef = useRef();
   const userNameInputRef = useRef();
-  const [fcomplain,setfcomplain] = useState(false);
+  const [fcomplain, setfcomplain] = useState(false);
 
   useEffect(() => {
     const getComplainData = async () => {
@@ -56,19 +56,19 @@ const HomePage = () => {
 
     if (status === "Any") status = null;
     if (profession === "Any") profession = null;
-    if(status === profession) {
+    if (status === profession) {
       alert("Select a valid filter");
       setfcomplain(!fcomplain);
       return;
     }
-    
+
     try {
       console.log("sending request to filter complain");
 
       const Data = {
         profession,
         status,
-        distance :null
+        distance: null,
       };
 
       const response = await fetch(
@@ -94,22 +94,25 @@ const HomePage = () => {
       } else if (response.status === 400) {
         console.log(responseData.error);
         alert(responseData.error);
+        setfcomplain(!fcomplain);
+        return;
       } else {
         throw Error("Couldn't filter complain");
       }
-
     } catch (err) {
       console.log(err);
       alert("Couldn't able to filter complains");
+      setfcomplain(!fcomplain);
+      return;
     }
   };
 
   const usernameButtonHandler = async () => {
     const username = userNameInputRef.current.value;
-    console.log("sdjfs");
 
-    if(username.length ===0 ){
+    if (username.length === 0) {
       alert("Enter a username");
+      setfcomplain(!fcomplain);
       return;
     }
 
@@ -117,7 +120,8 @@ const HomePage = () => {
       console.log("sending request to filter complain of username", username);
 
       const response = await fetch(
-        `${process.env.REACT_APP_SERVER_ROOT_URI}/api/complain/username/${username}`);
+        `${process.env.REACT_APP_SERVER_ROOT_URI}/api/complain/username/${username}`
+      );
 
       console.log(response.status);
 
@@ -130,17 +134,18 @@ const HomePage = () => {
       } else if (response.status === 400) {
         console.log(responseData.error);
         alert(responseData.error);
+        setfcomplain(!fcomplain);
+        return;
       } else {
-        throw Error("Couldn't filter compalain");
+        throw Error("Couldn't filter complain");
       }
-
     } catch (err) {
       console.log(err);
-      alert("Couldn't able to filter complains of user",username);
+      alert("Couldn't able to filter complains of user", username);
+      setfcomplain(!fcomplain);
       return;
     }
   };
-
 
   return (
     <>
@@ -149,7 +154,12 @@ const HomePage = () => {
         <div>
           <select ref={professionInputRef}>
             {profession.map((data) => {
-              return <option value={`${data.name}`} key={`${data.name}`}>{`${data.name}`}</option>;
+              return (
+                <option
+                  value={`${data.name}`}
+                  key={`${data.name}`}
+                >{`${data.name}`}</option>
+              );
             })}
             <option value="Any">Any</option>
           </select>
@@ -175,8 +185,6 @@ const HomePage = () => {
         </div>
 
         <ComplainBoxes complains={complainsData} />
-
-        
       </div>
     </>
   );
