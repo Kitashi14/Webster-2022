@@ -88,7 +88,6 @@ const HomePage = () => {
       const responseData = await response.json();
 
       if (response.status === 200) {
-        console.log(responseData.message);
         setComplainsData(responseData.data);
         return;
       } else if (response.status === 400) {
@@ -128,7 +127,6 @@ const HomePage = () => {
       const responseData = await response.json();
 
       if (response.status === 200) {
-        console.log(responseData.message);
         setComplainsData(responseData.data);
         return;
       } else if (response.status === 400) {
