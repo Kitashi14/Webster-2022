@@ -151,37 +151,42 @@ const HomePage = () => {
     <>
       <div className="bg-gray-200 h-full">
         <Hero />
-        <div>
-          <select ref={professionInputRef}>
-            {profession.map((data) => {
-              return (
-                <option
-                  value={`${data.name}`}
-                  key={`${data.name}`}
-                >{`${data.name}`}</option>
-              );
-            })}
-            <option value="Any">Any</option>
-          </select>
-        </div>
-        <div>
-          <select ref={statusInputRef}>
-            <option value="Not Approved">Not Approved</option>
-            <option value="Approved">Approved</option>
-            <option value="Resolved">Resolved</option>
-            <option value="Any">Any</option>
-          </select>
-          <button onClick={filterButtonHandler}>Find</button>
-        </div>
-        <div className="mb-4">
-          <input
-            className="w-1/5 px-3 py-2 text-sm leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
-            id="text"
-            type="text"
-            ref={userNameInputRef}
-            placeholder="Enter username"
-          />
-          <button onClick={usernameButtonHandler}>Search</button>
+        <div className="flex flex-row justify-around">
+          <div>
+            <div>
+              <select ref={professionInputRef}>
+                {profession.map((data) => {
+                  return (
+                    <option
+                      value={`${data.name}`}
+                      key={`${data.name}`}
+                    >{`${data.name}`}</option>
+                  );
+                })}
+                <option value="Any">Any</option>
+              </select>
+            </div>
+            <div>
+              <select ref={statusInputRef}>
+                <option value="Not Approved">Not Approved</option>
+                <option value="Approved">Approved</option>
+                <option value="Resolved">Resolved</option>
+                <option value="Any">Any</option>
+              </select>
+              <button onClick={filterButtonHandler}>Find</button>
+            </div>
+          </div>
+
+          <div className="mb-4">
+            <input
+              className=" px-3 py-2 text-sm leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
+              id="text"
+              type="text"
+              ref={userNameInputRef}
+              placeholder="Enter username"
+            />
+            <button onClick={usernameButtonHandler}>Search</button>
+          </div>
         </div>
 
         <ComplainBoxes complains={complainsData} />
