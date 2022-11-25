@@ -42,11 +42,15 @@ function App() {
 
         <Route exact path="/resetPassword" element={<ResetPage />}></Route>
 
-        <Route exact path="/about" element={<About/>}></Route>
+        <Route exact path="/about" element={<About />}></Route>
 
-        <Route exact path="/forgetpassword" element={<ResetPage/>}></Route>
-
-        
+        <Route exact path="/forgetpassword" element={<ResetPage />}></Route>
+        <Route
+          exact
+          path="/complain/:cid"
+          element={<ComplainDetails />}
+        ></Route>
+        <Route exact path="/:uid" element={<Profile />}></Route>
       </Routes>
     </>
   ) : (
@@ -63,7 +67,11 @@ function App() {
           }
         />
         <Route exact path="/registerComplain" element={<Form />}></Route>
-        <Route exact path="/complain/:cid" element={<ComplainDetails />}></Route>
+        <Route
+          exact
+          path="/complain/:cid"
+          element={<ComplainDetails />}
+        ></Route>
         <Route exact path="/:uid" element={<Profile />}></Route>
       </Routes>
     </>
