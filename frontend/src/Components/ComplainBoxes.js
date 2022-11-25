@@ -21,7 +21,7 @@ const ComplainBoxes = (props) => {
           })
         ) : (
           <>
-            <div className="container justify-center place-content-center bg-gray-200 h-44 align-middle" >No Complains Found</div>
+            <div className="container justify-center place-content-center bg-gray-200 h-56 align-middle" >No Complains Found</div>
           </>
         )}
       </div>
