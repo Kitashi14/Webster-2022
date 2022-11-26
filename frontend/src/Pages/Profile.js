@@ -80,6 +80,7 @@ const Profile = () => {
     const data = {
       profession,
       creationTime,
+      username: userName
     };
 
     console.log(data);
@@ -119,7 +120,8 @@ const Profile = () => {
 
   return (
     <>
-      {userName}
+      {userName}<br>
+      </br>
       profession :
       <div className="text-red-500" key="profession">
         {userProfessions.map((data) => {
