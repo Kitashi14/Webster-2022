@@ -194,6 +194,7 @@ const Form = () => {
               <input
                 className="w-full px-3 py-2 text-sm  text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline focus:border-blue-400 "
                 required
+                type="number"
                 ref={phonenumInputRef}
                 id="phoneno"
                 placeholder="Enter your phone no..."

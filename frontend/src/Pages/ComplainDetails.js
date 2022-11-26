@@ -66,7 +66,7 @@ const ComplainDetails = () => {
 
     const deleteComplain = async()=>{
         setModalIsOpen(false);
-        console.log("to delte complain api request hit");
+        console.log("to delete complain api request hit");
 
         try{
 
