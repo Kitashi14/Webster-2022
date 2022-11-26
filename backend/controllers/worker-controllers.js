@@ -65,6 +65,15 @@ const addWorker = async (req, res) => {
 
   const profession = req.body.profession;
   const creationTime = req.body.creationTime;
+  const userName = req.body.username;
+
+  //check whether username matches;
+  console.log("\nchecking authentication")
+  if(userName !== decoded_login_token.userName){
+    console.log("\nrequest username doesn't matches with access token username");
+    res.status(400).json({error: "You can't add profession for this username"});
+    return;
+  }
 
   console.log("\nprofession :", profession);
 

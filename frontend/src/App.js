@@ -13,6 +13,7 @@ import About from "./Pages/AboutUs";
 import Form from "./Pages/ComplainForm";
 import ComplainDetails from "./Pages/ComplainDetails";
 import Profile from "./Pages/Profile";
+import WorkerProfile from "./Pages/WorkerProfile";
 
 function App() {
   const auth = useContext(AuthContext);
@@ -51,6 +52,11 @@ function App() {
           element={<ComplainDetails />}
         ></Route>
         <Route exact path="/:uid" element={<Profile />}></Route>
+        <Route
+          exact
+          path="/:uid/:profession"
+          element={<WorkerProfile />}
+        ></Route>
       </Routes>
     </>
   ) : (
@@ -73,6 +79,13 @@ function App() {
           element={<ComplainDetails />}
         ></Route>
         <Route exact path="/:uid" element={<Profile />}></Route>
+        <Route
+          exact
+          path="/:uid/:profession"
+          element={<WorkerProfile />}
+        ></Route>
+
+        <Route exact path="/about" element={<About />}></Route>
       </Routes>
     </>
   );

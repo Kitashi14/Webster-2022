@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { profession } from "../Helper/Profession";
 
 const Profile = () => {
@@ -13,20 +13,20 @@ const Profile = () => {
   const [aprvComplains, setAprvComplains] = useState({});
   const [isOwner, setIsOwner] = useState(false);
 
-  const [render,setRender] = useState(false);
+  const [render, setRender] = useState(false);
 
   const professionInputRef = useRef();
 
   let toAddProfession = [];
-  for(var i=0; i<availableProfession.length ; i++){
+  for (var i = 0; i < availableProfession.length; i++) {
     var flag = true;
-    for(var j=0;j<userProfessions.length;j++){
-      if(availableProfession[i].name=== userProfessions[j].workerProfession){
-        flag =false;
+    for (var j = 0; j < userProfessions.length; j++) {
+      if (availableProfession[i].name === userProfessions[j].workerProfession) {
+        flag = false;
         break;
       }
     }
-    if(flag) toAddProfession.push(availableProfession[i].name);
+    if (flag) toAddProfession.push(availableProfession[i].name);
   }
 
   console.log("details :", details);
@@ -70,21 +70,20 @@ const Profile = () => {
     };
 
     fetchProfileDetails();
-  }, [userName, navigate,render]);
+  }, [userName, navigate, render]);
 
-  const addProfessionButtonHandler = async ()=>{
-
+  const addProfessionButtonHandler = async () => {
     console.log("add profession api hit");
     const profession = professionInputRef.current.value;
     const creationTime = new Date(Date.now());
 
     const data = {
       profession,
-      creationTime
+      creationTime,
     };
 
     console.log(data);
-    try{
+    try {
       const response = await fetch(
         `${process.env.REACT_APP_SERVER_ROOT_URI}/api/worker/add`,
         {
@@ -98,50 +97,66 @@ const Profile = () => {
       );
 
       const responseData = await response.json();
-        console.log("response status:", response.status);
+      console.log("response status:", response.status);
 
-        if (response.status === 200) {
-          console.log(responseData.data);
-          alert("Profession added");
-          setRender(!render);
-          return;
-        } else if (response.status === 400) {
-          console.log(responseData.error);
-          alert(responseData.error);
-        } else if (response.status === 500) {
-          throw Error(responseData.error);
-        }
-    }catch(err){
+      if (response.status === 200) {
+        console.log(responseData.data);
+        alert("Profession added");
+        setRender(!render);
+        return;
+      } else if (response.status === 400) {
+        console.log(responseData.error);
+        alert(responseData.error);
+      } else if (response.status === 500) {
+        throw Error(responseData.error);
+      }
+    } catch (err) {
       console.log(err);
       alert("Failed to add profession");
       return;
     }
-
   };
 
-  return (<>
-  {userName}
-  <div>
-    profession : 
-    <div className="text-red-500">
-      {userProfessions.map((data)=>{
-        return (<div>{`${data.workerProfession}`}</div>);
-      })}
-    </div>
-  </div>
-
-  <div>
-    Add profession: 
-    <div>
-      <select ref={professionInputRef}>
-        {toAddProfession.map((profession)=>{
-          return (<option value={`${profession}`}>{`${profession}`}</option>)
+  return (
+    <>
+      {userName}
+      profession :
+      <div className="text-red-500" key="profession">
+        {userProfessions.map((data) => {
+          return (
+            <>
+              <Link to={`/${userName}/${data.workerProfession}`}>
+                <span>{`${data.workerProfession}`}</span>
+              </Link>
+              <br></br>
+            </>
+          );
         })}
-      </select>
-      <button onClick={addProfessionButtonHandler}>Add</button>
-    </div>
-  </div>
-  </>);
+      </div>
+      {isOwner ? (
+        <>
+          <div>
+            Add profession:
+            <div>
+              <select ref={professionInputRef} key="profession">
+                {toAddProfession.map((profession) => {
+                  return (
+                    <option
+                      value={`${profession}`}
+                      key={`${profession}`}
+                    >{`${profession}`}</option>
+                  );
+                })}
+              </select>
+              <button onClick={addProfessionButtonHandler}>Add</button>
+            </div>
+          </div>
+        </>
+      ) : (
+        <></>
+      )}
+    </>
+  );
 };
 
 export default Profile;
