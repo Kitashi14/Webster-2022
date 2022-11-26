@@ -31,8 +31,9 @@ export const AuthContextProvider = (props) => {
       );
       const responseData = await response.json();
 
-      if (response.status === 200) console.log("logged out");
-      else throw Error(responseData.error);
+      if (response.status === 200) {
+        console.log("logged out");
+      } else throw Error(responseData.error);
     } catch (err) {
       console.log(err);
       alert("Can't delete logout token");
@@ -42,6 +43,7 @@ export const AuthContextProvider = (props) => {
     setIsLoggedIn(false);
     setUserName(null);
     setUser(null);
+    window.location.replace(`${process.env.REACT_APP_CLIENT_ROOT_URI}`);
   };
 
   console.log("userName:", userName);
