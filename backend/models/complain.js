@@ -49,22 +49,7 @@ const complainSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  acceptedWorkers: [
-    new mongoose.Schema({
-        workerId: {
-            type: String,
-            required: true
-        },
-        workerUsername: {
-            type: String,
-            required: true
-        },
-        acceptedDate: {
-            type: Date,
-            required: true
-        }
-    })
-  ],
+  acceptedWorkers: [],
   status:{
     type: String,
     required: true,

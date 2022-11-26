@@ -99,4 +99,5 @@ worker-list{
     rating;
     TCR;
     score;
+    acceptedWork;
 }
