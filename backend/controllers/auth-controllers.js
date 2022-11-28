@@ -158,12 +158,7 @@ const redirectGoogleEmail = async (req, res, next) => {
           const userData = {
             userEmail: existingUser.email,
             userName: existingUser.username,
-            password: existingUser.password,
-            firstName: existingUser.firstName,
-            lastName: existingUser.lastName,
-            isGoogleVerified: existingUser.isGoogle,
-            phonenum: existingUser.phonenum,
-            professions: existingUser.professions,
+            password: existingUser.password
           };
     
           //creating jwt token
@@ -620,13 +615,13 @@ const verifyLoginToken = async (req, res, next) => {
       console.log("\nNo user exists with this email, please sign up");
       res
         .status(400)
-        .json({ error: "No user exists with this email, please sign up" });
+        .json({ error: "Authentication error. Please log in again" });
       return;
     } else if (existingUser.password !== password) {
       console.log("\nInvalid credentials, could not log you in.");
       res
         .status(400)
-        .json({ error: "Invalid credentials, could not log you in" });
+        .json({ error: "Invalid credentials. Please login again" });
       return;
     }
 
@@ -634,13 +629,7 @@ const verifyLoginToken = async (req, res, next) => {
     const userData = {
       userEmail: decoded_login_token.userEmail,
       userName: decoded_login_token.userName,
-      firstName: decoded_login_token.firstName,
-      lastName: decoded_login_token.lastName,
-      password: decoded_login_token.password,
-      isGoogleVerified: decoded_login_token.isGoogleVerified,
-      phonenum: decoded_login_token.phonenum,
-      professions: decoded_login_token.professions,
-      address: existingUser.address,
+      password: decoded_login_token.password
     };
     console.log("\nsending userData");
 
@@ -718,13 +707,7 @@ const verifyUser = async (req, res, next) => {
     const userData = {
       userEmail: existingUser.email,
       userName: existingUser.username,
-      password: existingUser.password,
-      firstName: existingUser.firstName,
-      lastName: existingUser.lastName,
-      isGoogleVerified: existingUser.isGoogle,
-      phonenum: existingUser.phonenum,
-      professions: existingUser.professions,
-      address: existingUser.address,
+      password: existingUser.password
     };
 
     //creating jwt token
