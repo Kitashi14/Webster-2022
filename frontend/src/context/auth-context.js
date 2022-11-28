@@ -14,7 +14,6 @@ export const AuthContextProvider = (props) => {
   const [user, setUser] = useState(null);
 
   const login = (user) => {
-    localStorage.setItem("user", JSON.stringify(user));
     setUserName(user.userName);
     setUser(user);
     setIsLoggedIn(true);
@@ -39,7 +38,6 @@ export const AuthContextProvider = (props) => {
       alert("Can't delete logout token");
       return;
     }
-    localStorage.removeItem("user");
     setIsLoggedIn(false);
     setUserName(null);
     setUser(null);
