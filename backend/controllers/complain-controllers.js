@@ -144,7 +144,7 @@ const addComplain = async (req, res, next) => {
     return;
   }
 
-  //adding user
+  //adding complain
   try {
     await newComplain.save();
     console.log("\ncomplain added in database");
