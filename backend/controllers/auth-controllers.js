@@ -157,8 +157,7 @@ const redirectGoogleEmail = async (req, res, next) => {
           console.log("\nUser exists");
           const userData = {
             userEmail: existingUser.email,
-            userName: existingUser.username,
-            password: existingUser.password
+            userName: existingUser.username
           };
     
           //creating jwt token
@@ -591,9 +590,7 @@ const verifyLoginToken = async (req, res, next) => {
 
     console.log("\ndecoded", decoded_login_token);
 
-    //after decoding check the password with database
     const email = decoded_login_token.userEmail;
-    const password = decoded_login_token.password;
 
     console.log("\n", "checking if the user exist");
 
@@ -617,19 +614,12 @@ const verifyLoginToken = async (req, res, next) => {
         .status(400)
         .json({ error: "Authentication error. Please log in again" });
       return;
-    } else if (existingUser.password !== password) {
-      console.log("\nInvalid credentials, could not log you in.");
-      res
-        .status(400)
-        .json({ error: "Invalid credentials. Please login again" });
-      return;
     }
 
     //sending response with userData
     const userData = {
       userEmail: decoded_login_token.userEmail,
-      userName: decoded_login_token.userName,
-      password: decoded_login_token.password
+      userName: decoded_login_token.userName
     };
     console.log("\nsending userData");
 
@@ -707,7 +697,6 @@ const verifyUser = async (req, res, next) => {
     const userData = {
       userEmail: existingUser.email,
       userName: existingUser.username,
-      password: existingUser.password
     };
 
     //creating jwt token
