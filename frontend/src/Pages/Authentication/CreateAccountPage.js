@@ -242,17 +242,6 @@ const CreateAccountPage = () => {
                 />
               </div>
 
-              {/* <!--Forget Password --> */}
-              <div className="mb-6">
-                <Link
-                  className="ml-1  p-2 inline-block text-sm text-blue-500 align-baseline hover:text-blue-800 px-2 py-2 font-semibold  bg-white shadow-sm"
-                  to="/forgetPassword"
-                  // onClick={forgetPassword}
-                >
-                  Forget Password?
-                </Link>
-              </div>
-
               {/* <!-- Create button --> */}
               <div className="mb-6 text-center">
                 <button

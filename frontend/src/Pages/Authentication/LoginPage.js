@@ -220,7 +220,7 @@ const LoginPage = () => {
 							<div className="text-center">
 								Create Account<Link
 									className="ml-1  p-2 inline-block text-sm text-blue-500 align-baseline hover:text-blue-800 px-2 py-2 font-semibold bg-white   shadow-sm"
-									to="/createAccount"
+									to="/verifyEmail"
 								>
 									 Sign Up
 								</Link>
