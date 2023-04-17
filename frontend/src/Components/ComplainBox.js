@@ -49,7 +49,7 @@ const ComplainBox = (props) => {
                   <span>
                     <Link
                       className="hover:text-red-500"
-                      to={`/${props.item.creatorUsername}`}
+                      to={`/user/${props.item.creatorUsername}`}
                     >
                       {props.item.creatorUsername}
                     </Link>

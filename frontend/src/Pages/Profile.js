@@ -127,7 +127,7 @@ const Profile = () => {
         {userProfessions.map((data) => {
           return (
             <>
-              <Link to={`/${userName}/${data.workerProfession}`}>
+              <Link to={`/worker/${userName}/${data.workerProfession}`}>
                 <span>{`${data.workerProfession}`}</span>
               </Link>
               <br></br>

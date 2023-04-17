@@ -59,8 +59,6 @@ export const AuthContextProvider = (props) => {
             credentials: "include",
           }
         );
-
-        console.log("response status:", response.status);
         const responseData = await response.json();
 
         if (response.status === 200) {

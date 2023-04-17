@@ -1,3 +1,5 @@
+/** @format */
+
 //first fetching environment variable
 require("dotenv").config();
 
@@ -50,16 +52,20 @@ mongoose
   }).catch((err)=>{
     console.log(err.message);
   });
-// mongoose.connect(`mongodb://localhost:${process.env.LOCAL_DATABASE_PORT}/${dbName}`)
+// mongoose
+//   .connect(`mongodb://localhost:${process.env.LOCAL_DATABASE_PORT}/${dbName}`)
 //   .then(() => {
 //     console.log("Connected to database\n");
+//   })
+//   .catch((err) => {
+//     console.log(err);
 //   });
 
 //setting api
 app.use("/api/auth", authRouters);
 app.use("/api/user", userRouters);
-app.use("/api/complain",complainRouters);
-app.use("/api/worker",workerRouters);
+app.use("/api/complain", complainRouters);
+app.use("/api/worker", workerRouters);
 
 //setting the server port
 const port = process.env.PORT;
