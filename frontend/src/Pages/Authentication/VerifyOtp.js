@@ -97,23 +97,6 @@ const VerifyOTP = () => {
               Submit
             </button>
           </div>
-{/* <!-- 							<hr class="mb-6 border-t" />
-          <div class="text-center">
-            <a
-              class="inline-block text-sm text-blue-500 align-baseline hover:text-blue-800"
-              href="./register.html"
-            >
-              Create an Account!
-            </a>
-          </div>--> */}
-          {/* <div class="text-center mt-2">
-            <a
-              class="inline-block text-sm text-blue-500 align-baseline hover:text-blue-800"
-              href="./index.html"
-            >
-              Resend OTP
-            </a> 
-          </div> */}
         </form>
       </div>
     
@@ -121,18 +104,6 @@ const VerifyOTP = () => {
 </div>
 
     </>
-
-
-
-    // <Container>
-    //   <form>
-    //     <div>
-    //       <input ref={otpInputRef} type="text" required />
-    //       <label>Enter OTP</label>
-    //     </div>
-    //     <button onClick={submitButtonHandler}>Submit</button>
-    //   </form>
-    // </Container>
   );
 };
 

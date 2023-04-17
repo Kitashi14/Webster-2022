@@ -200,7 +200,7 @@ const CreateAccountPage = () => {
                   ref={phonenumInputRef}
                   type="number"
                   required
-                  className="w-full px-3 py-2 text-sm leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
+                  className="w-full px-3 py-2 text-sm text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
                   id="phoneNo"
                   placeholder="Enter Phone no..."
                 />
@@ -252,29 +252,7 @@ const CreateAccountPage = () => {
                   Create Account
                 </button>
               </div>
-              <hr className="mb-6 border-t" />
-              <div className="text-center mb-2">
-                Sign in with
-                <a
-                  className="inline-block text-sm text-blue-500 align-middle hover:text-blue-800"
-                  href="./register.html"
-                >
-                  <img
-                    src="https://qotoqot.com/sad-animations/img/100/sigh/sigh.png"
-                    className="h-6 rounded-full border mx-2 w-6 d-flex"
-                    alt=""
-                  />
-                </a>
-              </div>
-              <div className="text-center">
-                Create Account
-                <a
-                  className="ml-1  p-2 inline-block text-sm text-blue-500 align-baseline hover:text-blue-800 px-2 py-2 font-semibold  bg-white  shadow-sm"
-                  href="./index.html"
-                >
-                  Sign Up
-                </a>
-              </div>
+              
             </form>
           </div>
         </div>
