@@ -181,7 +181,7 @@ const HomePage = () => {
               id="text"
               type="text"
               ref={userNameInputRef}
-              placeholder="Enter username"
+              placeholder="Enter full username"
             />
             <button onClick={usernameButtonHandler}>Search</button>
           </div>
