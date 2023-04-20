@@ -42,6 +42,7 @@ app.use(
 
 //connecting to mongobd database server
 const mongoose = require("mongoose");
+mongoose.set("strictQuery", true);
 const dbName = process.env.DBNAME;
 mongoose
   .connect(
