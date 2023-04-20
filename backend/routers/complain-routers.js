@@ -11,7 +11,7 @@ router.post("/filter",complainController.filterComplain);
 router.post("/add",complainController.addComplain);
 router.post("/update",complainController.updateComplain);
 router.get("/latest",complainController.latestComplain);
-router.get("/:cid",complainController.getComplainDetails);
+router.get("/getDetails/:cid",complainController.getComplainDetails);
 router.delete("/:cid",complainController.deleteComplain);
 
 module.exports = router;

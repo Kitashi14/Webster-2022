@@ -357,7 +357,7 @@ const deleteComplain = async (req, res, next) => {
 
     console.log("\ndeleted complain from database");
     console.log("\ndeleted complain", deletedComplain);
-    if (!deletedComplain) {
+    if (!deletedComplain.deletedCount) {
       console.log("\nno complain exists with this complain id");
       res.status(400).json({ error: "Complain doesn't exists" });
       return;
