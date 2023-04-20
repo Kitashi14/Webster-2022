@@ -7,6 +7,8 @@ const workerController = require("../controllers/worker-controllers");
 
 //setting rest APIs
 router.post("/add", workerController.addWorker);
-router.get("/:uid/:profession",workerController.getWorkerDetails);
+router.get("/getDetails/:uid/:profession",workerController.getWorkerDetails);
+router.get("/filter/:profession",workerController.filterWorker);
+router.delete("/delete/:workerUsername/:profession",workerController.deleteWorker);
 
 module.exports = router;
