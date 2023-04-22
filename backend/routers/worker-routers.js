@@ -10,5 +10,5 @@ router.post("/add", workerController.addWorker);
 router.get("/getDetails/:uid/:profession",workerController.getWorkerDetails);
 router.get("/filter/:profession",workerController.filterWorker);
 router.delete("/delete/:workerUsername/:profession",workerController.deleteWorker);
-
+router.get("/fetchFavoriteWorkers/:userName", workerController.fetchFavoriteWorkersDetails);
 module.exports = router;

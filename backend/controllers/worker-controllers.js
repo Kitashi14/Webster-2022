@@ -63,6 +63,8 @@ const addWorker = async (req, res) => {
     return;
   }
 
+  console.log(req.body);
+
   const profession = req.body.profession;
   const creationTime = req.body.creationTime;
   const userName = req.body.username;
@@ -311,8 +313,44 @@ const deleteWorker = async (req, res) => {
     return;
   }
 };
+//fetch favorite workers details
+const fetchFavoriteWorkersDetails=async (req,res)=>
+{
+  try
+  {
+    const username = req.params.userName;
+    const temp = await User.findOne({ username: username });
+    console.log(temp);
+    const arr=temp.favouriteWorkers;
+    console.log(arr);
+    const result=[];
+    for(const element of arr)
+    {
+      try
+      {
+        const individualresult = await Worker.findById(element);
+        result.push(individualresult);
+      }
+      catch(err)
+      {
+        console.log(err.message);
+      }
+    }
+    console.log(result);
+    res.status(200).json({data:result});
+    return;
+  }
+  catch(err)
+  {
+    console.log("fetching Unsuccesful");
+    console.log(err.message);
+    res.status(500).json({ error: err.message });
+  }
 
+
+}
 exports.addWorker = addWorker;
 exports.getWorkerDetails = getWorkerDetails;
 exports.filterWorker = filterWorker;
 exports.deleteWorker = deleteWorker;
+exports.fetchFavoriteWorkersDetails=fetchFavoriteWorkersDetails;
