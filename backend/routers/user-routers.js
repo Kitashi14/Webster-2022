@@ -8,7 +8,9 @@ const userController = require("../controllers/user-controllers");
 //setting rest APIs
 router.post("/createAccount",userController.createAccount);
 router.post("/resetPassword",userController.resetPassword);
-router.get("/:uid",userController.getUserDetail);
+router.get("/getDetails/:uid",userController.getUserDetail);
+router.patch("/favorite/:username/:id",userController.addfavoriteworker);
+router.delete("/favorite/:username/:id",userController.deletefavoriteworker)
 
 module.exports = router;
 

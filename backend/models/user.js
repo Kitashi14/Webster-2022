@@ -38,7 +38,7 @@ const userSchema = new mongoose.Schema({
   address: {
     type: String,
     required: [true, "Please enter address"],
-    maxlength: 500
+    maxlength: 500,
   },
   phonenum: {
     type: Number,
@@ -57,9 +57,9 @@ const userSchema = new mongoose.Schema({
     lat: { type: Number },
     lng: { type: Number },
   },
-  professions: []
+  professions: [],
+  favouriteWorkers: [],
 });
-
 
 //exporting User modal
 module.exports = mongoose.model("User", userSchema);
