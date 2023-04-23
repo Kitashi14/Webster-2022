@@ -119,7 +119,7 @@ const addComplain = async (req, res, next) => {
     workerId: "N/A",
     workerUsername: "N/A",
     acceptedWorkers: [],
-    status: "Not Assigned",
+    status: "not_assigned",
     rating: 0,
     comment: "",
     resolvedDate: null,
@@ -479,7 +479,7 @@ const acceptComplain = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
-const rejectComplain = async (req, res) => {
+const workerRejectComplain = async (req, res) => {
   try {
     const workerid = req.params.workerId;
     const complainid = req.params.complainId;
@@ -495,6 +495,73 @@ const rejectComplain = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+const closeComplain = async (req, res) => {
+  try {
+    const id = req.body.id;
+    const rating = req.body.rating;
+    const comment = req.body.comment;
+    const resolvedDate = req.body.resolvedDate;
+    let res1 = await Complain.findByIdAndUpdate(id, {
+      status: "resolved",
+      rating: rating,
+      comment: comment,
+      resolvedDate: resolvedDate,
+    });
+    const workerUsername = res1.workerUsername;
+    let res2 = await Woker.findOne({ workerUsername: workerUsername });
+    res2.TCR = res2.TCR + 1;
+    res2.score = res2.score + rating;
+    res2.rating = res2.score / res2.TCR;
+    await res2.save();
+    res.status(200).json({ data: res1, message: "complain closed" });
+  } catch (err) {
+    console.log(err.message);
+    res.status(500).json({ error: err.message });
+  }
+};
+const approveComplain = async (req, res) => {
+  try {
+    id = req.params.id;
+    userName = req.params.userName;
+    let result = await Complain.findByIdAndUpdate(id, {
+      status: "assigned",
+      workerUsername: userName,
+    });
+    console.log(result);
+    if (!result) {
+      res.status(400).json({ error: "Complain Not Found" });
+      return;
+    }
+    console.log(result);
+    res
+      .status(200)
+      .json({ data: result, message: "Complain has been assigned" });
+  } catch (err) {
+    console.log(err.message);
+    res.status(500).json({ error: err.message });
+  }
+};
+const rejectComplain = async (req, res) => {
+  try {
+    id = req.params.id;
+    let result = await Complain.findByIdAndUpdate(id, {
+      status: "not_assigned",
+      workerUsername: "N/A",
+    });
+    console.log(result);
+    if (!result) {
+      res.status(400).json({ error: "Complain Not Found" });
+      return;
+    }
+    console.log(result);
+    res
+      .status(200)
+      .json({ data: result, message: "Complain has been rejected" });
+  } catch (err) {
+    console.log(err.message);
+    res.status(500).json({ error: err.message });
+  }
+};
 exports.latestComplain = latestComplain;
 exports.addComplain = addComplain;
 exports.userComplain = userComplain;
@@ -502,4 +569,8 @@ exports.filterComplain = filterComplain;
 exports.deleteComplain = deleteComplain;
 exports.getComplainDetails = getComplainDetails;
 exports.updateComplain = updateComplain;
-exports.rejectComplain=rejectComplain;
+exports.workerRejectComplain = workerRejectComplain;
+exports.acceptComplain = acceptComplain;
+exports.closeComplain = closeComplain;
+exports.approveComplain = approveComplain;
+exports.rejectComplain = rejectComplain;
