@@ -7,7 +7,6 @@ const helper = require("../controllers/helper");
 //for creating-checking jwt token
 const jwt = require("jsonwebtoken");
 const { removeSpaces } = require("./helper");
-const complain = require("../models/complain");
 
 //fetching latest complains
 const latestComplain = async (req, res, next) => {
