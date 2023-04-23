@@ -7,6 +7,7 @@ const helper = require("../controllers/helper");
 //for creating-checking jwt token
 const jwt = require("jsonwebtoken");
 const { removeSpaces } = require("./helper");
+const complain = require("../models/complain");
 
 //fetching latest complains
 const latestComplain = async (req, res, next) => {
@@ -82,10 +83,12 @@ const addComplain = async (req, res, next) => {
   console.log(req.body);
 
   //check for correction in data
-  let count = helper.professions.filter((professions)=> professions.name === profession );
+  let count = helper.professions.filter(
+    (professions) => professions.name === profession
+  );
 
-  if(!count.length){
-    res.status(400).json({error : "enter a valid profession"});
+  if (!count.length) {
+    res.status(400).json({ error: "enter a valid profession" });
     return;
   }
 
@@ -137,11 +140,9 @@ const addComplain = async (req, res, next) => {
         existingComplain
       );
       console.log("\nsending error message");
-      res
-        .status(422)
-        .json({
-          error: "You already have a complain with same title. Can't register.",
-        });
+      res.status(422).json({
+        error: "You already have a complain with same title. Can't register.",
+      });
       return;
     }
   } catch (err) {
@@ -463,7 +464,22 @@ const updateComplain = async (req, res, next) => {
     res.status(500).json({ error: err.message });
   }
 };
-
+const acceptComplain = async (req, res) => {
+  try {
+    const workerid = req.params.workerId;
+    const complainid = req.params.complainId;
+    let res1 = await Complain.findById(complainid);
+    res1.acceptedWorkers.push(workerid);
+    let res2 = await Worker.findById(workerid);
+    res2.acceptedWorks.push(complainid);
+    console.log(res1);
+    console.log(res2);
+    res.status(200).json({ message: "complain accepted" });
+  } catch (err) {
+    console.log(err.message);
+    res.status(500).json({ error: err.message });
+  }
+};
 exports.latestComplain = latestComplain;
 exports.addComplain = addComplain;
 exports.userComplain = userComplain;

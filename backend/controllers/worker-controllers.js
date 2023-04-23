@@ -193,7 +193,7 @@ const getWorkerDetails = async (req, res, next) => {
     console.log("\nfetching worker from database");
     workerDetails = await Worker.findOne({
       workerUsername: userName,
-      profession,
+      profession: profession,
     });
 
     console.log("\nfetched worker from database");
@@ -207,6 +207,30 @@ const getWorkerDetails = async (req, res, next) => {
       });
       return;
     }
+    let arr = workerDetails.acceptedWorks;
+    const approved = [];
+    const resolved = [];
+    const accepted = [];
+    for (let i = 0; i < arr.length; i++) {
+      let id = arr[i];
+      let res = Complain.findById(id);
+      if (res.resolvedDate != null && res.workerUsername == userName) {
+        resolved.push(res);
+      } else if (
+        res.workerUsername != "N/A" &&
+        res.workerUsername == userName
+      ) {
+        approved.push(res);
+      }
+      accepted.push(res);
+    }
+    res.status(200).json({
+      data: {
+        resolved: resolved,
+        approved: approved,
+        accepted: accepted,
+      },
+    });
   } catch (err) {
     console.log("\ncan't fetch worker from database");
     console.log(err.message);
@@ -316,43 +340,33 @@ const deleteWorker = async (req, res) => {
   }
 };
 //fetch favorite workers details
-const fetchFavoriteWorkersDetails=async (req,res)=>
-{
-  try
-  {
+const fetchFavoriteWorkersDetails = async (req, res) => {
+  try {
     const username = req.params.userName;
     const temp = await User.findOne({ username: username });
     console.log(temp);
-    const arr=temp.favouriteWorkers;
+    const arr = temp.favouriteWorkers;
     console.log(arr);
-    const result=[];
-    for(const element of arr)
-    {
-      try
-      {
+    const result = [];
+    for (const element of arr) {
+      try {
         const individualresult = await Worker.findById(element);
         result.push(individualresult);
-      }
-      catch(err)
-      {
+      } catch (err) {
         console.log(err.message);
       }
     }
     console.log(result);
-    res.status(200).json({data:result});
+    res.status(200).json({ data: result });
     return;
-  }
-  catch(err)
-  {
+  } catch (err) {
     console.log("fetching Unsuccesful");
     console.log(err.message);
     res.status(500).json({ error: err.message });
   }
-
-
-}
+};
 exports.addWorker = addWorker;
 exports.getWorkerDetails = getWorkerDetails;
 exports.filterWorker = filterWorker;
 exports.deleteWorker = deleteWorker;
-exports.fetchFavoriteWorkersDetails=fetchFavoriteWorkersDetails;
+exports.fetchFavoriteWorkersDetails = fetchFavoriteWorkersDetails;
