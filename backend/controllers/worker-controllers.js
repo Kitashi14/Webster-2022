@@ -1,3 +1,5 @@
+/** @format */
+
 //extracting the worker modal
 const Worker = require("../models/worker");
 const Complain = require("../models/complain");

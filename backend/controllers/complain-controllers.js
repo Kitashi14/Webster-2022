@@ -2,6 +2,7 @@
 const Complain = require("../models/complain");
 const Worker = require("../models/worker");
 const User = require("../models/user");
+const helper = require("../controllers/helper");
 
 //for creating-checking jwt token
 const jwt = require("jsonwebtoken");
@@ -81,6 +82,12 @@ const addComplain = async (req, res, next) => {
   console.log(req.body);
 
   //check for correction in data
+  let count = helper.professions.filter((professions)=> professions.name === profession );
+
+  if(!count.length){
+    res.status(400).json({error : "enter a valid profession"});
+    return;
+  }
 
   //remove spaces at start and end in title, discription & address
   console.log("\ntitle :", title);
@@ -357,7 +364,7 @@ const deleteComplain = async (req, res, next) => {
 
     console.log("\ndeleted complain from database");
     console.log("\ndeleted complain", deletedComplain);
-    if (!deletedComplain) {
+    if (!deletedComplain.deletedCount) {
       console.log("\nno complain exists with this complain id");
       res.status(400).json({ error: "Complain doesn't exists" });
       return;
