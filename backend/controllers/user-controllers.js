@@ -380,7 +380,57 @@ const addfavoriteworker = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+//update user in user_list
+const updateUser=async (req,res)=>
+{
+  try
+  {
+    const username=req.body.username;
+    const email = req.body.email;
+    const firstname = req.body.firstName;
+    const lastname = req.body.lastName;
+    const address = req.body.address;
+    const phonenum = req.body.phonenum;
+    const age = req.body.age;
+    const location = req.body.location;
+    const user=await User.findOneAndUpdate({username:username},{$set:
+      {
+        email:email,
+        firstName:firstname,
+        lastName:lastname,
+        address:address,
+        phonenum:phonenum,
+        age:age,
+        location:location
+      
+      }});
+      console.log(user);
+      
+      const worker = await Worker.UpdateMany(
+        { workerUsername: username },
+        {
+          $set: {
+            workerEmail: email,
+            workerFirstName: firstname,
+            workerLastName: lastname,
+            address: address,
+            workerPhonenum: phonenum,
+            workerAge: age,
+            location: location,
+          },
+        }
+      );
 
+      console.log(worker);
+      res.status(200).json({ data: user, message: "User details updated" });
+  }
+  catch(err)
+  {
+    console.log(err.message);
+    res.status(500).json({ error: err.message });
+  }
+
+}
 //delete favorite worker
 const deletefavoriteworker = async (req, res) => {
   console.log("\nremove favourite worker api hit\n")
@@ -421,3 +471,4 @@ exports.resetPassword = resetPassword;
 exports.getUserDetail = getUserDetail;
 exports.addfavoriteworker = addfavoriteworker;
 exports.deletefavoriteworker = deletefavoriteworker;
+exports.updateUser=updateUser;

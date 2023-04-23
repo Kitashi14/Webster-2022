@@ -11,6 +11,6 @@ router.post("/resetPassword",userController.resetPassword);
 router.get("/getDetails/:uid",userController.getUserDetail);
 router.patch("/favorite/:username/:id",userController.addfavoriteworker);
 router.delete("/favorite/:username/:id",userController.deletefavoriteworker)
-
+router.patch("/updateUser",userController.updateUser);
 module.exports = router;
 
