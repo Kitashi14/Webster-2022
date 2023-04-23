@@ -468,9 +468,25 @@ const acceptComplain = async (req, res) => {
     const workerid = req.params.workerId;
     const complainid = req.params.complainId;
     let res1 = await Complain.findById(complainid);
-    res1.acceptedWorkers.push(workerid);
+    res1.acceptedWorkers.addToSet(workerid);
     let res2 = await Worker.findById(workerid);
-    res2.acceptedWorks.push(complainid);
+    res2.acceptedWorks.addToSet(complainid);
+    console.log(res1);
+    console.log(res2);
+    res.status(200).json({ message: "complain accepted" });
+  } catch (err) {
+    console.log(err.message);
+    res.status(500).json({ error: err.message });
+  }
+};
+const rejectComplain = async (req, res) => {
+  try {
+    const workerid = req.params.workerId;
+    const complainid = req.params.complainId;
+    let res1 = await Complain.findById(complainid);
+    res1.acceptedWorkers.pull(workerid);
+    let res2 = await Worker.findById(workerid);
+    res2.acceptedWorks.pull(complainid);
     console.log(res1);
     console.log(res2);
     res.status(200).json({ message: "complain accepted" });
@@ -486,3 +502,4 @@ exports.filterComplain = filterComplain;
 exports.deleteComplain = deleteComplain;
 exports.getComplainDetails = getComplainDetails;
 exports.updateComplain = updateComplain;
+exports.rejectComplain=rejectComplain;
