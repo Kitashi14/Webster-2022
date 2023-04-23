@@ -330,6 +330,26 @@ const deleteWorker = async (req, res) => {
     }
     console.log("\ndelete succesfull");
     console.log(result1, result2);
+    let arr=result1.acceptedWorks;
+    for(let i=0;i<arr.length;i++)
+    {
+      let id=arr[i];
+      let res=await Complain.findById(id);
+      if(res.status=="resolve")
+      {
+        continue;
+      }
+      else if(res.status=="assigned")
+      {
+        res.status = "not_assigned";
+        res.workerUsername="N/A";
+      }
+      else
+      {
+        res.acceptedWorkers.pull(result1._id);
+      }
+      await res.save();
+    }
     res.status(200).json({ data: [result1, result2] });
     return;
   } catch (err) {
