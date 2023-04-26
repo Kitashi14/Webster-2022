@@ -174,8 +174,7 @@ const addComplain = async (req, res, next) => {
 const userComplain = async (req, res, next) => {
   console.log("\nfind userComplain api hit");
 
-  const userName = req.params.uid;
-
+  const userName = removeSpaces(req.params.uid);
   //fetching complains
   try {
     const userComplains = await Complain.find({

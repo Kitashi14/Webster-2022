@@ -334,8 +334,8 @@ const getUserDetail = async (req, res, next) => {
 
     const userAssComplains = await Complain.find({
       workerUsername: userName,
-      status: "assigned"
-    })
+      status: "assigned",
+    });
 
     const profileDetails = {
       userDetails,

@@ -13,12 +13,12 @@ const Navbar = (props) => {
     <>
       <nav className=" bg-tc px-2 sm:px-4 py-2.5  dark:bg-pc">
         <div className="container flex flex-wrap justify-between items-center mx-auto">
-          <Link to="/" className="flex items-center">
+          <a href="/" className="flex items-center">
             {/* <img src="" className="mr-3 h-6 sm:h-9" alt="Logo"> */}
             <span className="text-sc self-center text-xl font-semibold whitespace-nowrap dark:text-sc">
               Complain Box
             </span>
-          </Link>
+          </a>
           <button
             data-collapse-toggle="navbar-default"
             type="button"
