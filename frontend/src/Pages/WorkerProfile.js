@@ -21,7 +21,7 @@ const WorkerProfile = () => {
 
             try{
 
-                const response  = await fetch(`${process.env.REACT_APP_SERVER_ROOT_URI}/api/worker/${username}/${profession}`,{
+                const response  = await fetch(`${process.env.REACT_APP_SERVER_ROOT_URI}/api/worker/getDetails/${username}/${profession}`,{
                     credentials: "include"
                 });
                 
@@ -36,7 +36,7 @@ const WorkerProfile = () => {
                 }
                 else if(response.status===400){
                     alert(responseData.error);
-                    navigate(`/${username}`);
+                    navigate(`/user/${username}`);
                     return;
                 }
                 else if(response.status ===500){
@@ -45,7 +45,7 @@ const WorkerProfile = () => {
             }catch(err){
                 console.log(err);
                 alert("Failed to fetch worker details.");
-                navigate(`/${username}`);
+                navigate(`/user/${username}`);
 
             }
         }
@@ -71,10 +71,27 @@ const WorkerProfile = () => {
 
         try{
 
+            const response = await fetch(`${process.env.REACT_APP_SERVER_ROOT_URI}/api/worker/${username}/${profession}`,{
+                method: "DELETE",
+                credentials: "include"
+            });
+
+            const responseData = response.json();
+
+            if(response.status===200){
+                alert("Profession deleted successfully");
+                console.log(responseData.data);
+                navigate(`/user/${username}`);
+            }
+            else if(response.status ===400 || response.status===500){
+                alert(responseData.error);
+                closeModal();
+            }
             
         }catch(err){
             console.log(err);
             alert("Failed to delete profession.");
+            closeModal();
             return;
 
         }

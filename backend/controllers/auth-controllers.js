@@ -574,10 +574,10 @@ const verifyLoginToken = async (req, res, next) => {
     console.log("\nstoring access token");
     login_token = req.cookies[process.env.LOGIN_COOKIE_NAME];
 
-    if (!login_token) throw Error("\nSession expired");
+    if (!login_token) throw Error("\nLogin token not found");
   } catch (error) {
     console.log(error.message);
-    const response = { error: "login token expired" };
+    const response = { error: "login token not found" };
 
     res.status(400).json(response);
     return;

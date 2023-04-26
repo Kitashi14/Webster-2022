@@ -145,7 +145,7 @@ const addUser = async (req, res, next) => {
   console.log("\nfirstName :", firstName);
 
   //changing spaces in between to underscore
-  updatedFirstName = updatedFirstName.replace(/ /g,"_");
+  updatedFirstName = updatedFirstName.replace(/ /g, "_");
   console.log("\nupdatedUserFirstName :", updatedFirstName);
 
   //for last-name
@@ -325,7 +325,9 @@ const getUserDetail = async (req, res, next) => {
 
     const userRegComplains = await Complain.find({ creatorUsername: userName });
 
-    const userApprovedComplains = await Complain.find({ workerUsername: userName });
+    const userApprovedComplains = await Complain.find({
+      workerUsername: userName,
+    });
 
     const profileDetails = {
       userDetails,
@@ -334,7 +336,7 @@ const getUserDetail = async (req, res, next) => {
       isVerifiedUser,
     };
     console.log("\ngot user details from database");
-    console.log("\nprofile: ",profileDetails);
+    console.log("\nprofile: ", profileDetails);
     //sending details
     console.log("\nsent user details");
     res.status(200).json({ data: profileDetails });
@@ -345,9 +347,128 @@ const getUserDetail = async (req, res, next) => {
   }
 };
 
-//update profile
+//add favorite worker
+const addfavoriteworker = async (req, res) => {
+  console.log("\nadd favourite api hit\n");
+  try {
+    const favoriteworkerid = req.params.id;
+    const userName = req.params.username;
+    // let result = await User.findOneAndUpdate(
+    //   {
+    //     username: userName,
+    //   },
+    //   {
+    //     $push: {
+    //       favouriteWorkers: {
+    //         id: favoriteworkerid,
+    //       },
+    //     },
+    //   }
+    // );
+    let result = await User.findOne({ username: userName });
+    result.favouriteWorkers.addToSet(favoriteworkerid);
+    await result.save();
+    console.log(result);
+    if (!result) {
+      res.status(401).json({ error: "failed to add favorite worker" });
+    } else {
+      res.status(401).json({ data: result });
+    }
+  } catch (err) {
+    console.log("error while adding as favoite user");
+    console.log(err);
+    res.status(500).json({ error: err.message });
+  }
+};
+//update user in user_list
+const updateUser=async (req,res)=>
+{
+  try
+  {
+    const username=req.body.username;
+    const email = req.body.email;
+    const firstname = req.body.firstName;
+    const lastname = req.body.lastName;
+    const address = req.body.address;
+    const phonenum = req.body.phonenum;
+    const age = req.body.age;
+    const location = req.body.location;
+    const user=await User.findOneAndUpdate({username:username},{$set:
+      {
+        email:email,
+        firstName:firstname,
+        lastName:lastname,
+        address:address,
+        phonenum:phonenum,
+        age:age,
+        location:location
+      
+      }});
+      console.log(user);
+      
+      const worker = await Worker.UpdateMany(
+        { workerUsername: username },
+        {
+          $set: {
+            workerEmail: email,
+            workerFirstName: firstname,
+            workerLastName: lastname,
+            address: address,
+            workerPhonenum: phonenum,
+            workerAge: age,
+            location: location,
+          },
+        }
+      );
+
+      console.log(worker);
+      res.status(200).json({ data: user, message: "User details updated" });
+  }
+  catch(err)
+  {
+    console.log(err.message);
+    res.status(500).json({ error: err.message });
+  }
+
+}
+//delete favorite worker
+const deletefavoriteworker = async (req, res) => {
+  console.log("\nremove favourite worker api hit\n")
+  try {
+    const favoriteworkerid = req.params.id;
+    const userName = req.params.username;
+    // let result = await User.findOneAndUpdate(
+    //   {
+    //     username: userName,
+    //   },
+    //   {
+    //     $pull: {
+    //       favouriteWorkers: {
+    //         id: favoriteworkerid,
+    //       },
+    //     },
+    //   }
+    // );
+    const result = await User.findOne({ username: userName });
+    result.favouriteWorkers.pull(favoriteworkerid);
+    await result.save();
+    console.log(result);
+    if (!result) {
+      res.status(401).json({ error: "failed to delete favourite worker" });
+    } else {
+      res.status(401).json({ data: result });
+    }
+  } catch (err) {
+    console.log("error while deleting favourite user");
+    console.log(err);
+    res.status(500).json({ error: err.message });
+  }
+};
 
 exports.getUserInfo = getUserWithEmail;
 exports.createAccount = addUser;
 exports.resetPassword = resetPassword;
 exports.getUserDetail = getUserDetail;
+exports.addfavoriteworker = addfavoriteworker;
+exports.deletefavoriteworker = deletefavoriteworker;
+exports.updateUser=updateUser;

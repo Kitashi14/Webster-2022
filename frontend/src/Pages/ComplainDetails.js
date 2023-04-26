@@ -20,7 +20,7 @@ const ComplainDetails = () => {
 
             try{
 
-                const response  = await fetch(`${process.env.REACT_APP_SERVER_ROOT_URI}/api/complain/${complainId}`,{
+                const response  = await fetch(`${process.env.REACT_APP_SERVER_ROOT_URI}/api/complain/getDetails/${complainId}`,{
                     credentials: "include"
                 });
                 
