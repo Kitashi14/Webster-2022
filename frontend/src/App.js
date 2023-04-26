@@ -1,10 +1,12 @@
+/** @format */
+
 import { Route, Routes } from "react-router-dom";
 import CreateAccountPage from "./Pages/Authentication/CreateAccountPage";
 import EmailVerifyPage from "./Pages/Authentication/EmailVerifyPage";
 import LoginPage from "./Pages/Authentication/LoginPage";
 import VerifyOTP from "./Pages/Authentication/VerifyOtp";
 import LandingPage from "./Pages/LandingPage";
-import Navbar from "./Components/Navbar";
+import Navbar from "./Components/NavBar";
 import { useContext } from "react";
 import AuthContext from "./context/auth-context";
 import HomePage from "./Pages/HomePage";
@@ -18,7 +20,6 @@ import Page404 from "./Pages/Page404";
 
 function App() {
   const auth = useContext(AuthContext);
-
   return !auth.isLoggedIn ? (
     <>
       <Navbar login={false} />
@@ -29,7 +30,7 @@ function App() {
           path="/"
           element={
             <>
-              <LandingPage />
+              <HomePage />
             </>
           }
         />

@@ -1,3 +1,5 @@
+/** @format */
+
 //extracting router method from express module
 const express = require("express");
 const router = express.Router();
@@ -6,11 +8,10 @@ const router = express.Router();
 const userController = require("../controllers/user-controllers");
 
 //setting rest APIs
-router.post("/createAccount",userController.createAccount);
-router.post("/resetPassword",userController.resetPassword);
-router.get("/getDetails/:uid",userController.getUserDetail);
-router.patch("/favorite/:username/:id",userController.addfavoriteworker);
-router.delete("/favorite/:username/:id",userController.deletefavoriteworker)
-router.patch("/updateUser",userController.updateUser);
+router.post("/createAccount", userController.createAccount);
+router.post("/resetPassword", userController.resetPassword);
+router.get("/getDetails/:uid", userController.getUserDetail);
+router.patch("/favorite/:username/:id", userController.addfavoriteworker);
+router.delete("/favorite/:username/:id", userController.deletefavoriteworker);
+router.patch("/updateUser", userController.updateUser);
 module.exports = router;
-

@@ -40,7 +40,7 @@ const Profile = () => {
     const fetchProfileDetails = async () => {
       try {
         const response = await fetch(
-          `${process.env.REACT_APP_SERVER_ROOT_URI}/api/user/${userName}`,
+          `${process.env.REACT_APP_SERVER_ROOT_URI}/api/user/getDetails/${userName}`,
           {
             credentials: "include",
           }
@@ -209,7 +209,7 @@ const Profile = () => {
                         src=""
                         alt="pic"
                       />
-                      <Link to={`/${userName}/${data.workerProfession}`}>
+                      <Link to={`/worker/${userName}/${data.workerProfession}`}>
                         <span className="mb-1 text-sm font-medium text-gray-900 ">{`${data.workerProfession}`}</span>
                       </Link>
                       <span className="text-sm text-gray-500 ">Rating</span>
