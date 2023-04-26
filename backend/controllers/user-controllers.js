@@ -1,3 +1,5 @@
+/** @format */
+
 //extracting the user modal
 const User = require("../models/user");
 const Complain = require("../models/complain");
@@ -325,14 +327,21 @@ const getUserDetail = async (req, res, next) => {
 
     const userRegComplains = await Complain.find({ creatorUsername: userName });
 
-    const userApprovedComplains = await Complain.find({
+    const userResolvedcomplains = await Complain.find({
       workerUsername: userName,
+      status: "resolved",
     });
+
+    const userAssComplains = await Complain.find({
+      workerUsername: userName,
+      status: "assigned"
+    })
 
     const profileDetails = {
       userDetails,
       regComplains: userRegComplains,
-      aprvComplains: userApprovedComplains,
+      resComplains: userResolvedcomplains,
+      assComplains: userAssComplains,
       isVerifiedUser,
     };
     console.log("\ngot user details from database");
@@ -381,11 +390,9 @@ const addfavoriteworker = async (req, res) => {
   }
 };
 //update user in user_list
-const updateUser=async (req,res)=>
-{
-  try
-  {
-    const username=req.body.username;
+const updateUser = async (req, res) => {
+  try {
+    const username = req.body.username;
     const email = req.body.email;
     const firstname = req.body.firstName;
     const lastname = req.body.lastName;
@@ -393,47 +400,47 @@ const updateUser=async (req,res)=>
     const phonenum = req.body.phonenum;
     const age = req.body.age;
     const location = req.body.location;
-    const user=await User.findOneAndUpdate({username:username},{$set:
+    const user = await User.findOneAndUpdate(
+      { username: username },
       {
-        email:email,
-        firstName:firstname,
-        lastName:lastname,
-        address:address,
-        phonenum:phonenum,
-        age:age,
-        location:location
-      
-      }});
-      console.log(user);
-      
-      const worker = await Worker.UpdateMany(
-        { workerUsername: username },
-        {
-          $set: {
-            workerEmail: email,
-            workerFirstName: firstname,
-            workerLastName: lastname,
-            address: address,
-            workerPhonenum: phonenum,
-            workerAge: age,
-            location: location,
-          },
-        }
-      );
+        $set: {
+          email: email,
+          firstName: firstname,
+          lastName: lastname,
+          address: address,
+          phonenum: phonenum,
+          age: age,
+          location: location,
+        },
+      }
+    );
+    console.log(user);
 
-      console.log(worker);
-      res.status(200).json({ data: user, message: "User details updated" });
-  }
-  catch(err)
-  {
+    const worker = await Worker.UpdateMany(
+      { workerUsername: username },
+      {
+        $set: {
+          workerEmail: email,
+          workerFirstName: firstname,
+          workerLastName: lastname,
+          address: address,
+          workerPhonenum: phonenum,
+          workerAge: age,
+          location: location,
+        },
+      }
+    );
+
+    console.log(worker);
+    res.status(200).json({ data: user, message: "User details updated" });
+  } catch (err) {
     console.log(err.message);
     res.status(500).json({ error: err.message });
   }
-
-}
+};
 //delete favorite worker
 const deletefavoriteworker = async (req, res) => {
-  console.log("\nremove favourite worker api hit\n")
+  console.log("\nremove favourite worker api hit\n");
   try {
     const favoriteworkerid = req.params.id;
     const userName = req.params.username;
@@ -471,4 +478,4 @@ exports.resetPassword = resetPassword;
 exports.getUserDetail = getUserDetail;
 exports.addfavoriteworker = addfavoriteworker;
 exports.deletefavoriteworker = deletefavoriteworker;
-exports.updateUser=updateUser;
+exports.updateUser = updateUser;

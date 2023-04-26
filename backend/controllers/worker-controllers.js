@@ -105,6 +105,7 @@ const addWorker = async (req, res) => {
       rating: 0,
       TCR: 0,
       score: 0,
+      acceptedWorks : []
     });
 
     //checking if a worker with same username and profession exists
@@ -187,57 +188,6 @@ const getWorkerDetails = async (req, res, next) => {
   let login_token;
   let isVerifiedUser = false;
 
-  //fetching worker details from database
-  let workerDetails;
-  try {
-    console.log("\nfetching worker from database");
-    workerDetails = await Worker.findOne({
-      workerUsername: userName,
-      profession: profession,
-    });
-
-    console.log("\nfetched worker from database");
-    console.log(workerDetails);
-
-    //if worker doesn't exists
-    if (!workerDetails) {
-      console.log("\nno worker exists with this username and profession");
-      res.status(400).json({
-        error: "worker doesn't exists with this username and profession",
-      });
-      return;
-    }
-    let arr = workerDetails.acceptedWorks;
-    const approved = [];
-    const resolved = [];
-    const accepted = [];
-    for (let i = 0; i < arr.length; i++) {
-      let id = arr[i];
-      let res = Complain.findById(id);
-      if (res.resolvedDate != null && res.workerUsername == userName) {
-        resolved.push(res);
-      } else if (
-        res.workerUsername != "N/A" &&
-        res.workerUsername == userName
-      ) {
-        approved.push(res);
-      }
-      accepted.push(res);
-    }
-    res.status(200).json({
-      data: {
-        resolved: resolved,
-        approved: approved,
-        accepted: accepted,
-      },
-    });
-  } catch (err) {
-    console.log("\ncan't fetch worker from database");
-    console.log(err.message);
-    res.status(500).json({ error: err.message });
-    return;
-  }
-
   let decoded_login_token;
   //verifying login token
   try {
@@ -266,10 +216,62 @@ const getWorkerDetails = async (req, res, next) => {
   }
   console.log("\nisUserVerified", isVerifiedUser);
 
-  //sending response
-  res.status(200).json({ data: { worker: workerDetails, isVerifiedUser } });
-  return;
+  //fetching worker details from database
+  let workerDetails;
+  try {
+    console.log("\nfetching worker from database");
+    workerDetails = await Worker.findOne({
+      workerUsername: userName,
+      profession: profession,
+    });
+
+    console.log("\nfetched worker from database");
+    console.log(workerDetails);
+
+    //if worker doesn't exists
+    if (!workerDetails) {
+      console.log("\nno worker exists with this username and profession");
+      res.status(400).json({
+        error: "worker doesn't exists with this username and profession",
+      });
+      return;
+    }
+    let arr = workerDetails.acceptedWorks;
+    const approved = [];
+    const resolved = [];
+    const accepted = [];
+    for (let i = 0; i < arr.length; i++) {
+      let id = arr[i];
+      let complain = Complain.findById(id);
+      if (
+        complain.resolvedDate != null &&
+        complain.workerUsername == userName
+      ) {
+        resolved.push(complain);
+      } else if (
+        complain.workerUsername != "N/A" &&
+        complain.workerUsername == userName
+      ) {
+        approved.push(complain);
+      } else accepted.push(complain);
+    }
+    res.status(200).json({
+      data: {
+        details: workerDetails,
+        isVerifiedUser,
+        resolved: resolved,
+        approved: approved,
+        accepted: accepted,
+      },
+    });
+  } catch (err) {
+    console.log("\ncan't fetch worker from database");
+    console.log(err.message);
+    res.status(500).json({ error: err.message });
+    return;
+  }
 };
+
 //filter worker
 const filterWorker = async (req, res) => {
   console.log("\nfilter worker api hit");
@@ -306,6 +308,10 @@ const deleteWorker = async (req, res) => {
   let result1, result2;
   //different filter route
   try {
+    const worker = await Worker.findOne({
+      workerUsername: userName,
+      profession: profession,
+    });
     result1 = await Worker.deleteOne({
       workerUsername: userName,
       profession: profession,
@@ -328,27 +334,22 @@ const deleteWorker = async (req, res) => {
         .json({ error: "no worker exist with this username and profession" });
       return;
     }
-    console.log("\ndelete succesfull");
+    console.log("\ndelete from worker list succesfull");
+    console.log("deleted worker : ", worker);
     console.log(result1, result2);
-    let arr=result1.acceptedWorks;
-    for(let i=0;i<arr.length;i++)
-    {
-      let id=arr[i];
-      let res=await Complain.findById(id);
-      if(res.status=="resolve")
-      {
+    let arr = worker.acceptedWorks;
+    for (let i = 0; i < arr.length; i++) {
+      let id = arr[i];
+      let complain = await Complain.findById(id);
+      if (complain.status == "resolve") {
         continue;
+      } else if (complain.status == "assigned") {
+        complain.status = "not_assigned";
+        complain.workerUsername = "N/A";
+      } else {
+        complain.acceptedWorkers.pull(worker._id);
       }
-      else if(res.status=="assigned")
-      {
-        res.status = "not_assigned";
-        res.workerUsername="N/A";
-      }
-      else
-      {
-        res.acceptedWorkers.pull(result1._id);
-      }
-      await res.save();
+      await complain.save();
     }
     res.status(200).json({ data: [result1, result2] });
     return;

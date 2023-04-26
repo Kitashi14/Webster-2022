@@ -28,9 +28,9 @@ const WorkerProfile = () => {
                 console.log(response.status);
 
                 const responseData = await response.json();
-
+                console.log(responseData);
                 if(response.status ===200){
-                    setDetails(responseData.data.worker);
+                    setDetails(responseData.data.details);
                     setIsOwner(responseData.data.isVerifiedUser);
                     return;
                 }
@@ -71,7 +71,7 @@ const WorkerProfile = () => {
 
         try{
 
-            const response = await fetch(`${process.env.REACT_APP_SERVER_ROOT_URI}/api/worker/${username}/${profession}`,{
+            const response = await fetch(`${process.env.REACT_APP_SERVER_ROOT_URI}/api/worker/delete/${username}/${profession}`,{
                 method: "DELETE",
                 credentials: "include"
             });
