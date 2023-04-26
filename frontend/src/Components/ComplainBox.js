@@ -27,12 +27,12 @@ const ComplainBox = (props) => {
     <>
       <section>
         <section className="text-gray-600 body-font">
-          <div className="mx-8 mt-4 mb-8 ">
-            <div className="p-5 bg-white flex items-center mx-auto border-b border-gray-200 rounded-lg sm:flex-row flex-col">
-              <div className="sm:w-32 sm:h-32 h-20 w-20 sm:mr-10 inline-flex border-2 border-gray-200 rounded-full items-center justify-center  flex-shrink-0">
-                <img src={props.item.img} className="h-3/4 w-3/4 " alt="" />
+          {/* <div className="mx-8 mt-4 mb-8 "> */}
+            <div className="p-5 bg-white flex items-center mx-2 my-2 border-b border-gray-200 rounded-lg sm:flex-row flex-col">
+              <div className="sm:w-32 sm:h-32 h-20 w-20 rounded-full sm:mr-10 flex items-center gap-x-6 justify-center">
+                <img src={props.item.img} className="rounded-full h-3/4 w-3/4" alt="" />
               </div>
-              <div className="flex-grow sm:text-left text-center mt-6 sm:mt-0">
+              <div className="flex-grow sm:text-left text-center sm:mt-0">
                 <Link to={`/complain/${props.item._id}`}>
                   <span className="text-black text-2xl title-font font-bold mb-0 hover:text-red-500">
                     {props.item.title}
@@ -62,7 +62,7 @@ const ComplainBox = (props) => {
                 <Link to={`/complain/${props.item._id}`} className="text-green-500 bg-gray-200 text-center">Open</Link>
               </div>
             </div>
-          </div>
+          {/* </div> */}
         </section>
       </section>
     </>

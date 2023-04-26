@@ -82,21 +82,27 @@ const WorkerProfile = () => {
 
     return (
         <>
-        <Modal show={modalIsOpen} onCancel={closeModal} onOk={deleteWorker} header={"Press OK to delete this profession"}>
-            
-        </Modal>
-        {modalIsOpen ? <BackDrop onCancel={closeModal} /> : null}
-        <div>
-            {username} {profession}
+{/* Create a profile page UI */}
+
+<div className="m-4 p-2 ">
+
+            <Modal show={modalIsOpen} onCancel={closeModal} onOk={deleteWorker} header={"Press OK to delete this profession"}>
+            </Modal>
+            {modalIsOpen ? <BackDrop onCancel={closeModal} /> : null}
+            <div>
+                {username} {profession}
+            </div>
+    
+            {isOwner ? (
+                <>
+                <button onClick={OpenDeleteModal}>Delete</button>
+                </>
+            ): (
+                <></>
+            )}
         </div>
 
-        {isOwner ? (
-            <>
-            <button onClick={OpenDeleteModal}>Delete</button>
-            </>
-        ): (
-            <></>
-        )}
+        
         </>
     );
 };
