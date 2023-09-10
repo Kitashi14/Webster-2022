@@ -5,7 +5,7 @@ import CreateAccountPage from "./Pages/Authentication/CreateAccountPage";
 import EmailVerifyPage from "./Pages/Authentication/EmailVerifyPage";
 import LoginPage from "./Pages/Authentication/LoginPage";
 import VerifyOTP from "./Pages/Authentication/VerifyOtp";
-import Navbar from "./Components/NavBar";
+import Navbar from "./Components/Navbar";
 import { useContext } from "react";
 import AuthContext from "./context/auth-context";
 import HomePage from "./Pages/HomePage";
