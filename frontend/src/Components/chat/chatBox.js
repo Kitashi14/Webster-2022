@@ -109,7 +109,7 @@ const ChatBox = (props) => {
     } else {
       return (
         <svg
-          className="fill-red-600 m-auto ml-2 mr-2 fill-white"
+          className=" m-auto ml-2 mr-2 fill-white"
           xmlns="http://www.w3.org/2000/svg"
           height="1em"
           viewBox="0 0 384 512"
@@ -180,7 +180,7 @@ const ChatBox = (props) => {
           </div>
         </div>
         <div
-          className="bg-white h-4/6 px-4 flex flex-col-reverse space-y-1 py-1 px-2 overflow-y-auto sc-design overflow-x-hidden shadow-inner"
+          className="bg-white h-4/6 px-2 flex flex-col-reverse space-y-1 py-1  overflow-y-auto sc-design overflow-x-hidden shadow-inner"
           onScroll={scrollHandler}
           ref={scrollBlock}
         >
