@@ -18,7 +18,7 @@ const ControlBlock = (props) => {
     <>
       <div className="w-1/3 flex flex-col">
         <Navbar searchFunc={props.searchFunc} />
-        {onlineUsers.length ? (
+        {(onlineInteractedUsers.length)? (
           <>
             <OnlineUsers users={onlineInteractedUsers} openChatBox={props.openChatBox} />
           </>

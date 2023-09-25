@@ -58,7 +58,12 @@ const ChatPage = ()=>{
     socket.emit("seen", userName);
   };
 
-  const setNavigate = (userName)=>{
+  const setNavigate = (userName,message_id)=>{
+    if(message_id){
+      openChatBox(userName,message_id);
+      navigate("/chat");
+      return;
+    }
     navigate(`/chat/${userName}`);
   }
 

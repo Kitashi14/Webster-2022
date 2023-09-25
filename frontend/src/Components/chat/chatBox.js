@@ -56,7 +56,7 @@ const ChatBox = (props) => {
   };
 
   const showSelectedMsg = () => {
-    selectedMsgRef.current?.scrollIntoView({ block: "center" });
+    selectedMsgRef.current?.scrollIntoView({ block: "start" });
   };
 
   useEffect(() => {
@@ -295,7 +295,7 @@ const ChatBox = (props) => {
           )}
           {scrollDownButton ? (
             <>
-              <div className=" w-2/3 h-[50px] fixed flex flex-row justify-center">
+              <div className=" w-2/3 h-[50px] absolute flex flex-row justify-center">
                 <span
                   onClick={() => {
                     scrollBlock.current.scrollTop = 0;
