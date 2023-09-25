@@ -20,9 +20,10 @@
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
     "jsonwebtoken": "^8.5.1",
-    "mongoose": "^6.7.1",
+    "mongoose": "^6.12.0",
     "node-fetch": "^2.6.7",
     "nodemailer": "^6.8.0",
-    "querystring": "^0.2.1"
+    "querystring": "^0.2.1",
+    "socket.io": "^4.7.2"
   }
 }

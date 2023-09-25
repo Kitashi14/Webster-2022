@@ -1,3 +1,5 @@
+/** @format */
+
 import { Link } from "react-router-dom";
 import React, { useContext } from "react";
 import AuthContext from "../context/auth-context";
@@ -60,19 +62,34 @@ const Navbar = (props) => {
                   About
                 </Link>
               </li>
-              <li>
-                {props.login ? (
-                  <>
+
+              {props.login ? (
+                <>
+                  <li>
                     <Link to={`/user/${auth.userName}`}>
                       <div className="block py-2 pr-4 pl-3 text-sc  hover:text-gray-500  md:border-0  md:p-0 dark:text-gray-400">
                         Profile
                       </div>
                     </Link>
-                  </>
-                ) : (
-                  <></>
-                )}
-              </li>
+                  </li>
+                </>
+              ) : (
+                <></>
+              )}
+
+              {props.login ? (
+                <>
+                  <li>
+                    <Link to={`/chat`}>
+                      <div className="block py-2 pr-4 pl-3 text-sc  hover:text-gray-500  md:border-0  md:p-0 dark:text-gray-400">
+                        Chat
+                      </div>
+                    </Link>
+                  </li>
+                </>
+              ) : (
+                <></>
+              )}
               <li>
                 {!props.login ? (
                   <>

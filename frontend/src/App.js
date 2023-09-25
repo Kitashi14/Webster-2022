@@ -16,80 +16,95 @@ import ComplainDetails from "./Pages/ComplainDetails";
 import Profile from "./Pages/Profile";
 import WorkerProfile from "./Pages/WorkerProfile";
 import Page404 from "./Pages/Page404";
+import ChatPage from "./Pages/ChatPage";
+import { useSocket } from "./socket/socket";
 
 function App() {
+  useSocket();
   const auth = useContext(AuthContext);
-  return !auth.isLoggedIn ? (
-    <>
-      <Navbar login={false} />
-
-      <Routes>
-        <Route
-          exact
-          path="/"
-          element={
-            <>
-              <HomePage />
-            </>
-          }
-        />
-
-        <Route exact path="/login" element={<LoginPage />} />
-
-        <Route exact path="/verifyEmail" element={<EmailVerifyPage />} />
-
-        <Route exact path="/verifyOtp" element={<VerifyOTP />} />
-
-        <Route exact path="/createAccount" element={<CreateAccountPage />} />
-
-        <Route exact path="/resetPassword" element={<ResetPage />}></Route>
-
-        <Route exact path="/about" element={<About />}></Route>
-
-        <Route exact path="/forgetpassword" element={<ResetPage />}></Route>
-        <Route
-          exact
-          path="/complain/:cid"
-          element={<ComplainDetails />}
-        ></Route>
-        <Route exact path="/user/:uid" element={<Profile />}></Route>
-        <Route
-          exact
-          path="/worker/:uid/:profession"
-          element={<WorkerProfile />}
-        ></Route>
-        <Route exact path="*" element={<Page404 />} />
-      </Routes>
-    </>
+  return auth.isLoading ? (
+    <> Loading....</>
   ) : (
     <>
-      <Navbar login={true} />
-      <Routes>
-        <Route
-          exact
-          path="/"
-          element={
-            <>
-              <HomePage />
-            </>
-          }
-        />
-        <Route exact path="/registerComplain" element={<Form />}></Route>
-        <Route
-          exact
-          path="/complain/:cid"
-          element={<ComplainDetails />}
-        ></Route>
-        <Route exact path="/user/:uid" element={<Profile />}></Route>
-        <Route
-          exact
-          path="/worker/:uid/:profession"
-          element={<WorkerProfile />}
-        ></Route>
+      {!auth.isLoggedIn ? (
+        <>
+          <Navbar login={false} />
 
-        <Route exact path="/about" element={<About />}></Route>
-        <Route exact path="*" element={<Page404 />} />
-      </Routes>
+          <Routes>
+            <Route
+              exact
+              path="/"
+              element={
+                <>
+                  <HomePage />
+                </>
+              }
+            />
+
+            <Route exact path="/login" element={<LoginPage />} />
+
+            <Route exact path="/verifyEmail" element={<EmailVerifyPage />} />
+
+            <Route exact path="/verifyOtp" element={<VerifyOTP />} />
+
+            <Route
+              exact
+              path="/createAccount"
+              element={<CreateAccountPage />}
+            />
+
+            <Route exact path="/resetPassword" element={<ResetPage />}></Route>
+
+            <Route exact path="/about" element={<About />}></Route>
+
+            <Route exact path="/forgetpassword" element={<ResetPage />}></Route>
+            <Route
+              exact
+              path="/complain/:cid"
+              element={<ComplainDetails />}
+            ></Route>
+            <Route exact path="/user/:uid" element={<Profile />}></Route>
+            <Route
+              exact
+              path="/worker/:uid/:profession"
+              element={<WorkerProfile />}
+            ></Route>
+            <Route exact path="*" element={<Page404 />} />
+          </Routes>
+        </>
+      ) : (
+        <>
+          <Navbar login={true} />
+          <Routes>
+            <Route
+              exact
+              path="/"
+              element={
+                <>
+                  <HomePage />
+                </>
+              }
+            />
+            <Route exact path="/registerComplain" element={<Form />}></Route>
+            <Route
+              exact
+              path="/complain/:cid"
+              element={<ComplainDetails />}
+            ></Route>
+            <Route exact path="/user/:uid" element={<Profile />}></Route>
+            <Route
+              exact
+              path="/worker/:uid/:profession"
+              element={<WorkerProfile />}
+            ></Route>
+
+            <Route exact path="/about" element={<About />}></Route>
+            <Route exact path="/chat" element={<ChatPage />}></Route>
+            <Route exact path="/chat/:uid" element={<ChatPage />}></Route>
+            <Route exact path="*" element={<Page404 />} />
+          </Routes>
+        </>
+      )}
     </>
   );
 }
