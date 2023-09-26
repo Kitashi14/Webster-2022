@@ -13,13 +13,13 @@ const startSocket = async (httpServer) => {
     var count = 0;
     var onlineUsers = new Map();
     io.on("connection", (socket) => {
-      console.log("new user joined : ", socket.id);
+      console.log("\nnew user joined : ", socket.id);
       count++;
       console.log("connected users : ", count, "\n");
 
       socket.on("joined", async (data) => {
         try {
-          console.log("got join request\n",data,"\n");
+          console.log("\ngot join request\n",data,"\n");
           var users = [];
           onlineUsers.forEach((val, key) => {
             users.push(val);
@@ -59,7 +59,7 @@ const startSocket = async (httpServer) => {
       });
 
       socket.on("disconnect", (reason) => {
-        console.log("disconnected : ", reason);
+        console.log("\ndisconnected : ", reason);
         count--;
         if (onlineUsers.has(socket.id)) {
           console.log("sending braodcast for left user\n",onlineUsers.get(socket.id).userName);
@@ -70,7 +70,7 @@ const startSocket = async (httpServer) => {
       });
 
       socket.on("send message", async (data) => {
-        console.log("new send message request : ", data);
+        console.log("\nnew send message request : ", data);
         try {
           if(!data.from || !data.to || !data.message) {
             throw Error("Data not defined properly");
@@ -109,7 +109,7 @@ const startSocket = async (httpServer) => {
         
         const userWhoSaw = onlineUsers.get(socket.id).userName;
         const userWhoseMessageWasSeen = userName;
-        console.log("seen request from",userWhoSaw,"for",userWhoseMessageWasSeen);
+        console.log("\nseen request from",userWhoSaw,"for",userWhoseMessageWasSeen);
         try{
 
           await Chat.updateMany({
