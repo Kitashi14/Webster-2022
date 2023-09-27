@@ -150,7 +150,7 @@ const CreateAccountPage = () => {
 								link to reset your password!
 							</p> --> */}
             </div>
-            <form className="px-8 pt-6 pb-8 mb-4 bg-white rounded">
+            <div className="px-8 pt-6 pb-8 mb-4 bg-white rounded">
               {/* <!-- Enter Name --> */}
               <div className="mb-4">
                 <label
@@ -283,7 +283,7 @@ const CreateAccountPage = () => {
                   Create Account
                 </button>
               </div>
-            </form>
+            </div>
           </div>
         </div>
       </div>

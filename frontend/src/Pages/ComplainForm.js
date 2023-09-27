@@ -21,11 +21,11 @@ const Form = () => {
 
   const [details, setDetails] = useState({
     address: "",
-    location : {
-      lat : "",
-      lng : ""
+    location: {
+      lat: "",
+      lng: "",
     },
-    phonenum : ""
+    phonenum: "",
   });
 
   useEffect(() => {
@@ -59,8 +59,7 @@ const Form = () => {
     };
 
     fetchProfileDetails();
-  }, [navigate,userName]);
-
+  }, [navigate, userName]);
 
   const [lat, setLat] = useState(null);
   const [long, setLong] = useState(null);
@@ -99,12 +98,12 @@ const Form = () => {
     const phonenum = phonenumInputRef.current.value;
     const profession = professionInputRef.current.value;
 
-    if (address.length < 5) alert("Enter a valid address");
-    else if (address.length > 500) alert("Address too long");
-    else if (phonenum.length !== 10) alert("Phone no. should be of 10 digits");
-    else if (title.length === 0) alert("Enter a title");
+    if (title.length === 0) alert("Enter a title");
     else if (description.length > 1000) alert("Description too long");
     else if (profession === "select") alert("Select a profession");
+    else if (phonenum.length !== 10) alert("Phone no. should be of 10 digits");
+    else if (address.length < 5) alert("Enter a valid address");
+    else if (address.length > 500) alert("Address too long");
     else {
       const coordinates = submitCooridnates(lat, long);
       if (!coordinates) return;
@@ -194,7 +193,7 @@ const Form = () => {
             link to reset your password!
           </p> --> */}
           </div>
-          <form className="px-8 pt-6 pb-8 mb-4 bg-white rounded">
+          <div className="px-8 pt-6 pb-8 mb-4 bg-white rounded">
             {/* <!-- Enter Title --> */}
             <div className="mb-4">
               <label
@@ -205,7 +204,6 @@ const Form = () => {
               </label>
               <input
                 type="text"
-                required
                 ref={titleInputRef}
                 className="w-full px-3 py-2 text-sm leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline focus:border-blue-400"
                 id="title"
@@ -269,7 +267,6 @@ const Form = () => {
               </label>
               <input
                 className="w-full px-3 font-normal py-2 text-sm  text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline focus:border-blue-400 "
-                required
                 type="number"
                 ref={phonenumInputRef}
                 id="phoneno"
@@ -308,7 +305,10 @@ const Form = () => {
                 defaultValue={details.address}
               />
             </div>
-            <MapForm setCoordinates={setCoordinates} initialValues= {details.location}/>
+            <MapForm
+              setCoordinates={setCoordinates}
+              initialValues={details.location}
+            />
 
             {/* <!-- Create button --> */}
             <div className="mb-2 text-center">
@@ -337,7 +337,7 @@ const Form = () => {
           Sign Up
         </a>
       </div> */}
-          </form>
+          </div>
         </div>
       </div>
     </div>
