@@ -101,17 +101,21 @@ export const ChatContextProvider = (props) => {
       this.userIndex = new Map();
       this.users = [];
       this.onlineUsers = [];
+      this.unreadUsers = new Set();
     }
 
     addData(authUser, data) {
-      data.map((row) => {
-        var otherParty = row.from === authUser ? row.to : row.from;
+      data.map((message_obj) => {
+        var otherParty = message_obj.from === authUser ? message_obj.to : message_obj.from;
+        if((message_obj.status==="delivered" || message_obj.status==="received") && message_obj.from=== otherParty){
+          this.unreadUsers.add(otherParty);
+        }
         if (this.userIndex.has(otherParty)) {
           var i = this.userIndex.get(otherParty);
-          this.users[i].addMessage(row);
+          this.users[i].addMessage(message_obj);
         } else {
           const user = new User(otherParty);
-          user.addMessage(row);
+          user.addMessage(message_obj);
           this.users.push(user);
           this.userIndex.set(otherParty, this.users.length - 1);
         }
@@ -153,6 +157,9 @@ export const ChatContextProvider = (props) => {
     }
 
     addMessage(name, data) {
+      if((data.status==="delivered" || data.status==="received") && data.from=== name){
+        this.unreadUsers.add(name);
+      }
       if (!this.userIndex.has(name)) {
         const user = new User(name);
         this.users.push(user);
@@ -220,6 +227,7 @@ export const ChatContextProvider = (props) => {
     meSaw(userName) {
       var i = this.userIndex.get(userName);
       this.users[i].unseenCount = 0;
+      this.unreadUsers.delete(userName);
     }
   }
 
@@ -245,6 +253,7 @@ export const ChatContextProvider = (props) => {
 
   const modifyIsTyping = (userName) => {
     isTyping[userName] = isTyping[userName] + 1 || 1;
+    setIsTyping(isTyping);
     console.log(isTyping);
     forceRender();
     setTimeout(() => {

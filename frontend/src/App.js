@@ -1,12 +1,12 @@
 /** @format */
 
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, useLocation } from "react-router-dom";
 import CreateAccountPage from "./Pages/Authentication/CreateAccountPage";
 import EmailVerifyPage from "./Pages/Authentication/EmailVerifyPage";
 import LoginPage from "./Pages/Authentication/LoginPage";
 import VerifyOTP from "./Pages/Authentication/VerifyOtp";
 import Navbar from "./Components/Navbar";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import AuthContext from "./context/auth-context";
 import HomePage from "./Pages/HomePage";
 import ResetPage from "./Pages/Authentication/ResetPage";
@@ -18,10 +18,23 @@ import WorkerProfile from "./Pages/WorkerProfile";
 import Page404 from "./Pages/Page404";
 import ChatPage from "./Pages/ChatPage";
 import { useSocket } from "./socket/socket";
+import ChatContext from "./context/chatContext";
 
 function App() {
   useSocket();
   const auth = useContext(AuthContext);
+  const chat = useContext(ChatContext);
+
+  const location = useLocation();
+
+  useEffect(() => {
+    // execute on location change
+    console.log("Location changed!", location.pathname);
+    if(!location.pathname.includes("chat")){
+      chat.setChatScreenUser(null);
+    }
+  }, [location,chat]);
+
   return auth.isLoading ? (
     <> Loading....</>
   ) : (
