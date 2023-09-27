@@ -85,3 +85,8 @@ input[type="number"] {
 .sc-design::-webkit-scrollbar-thumb:hover {
   background: #b30000; 
 }
+
+.leaflet-container{
+
+  height: 100%;
+}

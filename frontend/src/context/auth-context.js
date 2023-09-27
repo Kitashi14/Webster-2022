@@ -48,7 +48,7 @@ export const AuthContextProvider = (props) => {
     window.location.replace(`${process.env.REACT_APP_CLIENT_ROOT_URI}`);
   };
 
-  console.log("userName:", userName);
+  console.log("userName:", userName,user);
 
   console.log("isLogin:", isLoggedIn);
   useEffect(() => {
