@@ -2,6 +2,8 @@
 // import { Server } from "socket.io";
 const { Server } = require("socket.io");
 const Chat = require("./models/chat");
+const User =require("./models/user");
+const user = require("./models/user");
 
 const startSocket = async (httpServer) => {
   try {
@@ -35,6 +37,10 @@ const startSocket = async (httpServer) => {
             }
           );
 
+          const userDetails = await User.findOne({
+            username: data.userName
+          });
+
           await Chat.updateMany({
             to: data.userName,
             status: "delivered"
@@ -49,9 +55,10 @@ const startSocket = async (httpServer) => {
           });
           socket.join(data.userName);
           console.log("sending broadcast for new online user");
-          socket.broadcast.emit("joined", data);
+          socket.broadcast.emit("joined", {...data,userProfile: userDetails.profilePic});
           onlineUsers.set(socket.id, {
             userName: data.userName,
+            userProfile: userDetails.profilePic
           });
         } catch (err) {
           console.log(err);

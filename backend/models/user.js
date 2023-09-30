@@ -35,6 +35,9 @@ const userSchema = new mongoose.Schema({
     type: String,
     minlength: 8,
   },
+  profilePic : {
+    type : String,
+  },
   address: {
     type: String,
     required: [true, "Please enter address"],

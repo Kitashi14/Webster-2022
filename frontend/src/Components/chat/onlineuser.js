@@ -20,13 +20,13 @@ const OnlineUsers = (props) => {
                     key={data.userName}
                     user={data.userName}
                     onClick={openUser}
-                    className="w-16 h-16 border rounded-full font-normal bg-green-600 text-white"
+                    className="w-16 h-16 border-2 rounded-full font-normal bg-gray-600 text-white"
                   >
                     <img
                       find_user={data.userName}
-                      className="rounded-full"
+                      className="rounded-full h-full w-full object-cover"
                       alt="profile"
-                      src={`https://static.vecteezy.com/system/resources/thumbnails/003/337/584/small/default-avatar-photo-placeholder-profile-icon-vector.jpg`}
+                      src={ data.userProfile? data.userProfile : `https://static.vecteezy.com/system/resources/thumbnails/003/337/584/small/default-avatar-photo-placeholder-profile-icon-vector.jpg`}
                     />
                   </button>
                   <span className="text-xs pt-0 font-normal">

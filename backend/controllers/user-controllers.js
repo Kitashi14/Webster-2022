@@ -472,6 +472,43 @@ const deletefavoriteworker = async (req, res) => {
   }
 };
 
+const updateUserProfilePic = async (req, res) => {
+  console.log("update profile pic api hit");
+  const { username, profilepic } = req.body;
+  console.log("username:", username);
+  if (!username || !profilepic) {
+    console.log("Incomplete Request !!");
+    res.status(400).json({ message: "Incomplete Request !!" });
+    return;
+  }
+
+  let user;
+  try {
+    user = await User.updateOne(
+      { username: username },
+      { profilePic: profilepic }  
+    );
+  } catch (err) {
+    console.log(err.message);
+    res.status(500).json({ message: err.message });
+    return;
+  }
+  if (user.matchedCount == 0) {
+    console.log("No User with given username exists");
+    res.status(400).json({ message: "User Not Found !!" });
+    return;
+  } else if (user.modifiedCount == 0) {
+    console.log("profile was not Updated");
+    res.status(400).json({ message: "No user was Updated" });
+    return;
+  }
+
+  console.log("Update User Profile Pic -> User Profile Pic Updated !!");
+  res.status(200).json({
+    message: "User Profile Pic Updated Sucessfully !!",
+  });
+};
+
 exports.getUserInfo = getUserWithEmail;
 exports.createAccount = addUser;
 exports.resetPassword = resetPassword;
@@ -479,3 +516,4 @@ exports.getUserDetail = getUserDetail;
 exports.addfavoriteworker = addfavoriteworker;
 exports.deletefavoriteworker = deletefavoriteworker;
 exports.updateUser = updateUser;
+exports.updateUserProfilePic = updateUserProfilePic;
