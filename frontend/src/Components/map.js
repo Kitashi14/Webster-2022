@@ -1,6 +1,6 @@
 /** @format */
 import "leaflet/dist/leaflet.css";
-import omm from "./../Helper/map_attributes";
+import maps from "./../Helper/map_attributes";
 
 import { MapContainer, TileLayer } from "react-leaflet";
 import { Marker } from "react-leaflet";
@@ -103,8 +103,8 @@ const MapDiv = (props) => {
               ref={mapRef}
             >
               <TileLayer
-                attribution={omm.maptiler.attribution}
-                url={omm.maptiler.url}
+                attribution={maps.maptiler.attribution}
+                url={maps.maptiler.url}
               />
 
               <Marker

@@ -1,6 +1,6 @@
 /** @format */
 
-const omm = {
+const maps = {
   maptiler: {
     url: "https://api.maptiler.com/maps/basic-v2/{z}/{x}/{y}.png?key=gk56D6AEWzhtu1gTTChN",
     attribution:
@@ -20,4 +20,4 @@ const omm = {
   },
 };
 
-export default omm;
+export default maps;
