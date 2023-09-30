@@ -20,7 +20,7 @@ const OnlineUsers = (props) => {
                     key={data.userName}
                     user={data.userName}
                     onClick={openUser}
-                    className="w-16 h-16 border-2 rounded-full font-normal bg-gray-600 text-white"
+                    className="w-16 h-16 border-2 rounded-full font-normal bg-gray-200 text-white"
                   >
                     <img
                       find_user={data.userName}

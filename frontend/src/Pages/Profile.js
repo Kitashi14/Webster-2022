@@ -188,8 +188,8 @@ const Profile = () => {
   };
 
   const setProfilePic = async (file) => {
-    if (file.size > 10485760 / 10) {
-      toast.error("File size should be less then 2.5 MB");
+    if (file.size > (1048576/2)) {
+      toast.error("File size should be less then 500 KB");
       return;
     }
     if (details.profilePic) {
