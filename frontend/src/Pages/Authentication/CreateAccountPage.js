@@ -217,7 +217,10 @@ const CreateAccountPage = () => {
                 />
               </div>
 
-              <MapForm setCoordinates={setCoordinates} initialValues={ {lat : null , lng : null}} />
+              <MapForm
+                setCoordinates={setCoordinates}
+                initialValues={{ lat: null, lng: null }}
+              />
 
               {/* <!-- Enter PhoneNo --> */}
               <div className="mb-4">
