@@ -3,7 +3,6 @@ import { profession } from "../Helper/Profession";
 import ComplainBox from "./ComplainBox";
 
 const ComplainBoxes = (props) => {
-
   return (
     <>
       <div className="d-flex p-4 justify-content-space-between place-content-center h-full w-full">
@@ -21,7 +20,9 @@ const ComplainBoxes = (props) => {
           })
         ) : (
           <>
-            <div className="container justify-center place-content-center bg-gray-200 h-56 align-middle" >No Complains Found</div>
+            <div className="container justify-center place-content-center bg-gray-200 h-56 align-middle">
+              No Complains Found
+            </div>
           </>
         )}
       </div>

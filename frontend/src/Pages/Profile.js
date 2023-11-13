@@ -134,7 +134,7 @@ const Profile = () => {
         <div className="flex flex-col m-2 items-center w-4/5 h-1/2 bg-white border border-gray-200 rounded-lg shadow md:flex-row md:max-w-full hover:bg-gray-100">
           <img
             className="object-cover w-1/4 basis-1/3 rounded-lg h-1/2"
-            src= "https://www.pngitem.com/pimgs/m/146-1468479_my-profile-icon-blank-profile-picture-circle-hd.png"
+            src="https://www.pngitem.com/pimgs/m/146-1468479_my-profile-icon-blank-profile-picture-circle-hd.png"
             alt="profile pic"
           />
           <div className="flex basis-2/3 h-full flex-row justify-between p-4 leading-normal">

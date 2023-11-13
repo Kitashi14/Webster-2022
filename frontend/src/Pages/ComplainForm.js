@@ -1,5 +1,5 @@
 import React, { useContext, useRef } from "react";
-import {  useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import AuthContext from "../context/auth-context";
 
 import { profession } from "../Helper/Profession";
@@ -70,7 +70,7 @@ const Form = () => {
           console.log(responseData.message);
           alert("Complain added");
           // navigate(`/complain/${responseData.data.complainId}`);
-          navigate('/');
+          navigate("/");
           return;
         } else if (response.status === 422) {
           console.log(responseData.error);
@@ -201,8 +201,18 @@ const Form = () => {
                 defaultValue={auth.user.phonenum}
               />
             </div>
-            <input ref={locationXInputRef} className="invisible" type="text" required />
-            <input className="invisible" ref={locationYInputRef} type="text" required />
+            <input
+              ref={locationXInputRef}
+              className="invisible"
+              type="text"
+              required
+            />
+            <input
+              className="invisible"
+              ref={locationYInputRef}
+              type="text"
+              required
+            />
 
             {/* <!--Forget Password --> */}
             {/* <div className="mb-6">
