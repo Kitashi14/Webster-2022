@@ -5,6 +5,7 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  @apply leading-[normal] m-0;
 }
 
 code {
@@ -36,4 +37,9 @@ input[type="number"] {
 
 .invisible{
   display: none;
+}
+
+::before,
+::after {
+  border-width: 0;
 }
