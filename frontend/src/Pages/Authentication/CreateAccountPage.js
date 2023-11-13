@@ -1,5 +1,9 @@
-import { useRef } from "react";
+/** @format */
+
+import { useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import MapForm from "../../Components/mapForm";
+import { toast } from "react-toastify";
 // import Container from "../../Components/Shared/Container";
 
 const CreateAccountPage = () => {
@@ -12,8 +16,34 @@ const CreateAccountPage = () => {
   const ageInputRef = useRef();
   const addressInputRef = useRef();
   const phonenumInputRef = useRef();
-  const locationXInputRef = useRef();
-  const locationYInputRef = useRef();
+
+  const [lat, setLat] = useState(null);
+  const [long, setLong] = useState(null);
+
+  const setCoordinates = (lat, long) => {
+    setLat(lat);
+    setLong(long);
+  };
+
+  const submitCooridnates = (lat, long) => {
+    var correct = false;
+    if (!lat || !long) {
+      toast.error("Both fields are required to be filled.");
+    } else if (lat < -90 || lat > 90) {
+      toast.error("Latitude value out of range.");
+    } else if (long < -180 || long > 180) {
+      toast.error("Longitude value out of range.");
+    } else {
+      correct = true;
+      console.log(lat, long);
+    }
+    if (correct) {
+      return {
+        lat,
+        long,
+      };
+    } else return false;
+  };
 
   const submitButtonHandler = async (event) => {
     event.preventDefault();
@@ -27,20 +57,22 @@ const CreateAccountPage = () => {
     const address = addressInputRef.current.value;
     const phonenum = phonenumInputRef.current.value;
 
-    if (age < 5 || age > 140) alert("Enter a valid age");
+    if (firstName.length === 0 || firstName.length > 50)
+      alert("Enter a valid first name");
+    else if (lastName.length > 50) alert("Enter a valid last name");
+    else if (age < 5 || age > 140) alert("Enter a valid age");
+    else if (address.length < 5) alert("Enter a valid address");
+    else if (address.length > 500) alert("Address too long");
+    else if (phonenum.length !== 10) alert("Phone no. should be of 10 digits");
     else if (password.length < 8)
       alert("Password must be of at least 8 characters");
     else if (password !== confirmPassword)
       alert("Confirmed password doesn't matches");
-    else if (firstName.length === 0 || firstName.length > 50)
-      alert("Enter a valid first name");
-    else if (lastName.length > 50) alert("Enter a valid last name");
-    else if (address.length < 5) alert("Enter a valid address");
-    else if (address.length > 500) alert("Address too long");
-    else if (phonenum.length !== 10) alert("Phone no. should be of 10 digits");
     else {
-      const locationX = locationXInputRef.current.value;
-      const locationY = locationYInputRef.current.value;
+      const coordinates = submitCooridnates(lat, long);
+      if (!coordinates) return;
+      const locationX = coordinates.lat;
+      const locationY = coordinates.long;
 
       const data = {
         firstName: firstName,
@@ -118,7 +150,7 @@ const CreateAccountPage = () => {
 								link to reset your password!
 							</p> --> */}
             </div>
-            <form className="px-8 pt-6 pb-8 mb-4 bg-white rounded">
+            <div className="px-8 pt-6 pb-8 mb-4 bg-white rounded">
               {/* <!-- Enter Name --> */}
               <div className="mb-4">
                 <label
@@ -177,7 +209,7 @@ const CreateAccountPage = () => {
                 Address
                 <textarea
                   ref={addressInputRef}
-                  className="w-full px-3 py-2 text-sm  text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
+                  className="w-full px-3 py-2 font-normal text-sm  text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
                   required
                   rows="4"
                   id="address"
@@ -185,8 +217,10 @@ const CreateAccountPage = () => {
                 />
               </div>
 
-              <input ref={locationXInputRef} type="text" required />
-              <input ref={locationYInputRef} type="text" required />
+              <MapForm
+                setCoordinates={setCoordinates}
+                initialValues={{ lat: null, lng: null }}
+              />
 
               {/* <!-- Enter PhoneNo --> */}
               <div className="mb-4">
@@ -252,8 +286,7 @@ const CreateAccountPage = () => {
                   Create Account
                 </button>
               </div>
-              
-            </form>
+            </div>
           </div>
         </div>
       </div>

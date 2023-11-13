@@ -5,7 +5,27 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  @apply leading-[normal] m-0;
+}
+
+/* body::-webkit-scrollbar {
+  width: 10px;
+}
+
+body::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 5px grey; 
+  border-radius: 20px;
+}
+ 
+body::-webkit-scrollbar-thumb {
+  background: rgb(255, 54, 54);
+}
+
+body::-webkit-scrollbar-thumb:hover {
+  background: #a72d2d; 
+} */
+
+body::-webkit-scrollbar{
+  display: none;
 }
 
 code {
@@ -39,7 +59,34 @@ input[type="number"] {
   display: none;
 }
 
-::before,
-::after {
-  border-width: 0;
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.sc-hide::-webkit-scrollbar {
+  display: none;
+}
+
+.sc-design::-webkit-scrollbar {
+  width: 10px;
+}
+
+/* Track */
+.sc-design::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 5px grey; 
+  border-radius: 10px;
+}
+ 
+/* Handle */
+.sc-design::-webkit-scrollbar-thumb {
+  background: red; 
+  border-radius: 10px;
+}
+
+/* Handle on hover */
+.sc-design::-webkit-scrollbar-thumb:hover {
+  background: #b30000; 
+}
+
+.leaflet-container{
+
+  height: 100%;
 }

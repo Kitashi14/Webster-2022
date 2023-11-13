@@ -1,6 +1,9 @@
+/** @format */
+
 import { Link } from "react-router-dom";
 import React, { useContext } from "react";
 import AuthContext from "../context/auth-context";
+import ChatContext from "../context/chatContext";
 
 const Navbar = (props) => {
   const auth = useContext(AuthContext);
@@ -8,6 +11,9 @@ const Navbar = (props) => {
     console.log("logout function called");
     auth.logout();
   };
+
+  const unreadUsersCount = useContext(ChatContext).chatBox.unreadUsers.size;
+  console.log(unreadUsersCount);
 
   return (
     <>
@@ -60,19 +66,43 @@ const Navbar = (props) => {
                   About
                 </Link>
               </li>
-              <li>
-                {props.login ? (
-                  <>
+
+              {props.login ? (
+                <>
+                  <li>
                     <Link to={`/user/${auth.userName}`}>
                       <div className="block py-2 pr-4 pl-3 text-sc  hover:text-gray-500  md:border-0  md:p-0 dark:text-gray-400">
                         Profile
                       </div>
                     </Link>
-                  </>
-                ) : (
-                  <></>
-                )}
-              </li>
+                  </li>
+                </>
+              ) : (
+                <></>
+              )}
+
+              {props.login ? (
+                <>
+                  <li>
+                    <Link to={`/chat`}>
+                      <div className="block py-2 pr-4   pl-3 text-sc md:border-0  md:p-0 dark:text-gray-400">
+                        <span className="hover:text-gray-500">Chat</span>
+                        {unreadUsersCount > 0 ? (
+                          <>
+                            <span className="ml-1 bg-white text-red-500 text-xs font-bold rounded-full px-2 py-1">
+                              {unreadUsersCount}
+                            </span>
+                          </>
+                        ) : (
+                          <></>
+                        )}
+                      </div>
+                    </Link>
+                  </li>
+                </>
+              ) : (
+                <></>
+              )}
               <li>
                 {!props.login ? (
                   <>

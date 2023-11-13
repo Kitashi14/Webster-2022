@@ -1,4 +1,5 @@
 import { createContext, useEffect, useState } from "react";
+import { socket } from "../socket/sc";
 
 const AuthContext = createContext({
   isLoggedIn: false,
@@ -6,10 +7,12 @@ const AuthContext = createContext({
   user: null,
   login: (user) => {},
   logout: () => {},
+  isLoading : false
 });
 
 export const AuthContextProvider = (props) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoading,setIsLoading] = useState(false);
   const [userName, setUserName] = useState(null);
   const [user, setUser] = useState(null);
 
@@ -28,6 +31,7 @@ export const AuthContextProvider = (props) => {
           credentials: "include",
         }
       );
+      socket.disconnect();
       const responseData = await response.json();
 
       if (response.status === 200) {
@@ -44,11 +48,12 @@ export const AuthContextProvider = (props) => {
     window.location.replace(`${process.env.REACT_APP_CLIENT_ROOT_URI}`);
   };
 
-  console.log("userName:", userName);
+  console.log("userName:", userName,user);
 
   console.log("isLogin:", isLoggedIn);
   useEffect(() => {
     const authLogin = async () => {
+      setIsLoading(true);
       console.log("sending request to access token check api");
 
       //fetch request
@@ -69,9 +74,8 @@ export const AuthContextProvider = (props) => {
           console.log(responseData.error);
           if (isLoggedIn) {
             alert("Session timeout. Please login again");
-            logout();
+            await logout();
           }
-          return;
         } else {
           throw Error(responseData.error);
         }
@@ -79,9 +83,10 @@ export const AuthContextProvider = (props) => {
         console.log(err);
         if (isLoggedIn) {
           alert("Failed to authenticate");
-          logout();
+          await logout();
         }
       }
+      setIsLoading(false);
     };
 
     authLogin();
@@ -94,6 +99,7 @@ export const AuthContextProvider = (props) => {
     user: user,
     login: login,
     logout: logout,
+    isLoading
   };
 
   return (

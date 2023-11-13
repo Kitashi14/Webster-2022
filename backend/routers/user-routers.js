@@ -12,6 +12,7 @@ router.post("/createAccount", userController.createAccount);
 router.post("/resetPassword", userController.resetPassword);
 router.get("/getDetails/:uid", userController.getUserDetail);
 router.patch("/favorite/:username/:id", userController.addfavoriteworker);
+router.patch("/profilepic", userController.updateUserProfilePic);
 router.delete("/favorite/:username/:id", userController.deletefavoriteworker);
 router.patch("/updateUser", userController.updateUser);
 module.exports = router;

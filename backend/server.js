@@ -7,9 +7,13 @@ require("dotenv").config();
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
 
-//extracting express module
+//extracting express module and setting server
 const express = require("express");
+const {createServer}=require('http');
+const {startSocket}=require('./socket');
 const app = express();
+const httpServer = createServer(app);
+startSocket(httpServer);
 
 //extracting routers
 const authRouters = require("./routers/auth-routers");
@@ -70,4 +74,4 @@ app.use("/api/worker", workerRouters);
 
 //setting the server port
 const port = process.env.PORT;
-app.listen(port, () => console.log(`Server listening on port ${port}...`));
+httpServer.listen(port, () => console.log(`Server listening on port ${port}...`));

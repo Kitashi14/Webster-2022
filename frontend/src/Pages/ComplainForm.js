@@ -1,20 +1,93 @@
-import React, { useContext, useRef } from "react";
+/** @format */
+
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AuthContext from "../context/auth-context";
 
 import { profession } from "../Helper/Profession";
+import MapForm from "../Components/mapForm";
+import { toast } from "react-toastify";
 
 const Form = () => {
   const navigate = useNavigate();
   const auth = useContext(AuthContext);
+  const userName = auth.userName;
 
   const titleInputRef = useRef();
   const descriptionInputRef = useRef();
   const professionInputRef = useRef();
   const addressInputRef = useRef();
   const phonenumInputRef = useRef();
-  const locationXInputRef = useRef();
-  const locationYInputRef = useRef();
+
+  const [details, setDetails] = useState({
+    address: "",
+    location: {
+      lat: "",
+      lng: "",
+    },
+    phonenum: "",
+  });
+
+  useEffect(() => {
+    const fetchProfileDetails = async () => {
+      try {
+        const response = await fetch(
+          `${process.env.REACT_APP_SERVER_ROOT_URI}/api/user/getDetails/${userName}`,
+          {
+            credentials: "include",
+          }
+        );
+
+        console.log(response.status);
+
+        const responseData = await response.json();
+        console.log(responseData);
+
+        if (response.status === 200) {
+          setDetails(responseData.data.userDetails);
+        } else if (response.status === 400) {
+          alert(responseData.error);
+          navigate("/");
+        } else if (response.status === 500) {
+          throw Error(responseData.error);
+        }
+      } catch (err) {
+        console.log(err);
+        toast.error("Failed to fetch profile details");
+        navigate("/");
+      }
+    };
+
+    fetchProfileDetails();
+  }, [navigate, userName]);
+
+  const [lat, setLat] = useState(null);
+  const [long, setLong] = useState(null);
+
+  const setCoordinates = (lat, long) => {
+    setLat(lat);
+    setLong(long);
+  };
+
+  const submitCooridnates = (lat, long) => {
+    var correct = false;
+    if (!lat || !long) {
+      toast.error("Both location fields are required to be filled.");
+    } else if (lat < -90 || lat > 90) {
+      toast.error("Latitude value out of range.");
+    } else if (long < -180 || long > 180) {
+      toast.error("Longitude value out of range.");
+    } else {
+      correct = true;
+      console.log(lat, long);
+    }
+    if (correct) {
+      return {
+        lat,
+        long,
+      };
+    } else return false;
+  };
 
   const submitButtonHandler = async (event) => {
     event.preventDefault();
@@ -25,15 +98,17 @@ const Form = () => {
     const phonenum = phonenumInputRef.current.value;
     const profession = professionInputRef.current.value;
 
-    if (address.length < 5) alert("Enter a valid address");
-    else if (address.length > 500) alert("Address too long");
-    else if (phonenum.length !== 10) alert("Phone no. should be of 10 digits");
-    else if (title.length === 0) alert("Enter a title");
+    if (title.length === 0) alert("Enter a title");
     else if (description.length > 1000) alert("Description too long");
     else if (profession === "select") alert("Select a profession");
+    else if (phonenum.length !== 10) alert("Phone no. should be of 10 digits");
+    else if (address.length < 5) alert("Enter a valid address");
+    else if (address.length > 500) alert("Address too long");
     else {
-      const locationX = locationXInputRef.current.value;
-      const locationY = locationYInputRef.current.value;
+      const coordinates = submitCooridnates(lat, long);
+      if (!coordinates) return;
+      const locationX = coordinates.lat;
+      const locationY = coordinates.long;
       const creationTime = new Date(Date.now());
 
       const data = {
@@ -118,7 +193,7 @@ const Form = () => {
             link to reset your password!
           </p> --> */}
           </div>
-          <form className="px-8 pt-6 pb-8 mb-4 bg-white rounded">
+          <div className="px-8 pt-6 pb-8 mb-4 bg-white rounded">
             {/* <!-- Enter Title --> */}
             <div className="mb-4">
               <label
@@ -129,7 +204,6 @@ const Form = () => {
               </label>
               <input
                 type="text"
-                required
                 ref={titleInputRef}
                 className="w-full px-3 py-2 text-sm leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline focus:border-blue-400"
                 id="title"
@@ -192,13 +266,12 @@ const Form = () => {
                 Phone No.
               </label>
               <input
-                className="w-full px-3 py-2 text-sm  text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline focus:border-blue-400 "
-                required
+                className="w-full px-3 font-normal py-2 text-sm  text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline focus:border-blue-400 "
                 type="number"
                 ref={phonenumInputRef}
                 id="phoneno"
                 placeholder="Enter your phone no..."
-                defaultValue={auth.user.phonenum}
+                defaultValue={details.phonenum}
               />
             </div>
             <input
@@ -241,9 +314,13 @@ const Form = () => {
                 className="w-full px-3 py-2 text-sm leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline focus:border-blue-400"
                 id="description"
                 placeholder="Your Address..."
-                defaultValue={auth.user.address}
+                defaultValue={details.address}
               />
             </div>
+            <MapForm
+              setCoordinates={setCoordinates}
+              initialValues={details.location}
+            />
 
             {/* <!-- Create button --> */}
             <div className="mb-2 text-center">
@@ -272,7 +349,7 @@ const Form = () => {
           Sign Up
         </a>
       </div> */}
-          </form>
+          </div>
         </div>
       </div>
     </div>

@@ -63,7 +63,7 @@ const ComplainBox = (props) => {
               <br></br>
               <Link
                 to={`/complain/${props.item._id}`}
-                className="text-green-500 bg-gray-200 text-center"
+                className="text-green-500 bg-gray-200 text-center rounded-xl"
               >
                 Open
               </Link>

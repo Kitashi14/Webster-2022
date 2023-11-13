@@ -149,10 +149,10 @@ const HomePage = () => {
     <>
       <div className="bg-gray-200 h-full">
         <Hero />
-        <div className="flex flex-row justify-around">
-          <div>
-            <div>
-              <select ref={professionInputRef}>
+        <div className="flex flex-row justify-between mx-20">
+          <div className="flex">
+            <div className="ml-2 rounded-xl">
+              <select ref={professionInputRef} className="rounded-lg px-1">
                 {profession.map((data) => {
                   return (
                     <option
@@ -164,26 +164,26 @@ const HomePage = () => {
                 <option value="Any">Any</option>
               </select>
             </div>
-            <div>
-              <select ref={statusInputRef}>
+            <div className="mx-2">
+              <select ref={statusInputRef} className="rounded-lg px-1">
                 <option value="Not Assigned">Not Assigned</option>
                 <option value="Assigned">Assigned</option>
                 <option value="Resolved">Resolved</option>
                 <option value="Any">Any</option>
               </select>
-              <button onClick={filterButtonHandler}>Find</button>
+              <button className="mx-2 rounded-lg bg-red-500 px-2 border-red-950 border-2 hover:scale-110 text-white text-sm p-[1px]" onClick={filterButtonHandler}>Find</button>
             </div>
           </div>
 
           <div className="mb-4">
             <input
-              className=" px-3 py-2 text-sm leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
+              className="px-3 py-2 mx-2 text-sm leading-tight text-gray-700 border rounded-lg shadow appearance-none focus:outline-none focus:shadow-outline"
               id="text"
               type="text"
               ref={userNameInputRef}
               placeholder="Enter full username"
             />
-            <button onClick={usernameButtonHandler}>Search</button>
+            <button className="mx-2 rounded-lg bg-red-500 px-2 border-red-950 border-2 hover:scale-110 text-white p-[3px] px-4" onClick={usernameButtonHandler}>Search</button>
           </div>
         </div>
 
