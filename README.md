@@ -1,6 +1,8 @@
 # Webster-2022: Empowering Communities, Resolving Concerns
 
-Welcome to [0π](https://github.com/Kitashi14/Webster-2022) – where technology meets community engagement! Our team is dedicated to building a robust platform that facilitates seamless communication and issue resolution within your community.
+Welcome to Compalint Box
+[0π](https://github.com/Kitashi14/Webster-2022) –
+where technology meets community engagement! Our team is dedicated to building a robust platform that facilitates seamless communication and issue resolution within your community.
 
 ## Team Members
 
@@ -51,6 +53,4 @@ Follow these simple steps to contribute or get the application up and running lo
 
 We welcome contributions from the community! Check out our [contribution guidelines](CONTRIBUTING.md) to get started.
 
-## License
 
-This project is licensed under the [MIT License](LICENSE.md).
