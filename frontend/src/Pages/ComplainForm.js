@@ -274,7 +274,7 @@ const Form = () => {
                 defaultValue={details.phonenum}
               />
             </div>
-            <input
+            {/* <input
               ref={locationXInputRef}
               className="invisible"
               type="text"
@@ -285,7 +285,7 @@ const Form = () => {
               ref={locationYInputRef}
               type="text"
               required
-            />
+            /> */}
 
             {/* <!--Forget Password --> */}
             {/* <div className="mb-6">
