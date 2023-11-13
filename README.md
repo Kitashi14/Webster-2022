@@ -1,26 +1,55 @@
-# Webster-2022
+# Webster-2022: Empowering Communities, Resolving Concerns
 
-## Complaint Box
+Welcome to [Compalint Box](https://github.com/Kitashi14/Webster-2022) –
+where technology meets community engagement! Our team is dedicated to building a robust platform that facilitates seamless communication and issue resolution within your community.
+## Team Name 0Π
+## Team Members
 
-### Team Name : [0π](https://github.com/Kitashi14/Webster-2022)
+- Sudhir Shukla
+- Rishav Raj
+- Ritik Vaidyasen
 
-### Proposed Features :
+## Features
 
-- User Login/ Signup
-- Various user profiles (residents, electrician etc)
-- One can add multiple profession
-- Standard & Custom Complaints
-- Add/Delete/Update complaints
-- Worker of different profession can select the complaint the want to take
-- Ratings on complaints by the resolve work done on them
+### 1. User-Friendly Interface
+   - Intuitive user login/signup for hassle-free onboarding.
+   - Varied user profiles catering to residents, electricians, and more.
 
-### Tech Stack :
+### 2. Effortless Complaint Management
+   - Standard & Custom Complaints tailored to diverse needs.
+   - Add, delete, and update complaints with ease.
 
-1. NODE js
-2. Tailwind
-3. HTML
-4. CSS
-5. JavaScript
-6. MongoDB
-7. ReactJS
-8. ExpressJS
+### 3. Dynamic Professional Profiles
+   - Users can add multiple professions to showcase their diverse skills.
+   - Professionals can selectively choose the complaints they want to address.
+
+### 4. Transparent Resolution Ratings
+   - Rate and review the resolution of complaints to maintain transparency.
+   - Feedback-driven improvement for continuous enhancement.
+
+### 5. Real-time Communication
+   - Inbuilt chat feature for seamless communication anytime, anywhere.
+   - Foster a sense of community through direct interaction.
+
+### 6. Location Awareness
+   - Integrated map functionality for easy location sharing.
+   - Enhance accessibility and streamline service provision.
+
+## Tech Stack
+
+- **Backend:** NODE.js, ExpressJS, MongoDB
+- **Frontend:** ReactJS, HTML, CSS (Tailwind), JavaScript
+
+## Get Started
+
+Follow these simple steps to contribute or get the application up and running locally:
+
+1. Clone the repository.
+2. Install dependencies using `npm install`.
+3. Run the application with `npm start`.
+
+## Contribution Guidelines
+
+We welcome contributions from the community! Check out our [contribution guidelines](CONTRIBUTING.md) to get started.
+
+
