@@ -1,9 +1,8 @@
 # Webster-2022: Empowering Communities, Resolving Concerns
 
-Welcome to Compalint Box
-[0π](https://github.com/Kitashi14/Webster-2022) –
+Welcome to [Compalint Box](https://github.com/Kitashi14/Webster-2022) –
 where technology meets community engagement! Our team is dedicated to building a robust platform that facilitates seamless communication and issue resolution within your community.
-
+## Team Name 0Π
 ## Team Members
 
 - Sudhir Shukla
