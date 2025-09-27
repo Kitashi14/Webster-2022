@@ -83,18 +83,8 @@ mongoose.set("strictQuery", true);
 
 const connectDB = async () => {
   try {
-    // Use MONGODB_URI from env if provided, otherwise construct from individual vars
-    let mongoUri;
-
-    if (process.env.MONGODB_URI) {
-      mongoUri = process.env.MONGODB_URI;
-    } else {
-      // Fallback to local MongoDB for development
-      mongoUri = `mongodb://localhost:27017/${env.DBNAME}`;
-      logger.warn(
-        "Using local MongoDB for development. Set MONGODB_URI for production."
-      );
-    }
+    // Use MongoDB Atlas connection
+    const mongoUri = `mongodb+srv://${process.env.DATABASE_USERNAME}:${process.env.DATABASE_PASSWORD}@complaintbox.ogds41e.mongodb.net/${process.env.DBNAME}?retryWrites=true&w=majority&appName=ComplaintBox`;
 
     const conn = await mongoose.connect(mongoUri);
 
@@ -103,8 +93,7 @@ const connectDB = async () => {
     );
   } catch (error) {
     logger.error("Database connection error:", error);
-
-    // Don't exit in development, just log the error
+    
     if (process.env.NODE_ENV === "production") {
       process.exit(1);
     } else {
@@ -112,6 +101,7 @@ const connectDB = async () => {
     }
   }
 };
+
 
 // Connect to database
 connectDB();
