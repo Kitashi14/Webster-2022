@@ -8,25 +8,33 @@ const AcceptedWorkers = (props) => {
 
   return (
     <>
-      <div className="d-flex p-4 justify-content-space-between place-content-center h-full w-full">
+      <div className="w-full">
         {props.workers.length ? (
-          props.workers.map((worker) => {
-            const imageUrl = workers.filter(
-              (data) => data.name === worker.name
-            )[0].img;
-            return (
-              <AcceptedWorker
-                item={{ ...worker, img: imageUrl }}
-                key={worker._id}
-              />
-            );
-          })
+          <div className="space-y-4">
+            {props.workers.map((worker) => {
+              const imageUrl = workers.filter(
+                (data) => data.name === worker.name
+              )[0]?.img;
+              return (
+                <div 
+                  key={worker._id}
+                  className="bg-white rounded-lg p-4 hover:shadow-md hover:bg-blue-50 transition-all duration-200 cursor-pointer"
+                >
+                  <AcceptedWorker
+                    item={{ ...worker, img: imageUrl }}
+                  />
+                </div>
+              );
+            })}
+          </div>
         ) : (
-          <>
-            <div className="container justify-center place-content-center bg-gray-200 h-56 align-middle">
-              No workers Found
+          <div className="flex items-center justify-center bg-slate-100 rounded-lg border-2 border-dashed border-slate-300 h-56">
+            <div className="text-center">
+              <div className="text-4xl mb-4">👷‍♂️</div>
+              <h3 className="text-lg font-medium text-slate-700 mb-2">No Workers Found</h3>
+              <p className="text-slate-500">No workers have shown interest in this task yet.</p>
             </div>
-          </>
+          </div>
         )}
       </div>
     </>
