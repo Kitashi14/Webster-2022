@@ -1,4 +1,4 @@
-# Prompt:
+# Prompt Template:
 Give short answers until asked otherwise and give code snippets with comments rather than explanations , for big tasks first give plan of action by giving bullet points and then after asking go point by point so as to not overwehlm with information
 
 # Project: Complaint Box
@@ -8,7 +8,6 @@ A web application that allows users to raise complaints, which are then assigned
 ## Technology Stack
 
 ### Backend
-
 *   **Runtime**: Node.js
 *   **Framework**: Express
 *   **Database**: MongoDB with Mongoose
@@ -17,7 +16,6 @@ A web application that allows users to raise complaints, which are then assigned
 *   **Other**: Nodemailer, dotenv
 
 ### Frontend
-
 *   **Framework**: React
 *   **Routing**: React Router
 *   **Mapping**: Leaflet
