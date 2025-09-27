@@ -3,7 +3,6 @@ const mongoose = require("mongoose");
 
 //Schema for workers
 const workerSchema = new mongoose.Schema({
-
   workerUsername: {
     type: String,
     required: [true, "Please enter workers username"],
@@ -14,29 +13,29 @@ const workerSchema = new mongoose.Schema({
     required: true,
   },
   workerLastName: {
-    type: String
+    type: String,
   },
   workerEmail: {
     type: String,
-    required: true
+    required: true,
   },
   workerPhonenum: {
     type: Number,
-    required:true
+    required: true,
   },
   workerAge: {
     type: Number,
-    required: true
+    required: true,
   },
   profession: {
     type: String,
     required: true,
-    maxlength: 25
+    maxlength: 25,
   },
   workerAddress: {
     type: String,
-    require: [true, "Please enter address"],
-    maxlength: 500
+    required: [true, "Please enter address"],
+    maxlength: 500,
   },
   location: {
     lat: { type: Number },
@@ -48,19 +47,18 @@ const workerSchema = new mongoose.Schema({
   },
   rating: {
     type: Number,
-    required: true
+    required: true,
   },
-  TCR:{
+  TCR: {
     type: Number,
-    required: true
+    required: true,
   },
   score: {
     type: Number,
-    required: true
+    required: true,
   },
-  acceptedWorks : []
+  acceptedWorks: [],
 });
-
 
 //exporting worker modal
 module.exports = mongoose.model("Worker", workerSchema);

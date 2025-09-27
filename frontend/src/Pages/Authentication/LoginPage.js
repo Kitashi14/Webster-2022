@@ -132,89 +132,121 @@ const LoginPage = () => {
   };
   return (
     <>
-      <div className="container mx-auto">
-        <div className="flex justify-center px-6 mt-12 ">
-          <div className="bg-white p-5 rounded-lg border-2 text-center">
-            <img
-              src="https://cdn-icons-png.flaticon.com/512/310/310818.png"
-              alt="Login Image"
-              className="inline-block rounded-full border h-[100px]"
-            />
-            <h2 className="text-3xl font-bold text-red-500 drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.8)]">
-              Log In
-            </h2>
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center px-4 sm:px-6 lg:px-8">
+        <div className="max-w-md w-full space-y-8">
+          <div className="bg-white rounded-2xl shadow-xl border border-slate-200 p-8">
+            {/* Header */}
+            <div className="text-center mb-8">
+              <div className="w-20 h-20 mx-auto mb-4 bg-gradient-to-br from-primary-500 to-primary-600 rounded-full flex items-center justify-center">
+                <svg
+                  className="w-10 h-10 text-white"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                  />
+                </svg>
+              </div>
+              <h2 className="text-3xl font-bold text-slate-900 mb-2">
+                Welcome back
+              </h2>
+              <p className="text-slate-600">
+                Sign in to your account to continue
+              </p>
+            </div>
 
-            <form className="px-6 pt-4 pb-4 bg-white rounded">
-              <div className="mb-4">
+            <form className="space-y-6">
+              {/* Email Field */}
+              <div>
                 <label
-                  className="block mb-1 text-sm font-bold text-gray-700"
+                  className="block text-sm font-medium text-slate-700 mb-2"
                   htmlFor="email"
                 >
-                  Email
+                  Email Address
                 </label>
                 <input
-                  className="w-full px-3 py-2 text-sm leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
+                  className="w-full px-4 py-3 border border-slate-300 rounded-lg bg-white text-slate-700 placeholder-slate-400 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors duration-200"
                   id="email"
                   type="email"
                   ref={emailInputRef}
-                  placeholder="Enter Email Address..."
+                  placeholder="Enter your email address"
                 />
               </div>
 
-              {/* <!--Enter Password --> */}
-              <div className="mb-6">
+              {/* Password Field */}
+              <div>
                 <label
-                  className="block mb-1 text-sm font-bold text-gray-700"
+                  className="block text-sm font-medium text-slate-700 mb-2"
                   htmlFor="password"
                 >
                   Password
                 </label>
                 <input
-                  className="w-full px-3 py-2 text-sm leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
+                  className="w-full px-4 py-3 border border-slate-300 rounded-lg bg-white text-slate-700 placeholder-slate-400 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors duration-200"
                   id="password"
                   ref={passwordInputRef}
                   type="password"
-                  placeholder="Enter password..."
+                  placeholder="Enter your password"
                 />
                 <button
-                  className="mt-2 inline-block text-sm text-blue-500 align-baseline hover:text-blue-800 font-semibold  bg-white shadow-sm"
+                  type="button"
+                  className="mt-3 text-sm text-primary-600 hover:text-primary-700 font-medium transition-colors duration-200"
                   onClick={sumbmitForgetPass}
                 >
-                  Forgot Password?
+                  Forgot your password?
                 </button>
               </div>
 
-              {/* <!-- Log iN button --> */}
-              <div className="mb-6 text-center">
-                <button
-                  className="w-full px-4 py-2 font-bold text-white bg-red-500 rounded-full hover:bg-red-700 focus:outline-none focus:shadow-outline"
-                  type="button"
-                  onClick={sumbitLoginButtonHandler}
-                >
-                  Log In
-                </button>
+              {/* Login Button */}
+              <button
+                type="button"
+                className="w-full bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 text-white font-semibold py-3 px-4 rounded-lg transition-all duration-200 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
+                onClick={sumbitLoginButtonHandler}
+              >
+                Sign In
+              </button>
+
+              {/* Divider */}
+              <div className="relative my-6">
+                <div className="absolute inset-0 flex items-center">
+                  <div className="w-full border-t border-slate-300"></div>
+                </div>
+                <div className="relative flex justify-center text-sm">
+                  <span className="px-4 bg-white text-slate-500">
+                    Or continue with
+                  </span>
+                </div>
               </div>
-              <hr className="mb-2 border-t" />
-              <div className="text-center mb-2">
-                Sign in with
-                <button
-                  className="inline-block text-sm text-blue-500 align-middle hover:text-blue-800"
-                  onClick={loginGoogleButtonHandler}
-                >
-                  <img
-                    src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Google_%22G%22_Logo.svg/2048px-Google_%22G%22_Logo.svg.png"
-                    className="h-6 rounded-full border mx-2 w-6 d-flex"
-                    alt=""
-                  />
-                </button>
-              </div>
-              <div className="text-center">
-                Create Account
+
+              {/* Google Login */}
+              <button
+                type="button"
+                className="w-full flex items-center justify-center px-4 py-3 border border-slate-300 rounded-lg bg-white hover:bg-slate-50 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
+                onClick={loginGoogleButtonHandler}
+              >
+                <img
+                  src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Google_%22G%22_Logo.svg/2048px-Google_%22G%22_Logo.svg.png"
+                  className="w-5 h-5 mr-3"
+                  alt="Google"
+                />
+                <span className="text-slate-700 font-medium">
+                  Sign in with Google
+                </span>
+              </button>
+
+              {/* Sign Up Link */}
+              <div className="text-center mt-6">
+                <span className="text-slate-600">Don't have an account? </span>
                 <Link
-                  className="ml-1  p-2 inline-block text-sm text-blue-500 align-baseline hover:text-blue-800 px-2 py-2 font-semibold bg-white   shadow-sm"
+                  className="text-primary-600 hover:text-primary-700 font-medium transition-colors duration-200"
                   to="/verifyEmail"
                 >
-                  Sign Up
+                  Sign up
                 </Link>
               </div>
             </form>

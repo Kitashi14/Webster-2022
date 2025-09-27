@@ -21,31 +21,33 @@ import { useSocket } from "./socket/socket";
 import ChatContext from "./context/chatContext";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { LoadingScreen } from "./Components/ui/Loading";
 
 function App() {
   useSocket();
   const auth = useContext(AuthContext);
   const chat = useContext(ChatContext);
 
-  const location = useLocation(); 
+  const location = useLocation();
 
   useEffect(() => {
     // execute on location change
     console.log("Location changed!", location.pathname);
-    if(!location.pathname.includes("chat")){
+    if (!location.pathname.includes("chat")) {
       chat.setChatScreenUser(null);
     }
-  }, [location,chat]);
+  }, [location, chat]);
 
   return auth.isLoading ? (
-    <> Loading....</>
+    <LoadingScreen message="Initializing Webster..." />
   ) : (
-    <><ToastContainer 
-    autoClose={1000}
-    position={toast.POSITION.BOTTOM_RIGHT}
-    hideProgressBar
-    theme="light"
-    />
+    <>
+      <ToastContainer
+        autoClose={1000}
+        position={toast.POSITION.BOTTOM_RIGHT}
+        hideProgressBar
+        theme="light"
+      />
       {!auth.isLoggedIn ? (
         <>
           <Navbar login={false} />

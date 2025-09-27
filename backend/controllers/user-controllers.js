@@ -18,14 +18,13 @@ const { removeSpaces } = require("./helper");
 //find data using email
 const getUserWithEmail = async (email) => {
   //finding user with email;
-  let existingUser;
   try {
     console.log("\n", "finding in database");
-    existingUser = await User.findOne({ email: email });
+    const existingUser = await User.findOne({ email: email });
     return existingUser;
   } catch (err) {
     console.log(err.message);
-    res.status(500).json({ error: err.message });
+    throw new Error(`Database error: ${err.message}`);
   }
 };
 
@@ -486,7 +485,7 @@ const updateUserProfilePic = async (req, res) => {
   try {
     user = await User.updateOne(
       { username: username },
-      { profilePic: profilepic }  
+      { profilePic: profilepic }
     );
   } catch (err) {
     console.log(err.message);

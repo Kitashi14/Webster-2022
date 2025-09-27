@@ -16,45 +16,58 @@ const Navbar = (props) => {
   };
   return (
     <>
-      <div className="h-1/6 drop-shadow-lg ">
-        <div
-          className={`py-2 w-full h-full bg-red-600 text-white text-xl rounded-tr-2xl  flex flex-col ${
-            auth.userName ? " items-start  pl-0 " : " items-center "
-          }justify-center`}
-        >
-          <span className="my-2 font-bold ml-4">{`User : ${auth.userName}`}</span>
-          <div className=" w-full">
-            <div class="relative w-full ">
-              <div class="absolute  inset-y-0 flex items-center pl-14 pointer-events-none">
+      <div className="bg-gradient-to-r from-primary-500 to-primary-600 shadow-lg rounded-tr-2xl">
+        <div className="px-6 py-4">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center space-x-3">
+              <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
                 <svg
-                  class="w-4 h-4 text-red-300"
-                  aria-hidden="true"
-                  xmlns="http://www.w3.org/2000/svg"
+                  className="w-5 h-5 text-white"
                   fill="none"
-                  viewBox="0 0 20 20"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
                 >
                   <path
-                    stroke="currentColor"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
                   />
                 </svg>
               </div>
-              <div className="w-full flex flex-row justify-center">
-                <input
-                  type="text"
-                  class="w-5/6 p-4 pl-10 text-sm text-white rounded-lg font-semibold placeholder:text-red-200  bg-red-500 focus:outline-none"
-                  placeholder="Search here..."
-                  onChange={searchUsers}
-                  onFocus={()=>{
-                    navigate("/chat");
-                  }}
-                  ref={searchInputRef}
-                />
+              <div>
+                <h2 className="text-white font-semibold text-lg">Messages</h2>
+                <p className="text-primary-100 text-sm">{auth.userName}</p>
               </div>
             </div>
+          </div>
+
+          <div className="relative">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <svg
+                className="w-5 h-5 text-primary-200"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                />
+              </svg>
+            </div>
+            <input
+              type="text"
+              className="w-full pl-10 pr-4 py-3 bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl text-white placeholder-primary-200 focus:outline-none focus:ring-2 focus:ring-white/30 focus:border-white/30 transition-all duration-200"
+              placeholder="Search conversations..."
+              onChange={searchUsers}
+              onFocus={() => {
+                navigate("/chat");
+              }}
+              ref={searchInputRef}
+            />
           </div>
         </div>
       </div>

@@ -3,7 +3,6 @@ const mongoose = require("mongoose");
 
 //Schema for complains
 const complainSchema = new mongoose.Schema({
-
   creatorUsername: {
     type: String,
     required: [true, "Please enter creator username"],
@@ -21,16 +20,16 @@ const complainSchema = new mongoose.Schema({
   profession: {
     type: String,
     required: true,
-    maxlength: 25
+    maxlength: 25,
   },
   address: {
     type: String,
-    require: [true, "Please enter address"],
-    maxlength: 500
+    required: [true, "Please enter address"],
+    maxlength: 500,
   },
   phonenum: {
     type: Number,
-    require: [true, "Please enter phone no."],
+    required: [true, "Please enter phone no."],
     unique: false,
   },
   location: {
@@ -45,31 +44,30 @@ const complainSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  workerUsername:{
+  workerUsername: {
     type: String,
     required: true,
   },
   acceptedWorkers: [],
-  status:{
+  status: {
     type: String,
     required: true,
   },
   rating: {
     type: Number,
-    required: true
+    required: true,
   },
   comment: {
-    type: String, 
-    maxlength: 1000
+    type: String,
+    maxlength: 1000,
   },
   resolvedDate: {
     type: Date,
   },
-  assignedDate:{
-    type: Date
-  }
+  assignedDate: {
+    type: Date,
+  },
 });
-
 
 //exporting complain modal
 module.exports = mongoose.model("Complain", complainSchema);
