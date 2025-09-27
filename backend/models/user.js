@@ -35,8 +35,8 @@ const userSchema = new mongoose.Schema({
     type: String,
     minlength: 8,
   },
-  profilePic: {
-    type: String,
+  profilePic : {
+    type : String,
   },
   address: {
     type: String,
@@ -54,7 +54,7 @@ const userSchema = new mongoose.Schema({
   },
   creationTime: {
     type: Date,
-    required: true,
+    requiredd: true,
   },
   location: {
     lat: { type: Number },
