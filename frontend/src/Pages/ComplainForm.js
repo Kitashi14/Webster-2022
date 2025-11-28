@@ -179,10 +179,6 @@ const Form = () => {
               className="h-10 w-10 inline-block rounded-full border"
               alt=""
             />
-            {/* <!-- 						<p className="mb-4 text-sm text-gray-700">
-           Enter your email address below and we'll send you a
-            link to reset your password!
-          </p>  --> */}
           </div>
 
           {/* <!-- complain  --> */}
@@ -249,12 +245,6 @@ const Form = () => {
                 <option value="select"> --Select Profession--</option>
                 {optionItems}
               </select>
-              {/* <button
-              type="dropbox" required
-              className="w-full px-3 py-2 text-sm leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
-              id="profession"
-              
-            /> */}
             </div>
 
             {/* <!-- Enter Phone no --> */}
@@ -274,31 +264,6 @@ const Form = () => {
                 defaultValue={details.phonenum}
               />
             </div>
-            {/* <input
-              ref={locationXInputRef}
-              className="invisible"
-              type="text"
-              required
-            />
-            <input
-              className="invisible"
-              ref={locationYInputRef}
-              type="text"
-              required
-            /> */}
-
-            {/* <!--Forget Password --> */}
-            {/* <div className="mb-6">
-        <Link
-          className="ml-1  p-2 inline-block text-sm text-blue-500 align-baseline hover:text-blue-800 px-2 py-2 font-semibold  bg-white shadow-sm"
-          to="/forgetPassword"
-          // onClick={forgetPassword}
-        >
-          Forget Password?
-        </Link>
-
-      </div> */}
-
             {/* <!-- Enter Description --> */}
             <div className="mb-4">
               <label
@@ -332,70 +297,11 @@ const Form = () => {
                 Register Complain
               </button>
             </div>
-            {/* <hr className="mb-6 border-t" />
-      <div className="text-center mb-2">
-        Sign in with<a
-          className="inline-block text-sm text-blue-500 align-middle hover:text-blue-800"
-          href="./register.html"
-        >
-          <img src="https://qotoqot.com/sad-animations/img/100/sigh/sigh.png" className="h-6 rounded-full border mx-2 w-6 d-flex" alt='' />
-        </a>
-      </div>
-      <div className="text-center">
-        Create Account<a
-          className="ml-1  p-2 inline-block text-sm text-blue-500 align-baseline hover:text-blue-800 px-2 py-2 font-semibold  bg-white  shadow-sm"
-          href="./index.html"
-        >
-          Sign Up
-        </a>
-      </div> */}
           </div>
         </div>
       </div>
     </div>
 
-    // <Container>
-    //       <form>
-    //         <div>
-    //           <input ref={firstNameInputRef} type="text" required />
-    //           <label>First Name</label>
-    //         </div>
-
-    //         <div>
-    //           <input ref={lastNameInputRef} type="text" />
-    //           <label>Last Name</label>
-    //         </div>
-
-    //         <div>
-    //           <input ref={ageInputRef} type="number" required />
-    //           <label>Age</label>
-    //         </div>
-
-    //         <div>
-    //           <input ref={addressInputRef} type="text" required />
-    //           <label>Address</label>
-    //         </div>
-    //         <div>
-    //           <input ref={phonenumInputRef} type="text" required />
-    //           <label>Phone No.</label>
-    //         </div>
-
-    //         <input ref={locationXInputRef} type="text" required />
-    //         <input ref={locationYInputRef} type="text" required />
-
-    //         <div>
-    //           <input ref={passwordInputRef} type="password" required />
-    //           <label>Password</label>
-    //         </div>
-
-    //         <div>
-    //           <input ref={confirmPasswordInputRef} type="password" required />
-    //           <label>Confirm Password</label>
-    //         </div>
-
-    //         <button onClick={submitButtonHandler}>Create</button>
-    //       </form>
-    //     </Container>
   );
 };
 

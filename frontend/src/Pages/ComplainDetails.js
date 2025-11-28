@@ -104,7 +104,7 @@ const ComplainDetails = () => {
         onOk={deleteComplain} 
         header={"Press OK to delete this complain"}
       />
-      {modalIsOpen && <BackDrop onCancel={closeModal} />}
+      {modalIsOpen && <BackDrop/>}
 
       <div className="min-h-screen bg-slate-50">
         {/* Header */}
