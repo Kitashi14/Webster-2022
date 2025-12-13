@@ -1,0 +1,25 @@
+<svg width="64" height="64" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background circle -->
+  <circle cx="32" cy="32" r="30" fill="#2563eb" stroke="#1d4ed8" stroke-width="2"/>
+  
+  <!-- Settings gear icon - made bigger -->
+  <g transform="translate(32, 32)">
+    <!-- Main gear body -->
+    <path d="M-12,-3 L-12,-9 L-9,-12 L9,-12 L12,-9 L12,-3 L9,0 L12,3 L12,9 L9,12 L-9,12 L-12,9 L-12,3 L-9,0 Z" fill="white"/>
+    
+    <!-- Center circle -->
+    <circle cx="0" cy="0" r="6" fill="#2563eb"/>
+    
+    <!-- Gear teeth - made bigger -->
+    <rect x="-1.5" y="-18" width="3" height="6" fill="white"/>
+    <rect x="-1.5" y="12" width="3" height="6" fill="white"/>
+    <rect x="12" y="-1.5" width="6" height="3" fill="white"/>
+    <rect x="-18" y="-1.5" width="6" height="3" fill="white"/>
+    
+    <!-- Diagonal teeth -->
+    <rect x="8" y="-12" width="3" height="4" fill="white" transform="rotate(45)"/>
+    <rect x="8" y="8" width="3" height="4" fill="white" transform="rotate(45)"/>
+    <rect x="-12" y="-12" width="3" height="4" fill="white" transform="rotate(-45)"/>
+    <rect x="-12" y="8" width="3" height="4" fill="white" transform="rotate(-45)"/>
+  </g>
+</svg>

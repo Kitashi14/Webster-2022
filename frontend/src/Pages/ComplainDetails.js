@@ -1,14 +1,15 @@
-import { useEffect, useState } from "react";
+import { useContext,useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import Modal from "../Components/ui/Modal";
 import BackDrop from "../Components/ui/Backdrop";
 import AcceptedWorkers from "../Components/AcceptedWorkers";
 import { workers } from "../Helper/Workers";
+import AuthContext from "../context/auth-context";
 
 const ComplainDetails = () => {
   const complainId = useParams().cid;
   const navigate = useNavigate();
-
+  const currentUser = useContext(AuthContext).userName;
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [details, setDetails] = useState({});
   const [isCreator, setIsCreator] = useState(false);
@@ -22,12 +23,11 @@ const ComplainDetails = () => {
             credentials: "include",
           }
         );
-
         const responseData = await response.json();
-
+        console.log("complaindettails", responseData.data.complain);
         if (response.status === 200) {
           setDetails(responseData.data.complain);
-          setIsCreator(responseData.data.isVerifiedUser);
+          setIsCreator(currentUser === responseData.data.complain.creatorUsername);
           return;
         } else if (response.status === 400) {
           alert(responseData.error);
@@ -104,7 +104,7 @@ const ComplainDetails = () => {
         onOk={deleteComplain} 
         header={"Press OK to delete this complain"}
       />
-      {modalIsOpen && <BackDrop onCancel={closeModal} />}
+      {modalIsOpen && <BackDrop/>}
 
       <div className="min-h-screen bg-slate-50">
         {/* Header */}
@@ -188,7 +188,7 @@ const ComplainDetails = () => {
 
               {/* Action Buttons */}
               <div className="mt-6 pt-6 border-t border-slate-200">
-                {isCreator ? (
+                {!isCreator ? (
                   <div className="flex justify-center">
                     <button className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors duration-200">
                       Accept Task
@@ -196,8 +196,9 @@ const ComplainDetails = () => {
                   </div>
                 ) : (
                   <div className="flex flex-col sm:flex-row gap-4 sm:justify-end">
-                    <button className="px-6 py-3 bg-slate-600 hover:bg-slate-700 text-white font-medium rounded-lg transition-colors duration-200">
-                      ✏️ Edit
+                    <button onClick={() => navigate(`/complain/edit/${complainId}`)}
+                      className="px-6 py-3 bg-slate-600 hover:bg-slate-700 text-white font-medium rounded-lg transition-colors duration-200">
+                        ✏️ Edit
                     </button>
                     <button 
                       onClick={OpenDeleteModal}
@@ -230,7 +231,7 @@ const ComplainDetails = () => {
           )}
 
           {/* Interested Workers Section */}
-          {!isCreator && (
+          {isCreator && (
             <div className="bg-white rounded-xl shadow-sm border border-slate-200">
               <div className="p-6">
                 <h2 className="text-xl font-semibold text-slate-900 mb-6">Workers Interested in This Task</h2>

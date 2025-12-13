@@ -9,6 +9,7 @@ import { SkeletonList } from "../Components/ui/Loading";
 
 const HomePage = () => {
   const [complainsData, setComplainsData] = useState([]);
+  const [filteredComplainsData, setFilteredComplainsData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
   const navigate = useNavigate();
@@ -33,6 +34,7 @@ const HomePage = () => {
         if (response.status === 200) {
           console.log("got latest complains");
           setComplainsData(responseData.data);
+          setFilteredComplainsData(responseData.data);
           setIsLoading(false);
           return;
         } else if (response.status === 400) {
@@ -56,100 +58,130 @@ const HomePage = () => {
 
   console.log("Home page entered.");
 
-  const filterButtonHandler = async () => {
-    var profession = professionInputRef.current.value;
-    var status = statusInputRef.current.value;
+  // const filterButtonHandler = async () => {
+  //   console.log("Filter button clicked",filteredComplainsData);
+  //   var profession = professionInputRef.current.value;
+  //   var status = statusInputRef.current.value;
 
-    if (status === "Any") status = null;
-    if (profession === "Any") profession = null;
-    if (status === profession) {
-      alert("Select a valid filter");
-      setfcomplain(!fcomplain);
-      return;
-    }
+  //   if (status.toLowerCase() === "any") status = null;
+  //   if (profession.toLowerCase() === "any") profession = null;
+  //   console.log("inside filter button handler", profession, status);
+  //   if (status === profession) {
+  //     alert("Select a valid filter");
+  //     setfcomplain(!fcomplain);
+  //     return;
+  //   }
 
-    try {
-      console.log("sending request to filter complain");
+  //   try {
+  //     console.log("sending request to filter complain");
 
-      const Data = {
-        profession,
-        status,
-        distance: null,
-      };
+  //     const Data = {
+  //       profession,
+  //       status,
+  //       distance: null,
+  //     };
 
-      const response = await fetch(
-        `${process.env.REACT_APP_SERVER_ROOT_URI}/api/complain/filter`,
-        {
-          method: "POST",
-          headers: {
-            "Content-type": "application/json",
-          },
-          body: JSON.stringify(Data),
-          credentials: "include",
-        }
-      );
+  //     const response = await fetch(
+  //       `${process.env.REACT_APP_SERVER_ROOT_URI}/api/complain/filter`,
+  //       {
+  //         method: "POST",
+  //         headers: {
+  //           "Content-type": "application/json",
+  //         },
+  //         body: JSON.stringify(Data),
+  //         credentials: "include",
+  //       }
+  //     );
 
-      console.log(response.status);
+  //     console.log(response.status);
 
-      const responseData = await response.json();
+  //     const responseData = await response.json();
 
-      if (response.status === 200) {
-        setComplainsData(responseData.data);
-        return;
-      } else if (response.status === 400) {
-        console.log(responseData.error);
-        alert(responseData.error);
-        setfcomplain(!fcomplain);
-        return;
-      } else {
-        throw Error("Couldn't filter complain");
-      }
-    } catch (err) {
-      console.log(err);
-      alert("Couldn't able to filter complains");
-      setfcomplain(!fcomplain);
-      return;
-    }
+  //     if (response.status === 200) {
+  //       setComplainsData(responseData.data);
+  //       return;
+  //     } else if (response.status === 400) {
+  //       console.log(responseData.error);
+  //       alert(responseData.error);
+  //       setfcomplain(!fcomplain);
+  //       return;
+  //     } else {
+  //       throw Error("Couldn't filter complain");
+  //     }
+  //   } catch (err) {
+  //     console.log(err);
+  //     alert("Couldn't able to filter complains");
+  //     setfcomplain(!fcomplain);
+  //     return;
+  //   }
+  // };
+
+  const filterButtonHandler = () => {
+    let profession = professionInputRef.current.value;
+    let status = statusInputRef.current.value;
+
+
+    if (profession.toLowerCase() === "any") profession = null;
+    if (status.toLowerCase() === "any") status = null;
+
+    const filtered = complainsData.filter(complaint => {
+      const professionMatch = profession ? complaint.profession === profession : true;
+      const statusMatch = status ? complaint.status.toLowerCase() === status.toLowerCase() : true;
+      console.log("inside filter" , profession,complaint.profession, complaint.status,status ,professionMatch,statusMatch)
+      return professionMatch && statusMatch;
+    });
+
+    setFilteredComplainsData(filtered);
   };
 
-  const usernameButtonHandler = async () => {
+
+  // const usernameButtonHandler = async () => {
+  //   const username = userNameInputRef.current.value;
+
+  //   if (username.length === 0) {
+  //     alert("Enter a username");
+  //     setfcomplain(!fcomplain);
+  //     return;
+  //   }
+
+  //   try {
+  //     console.log("sending request to filter complain of username", username);
+
+  //     const response = await fetch(
+  //       `${process.env.REACT_APP_SERVER_ROOT_URI}/api/complain/username/${username}`
+  //     );
+
+  //     console.log(response.status);
+
+  //     const responseData = await response.json();
+
+  //     if (response.status === 200) {
+  //       setComplainsData(responseData.data);
+  //       return;
+  //     } else if (response.status === 400) {
+  //       console.log(responseData.error);
+  //       alert(responseData.error);
+  //       setfcomplain(!fcomplain);
+  //       return;
+  //     } else {
+  //       throw Error("Couldn't filter complain");
+  //     }
+  //   } catch (err) {
+  //     console.log(err);
+  //     alert("Couldn't able to filter complains of user", username);
+  //     setfcomplain(!fcomplain);
+  //     return;
+  //   }
+  // };
+
+const usernameButtonHandler = () => {
     const username = userNameInputRef.current.value;
-
-    if (username.length === 0) {
-      alert("Enter a username");
-      setfcomplain(!fcomplain);
-      return;
-    }
-
-    try {
-      console.log("sending request to filter complain of username", username);
-
-      const response = await fetch(
-        `${process.env.REACT_APP_SERVER_ROOT_URI}/api/complain/username/${username}`
-      );
-
-      console.log(response.status);
-
-      const responseData = await response.json();
-
-      if (response.status === 200) {
-        setComplainsData(responseData.data);
-        return;
-      } else if (response.status === 400) {
-        console.log(responseData.error);
-        alert(responseData.error);
-        setfcomplain(!fcomplain);
-        return;
-      } else {
-        throw Error("Couldn't filter complain");
-      }
-    } catch (err) {
-      console.log(err);
-      alert("Couldn't able to filter complains of user", username);
-      setfcomplain(!fcomplain);
-      return;
-    }
-  };
+    if (username.length === 0) setFilteredComplainsData(complainsData); 
+    const filtered = complainsData.filter(complaint =>
+      complaint.creatorUsername.toLowerCase().includes(username.toLowerCase())
+    );
+    setFilteredComplainsData(filtered);
+};
 
   return (
     <>
@@ -189,20 +221,26 @@ const HomePage = () => {
                     ref={statusInputRef}
                     className="px-4 py-2 border border-slate-300 rounded-lg bg-white text-slate-700 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors duration-200 min-w-[150px]"
                   >
-                    <option value="Not Assigned">Not Assigned</option>
-                    <option value="Assigned">Assigned</option>
-                    <option value="Resolved">Resolved</option>
-                    <option value="Any">Any Status</option>
+                    <option value="not_assigned">Not Assigned</option>
+                    <option value="assigned">Assigned</option>
+                    <option value="resolved">Resolved</option>
+                    <option value="any">Any Status</option>
                   </select>
                 </div>
 
-                <div className="flex items-end">
+                <div className="flex items-end gap-4">
                   <button
                     className="px-6 py-2 bg-primary-500 hover:bg-primary-600 text-white font-medium rounded-lg transition-colors duration-200 focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
                     onClick={filterButtonHandler}
                   >
                     Apply Filters
                   </button>
+                <button
+                  className="px-6 py-2 bg-blue-500 hover:bg-blue-600 text-white font-medium rounded-lg transition-colors duration-200 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                  onClick={() => setfcomplain(!fcomplain)}
+                >
+                  Refresh
+                </button>
                 </div>
               </div>
 
@@ -234,7 +272,7 @@ const HomePage = () => {
         {isLoading ? (
           <SkeletonList count={6} />
         ) : (
-          <ComplainBoxes complains={complainsData} />
+          <ComplainBoxes complains={filteredComplainsData} />
         )}
       </div>
     </>

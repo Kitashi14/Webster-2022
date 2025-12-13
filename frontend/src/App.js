@@ -108,6 +108,7 @@ function App() {
               }
             />
             <Route exact path="/registerComplain" element={<Form />}></Route>
+            <Route exact path="/complain/edit/:cid" element={<Form />}></Route>
             <Route
               exact
               path="/complain/:cid"
