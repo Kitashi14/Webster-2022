@@ -7,7 +7,7 @@ const OnlineUsers = (props) => {
   };
   return (
     <>
-      <div className="h-1/6 w-full flex flex-col bg-red-700 justify-center">
+      <div className="h-1/6 w-full flex flex-col bg-primary-700 justify-center">
         <div className="px-4 text-white text-xl font-bold flex flex-row justify-start items-center space-x-4 overflow-x-scroll sc-hide">
           {props.users.map((data) => {
             return (
