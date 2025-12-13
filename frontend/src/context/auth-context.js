@@ -5,6 +5,7 @@ const AuthContext = createContext({
   isLoggedIn: false,
   userName: null,
   user: null,
+  isAdmin: false,
   login: (user) => {},
   logout: () => {},
   isLoading : false
@@ -15,10 +16,12 @@ export const AuthContextProvider = (props) => {
   const [isLoading,setIsLoading] = useState(false);
   const [userName, setUserName] = useState(null);
   const [user, setUser] = useState(null);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   const login = (user) => {
     setUserName(user.userName);
     setUser(user);
+    setIsAdmin(user && user.isAdmin === true);
     setIsLoggedIn(true);
   };
 
@@ -45,6 +48,7 @@ export const AuthContextProvider = (props) => {
     setIsLoggedIn(false);
     setUserName(null);
     setUser(null);
+    setIsAdmin(false);
     window.location.replace(`${process.env.REACT_APP_CLIENT_ROOT_URI}`);
   };
 
@@ -97,6 +101,7 @@ export const AuthContextProvider = (props) => {
     isLoggedIn: isLoggedIn,
     userName: userName,
     user: user,
+    isAdmin: isAdmin,
     login: login,
     logout: logout,
     isLoading
