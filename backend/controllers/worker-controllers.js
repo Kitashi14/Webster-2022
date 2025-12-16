@@ -175,24 +175,18 @@ const addWorker = async (req, res) => {
     return;
   }
 };
-
-//find worker details
 const getWorkerDetails = async (req, res, next) => {
   console.log("\nget worker details api hit");
 
   const userName = req.params.uid;
   const profession = req.params.profession;
-  console.log("\nuser id", userName);
-  console.log("\nprofession", profession);
+
 
   let login_token;
   let isVerifiedUser = false;
 
   let decoded_login_token;
-  //verifying login token
   try {
-    //accessing login token
-    console.log("\nstoring access token");
     login_token = req.cookies[process.env.LOGIN_COOKIE_NAME];
 
     if (!login_token) {
@@ -201,9 +195,7 @@ const getWorkerDetails = async (req, res, next) => {
 
     //decoding login token
     try {
-      console.log("\ndecoding login token");
       decoded_login_token = jwt.verify(login_token, process.env.JWT_SECRET);
-      console.log("\ndecoded", decoded_login_token);
       if (decoded_login_token.userName === userName) {
         isVerifiedUser = true;
       }
@@ -216,19 +208,16 @@ const getWorkerDetails = async (req, res, next) => {
   }
   console.log("\nisUserVerified", isVerifiedUser);
 
-  //fetching worker details from database
   let workerDetails;
   try {
-    console.log("\nfetching worker from database");
     workerDetails = await Worker.findOne({
       workerUsername: userName,
       profession: profession,
-    });
+    }).lean();
 
     console.log("\nfetched worker from database");
     console.log(workerDetails);
 
-    //if worker doesn't exists
     if (!workerDetails) {
       console.log("\nno worker exists with this username and profession");
       res.status(400).json({
@@ -241,20 +230,21 @@ const getWorkerDetails = async (req, res, next) => {
     const resolved = [];
     const accepted = [];
     for (let i = 0; i < arr.length; i++) {
-      let id = arr[i];
-      let complain = Complain.findById(id);
-      if (
-        complain.resolvedDate != null &&
-        complain.workerUsername == userName
-      ) {
-        resolved.push(complain);
-      } else if (
-        complain.workerUsername != "N/A" &&
-        complain.workerUsername == userName
-      ) {
-        approved.push(complain);
-      } else accepted.push(complain);
-    }
+        const id = arr[i];
+        try {
+          const complainDoc = await Complain.findById(id).lean();
+          if (!complainDoc) continue;
+          if (complainDoc.resolvedDate != null && complainDoc.workerUsername == userName) {
+            resolved.push(complainDoc);
+          } else if (complainDoc.workerUsername != "N/A" && complainDoc.workerUsername == userName) {
+            approved.push(complainDoc);
+          } else {
+            accepted.push(complainDoc);
+          }
+        } catch (err) {
+          console.log('failed to fetch complain', id, err.message);
+        }
+      }
     res.status(200).json({
       data: {
         details: workerDetails,
@@ -334,8 +324,6 @@ const deleteWorker = async (req, res) => {
         .json({ error: "no worker exist with this username and profession" });
       return;
     }
-    console.log("\ndelete from worker list succesfull");
-    console.log("deleted worker : ", worker);
     console.log(result1, result2);
     let arr = worker.acceptedWorks;
     for (let i = 0; i < arr.length; i++) {

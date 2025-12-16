@@ -13,5 +13,8 @@ router.post("/update", complainController.updateComplain);
 router.get("/latest", complainController.latestComplain);
 router.get("/getDetails/:cid", complainController.getComplainDetails);
 router.delete("/:cid", complainController.deleteComplain);
+router.post("/acceptById/:workerId/:complainId", complainController.acceptComplainById);
+router.post("/rejectById/:workerId/:complainId", complainController.workerRejectComplainById);
+router.post("/assign/:complainId/:workerId", complainController.assignComplain);
 
 module.exports = router;

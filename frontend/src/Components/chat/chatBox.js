@@ -265,7 +265,7 @@ const ChatBox = (props) => {
                       >
                         <span className="max-w-screen-md bg-gray-300 rounded-r-2xl rounded-tl-2xl rounder-bl-xs overflow-hidden">
                           <div className="w-full flex flex-row rounded pr-14  pl-6 pb-2 pt-2">
-                            <span className="w-full  break-words whitespace-pre-wrap">
+                              <span className="w-full  break-words whitespace-pre-wrap">
                               {message.message}
                             </span>
                           </div>

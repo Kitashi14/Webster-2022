@@ -3,7 +3,6 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import Modal from "../Components/ui/Modal";
 import BackDrop from "../Components/ui/Backdrop";
 import AcceptedWorkers from "../Components/AcceptedWorkers";
-import { workers } from "../Helper/Workers";
 import AuthContext from "../context/auth-context";
 
 const ComplainDetails = () => {
@@ -12,6 +11,7 @@ const ComplainDetails = () => {
   const currentUser = useContext(AuthContext).userName;
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [details, setDetails] = useState({});
+  const [acceptedWorkersList, setAcceptedWorkersList] = useState([]);
   const [isCreator, setIsCreator] = useState(false);
 
   useEffect(() => {
@@ -27,6 +27,7 @@ const ComplainDetails = () => {
         console.log("complaindettails", responseData.data.complain);
         if (response.status === 200) {
           setDetails(responseData.data.complain);
+          setAcceptedWorkersList(responseData.data.acceptedWorkersDetails || []);
           setIsCreator(currentUser === responseData.data.complain.creatorUsername);
           return;
         } else if (response.status === 400) {
@@ -49,6 +50,70 @@ const ComplainDetails = () => {
   const OpenDeleteModal = (e) => {
     e.preventDefault();
     setModalIsOpen(true);
+  };
+
+  const handleOnAssigned = async () => {
+    try {
+      const resp = await fetch(`${process.env.REACT_APP_SERVER_ROOT_URI}/api/complain/getDetails/${complainId}`, { credentials: 'include' });
+      const data = await resp.json();
+      if (resp.status === 200) {
+        setDetails(data.data.complain);
+        setAcceptedWorkersList(data.data.acceptedWorkersDetails || []);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const acceptTask = async () => {
+    try {
+      const already = (acceptedWorkersList || []).some(
+        (w) => (w.workerUsername || w.username || w.userName) === currentUser
+      );
+      if (already) {
+        alert("You have already shown interest in this task.");
+        return;
+      }
+
+      // find worker document for current user (matching username)
+      const wResp = await fetch(
+        `${process.env.REACT_APP_SERVER_ROOT_URI}/api/worker/getDetails/${currentUser}/` + details.profession,
+        { method: "GET",
+          credentials: "include" }
+      );
+      if (wResp.status !== 200) {
+        alert("You need to register as a worker for this profession to accept tasks.");
+        return;
+      }
+      const wData = await wResp.json();
+      const workerId = wData.data.details._id;
+
+      const response = await fetch(
+        `${process.env.REACT_APP_SERVER_ROOT_URI}/api/complain/acceptById/${workerId}/${complainId}`,
+        {
+          method: "POST",
+          credentials: "include",
+        }
+      );
+      const responseData = await response.json();
+      if (response.status === 200) {
+        alert("You have shown interest in this task");
+        const resp = await fetch(
+          `${process.env.REACT_APP_SERVER_ROOT_URI}/api/complain/getDetails/${complainId}`,
+          { credentials: "include" }
+        );
+        const data = await resp.json();
+        if (resp.status === 200) {
+          setDetails(data.data.complain);
+          setAcceptedWorkersList(data.data.acceptedWorkersDetails || []);
+        }
+      } else {
+        alert(responseData.error || "Failed to accept task");
+      }
+    } catch (err) {
+      console.log(err);
+      alert("Failed to accept task");
+    }
   };
 
   const closeModal = (e) => {
@@ -147,7 +212,9 @@ const ComplainDetails = () => {
                     <div className="flex items-center text-slate-600">
                       <span className="mr-3">👤</span>
                       <span className="font-medium">Username:</span>
-                      <span className="ml-2">{details.creatorUsername}</span>
+                      <Link to={`/user/${details.creatorUsername}`} className="ml-2 text-blue-600 hover:text-blue-700 font-medium">
+                        {details.creatorUsername}
+                      </Link>
                     </div>
 
                     <div className="flex items-center text-slate-600">
@@ -190,7 +257,7 @@ const ComplainDetails = () => {
               <div className="mt-6 pt-6 border-t border-slate-200">
                 {!isCreator ? (
                   <div className="flex justify-center">
-                    <button className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors duration-200">
+                    <button onClick={acceptTask} className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors duration-200">
                       Accept Task
                     </button>
                   </div>
@@ -220,7 +287,7 @@ const ComplainDetails = () => {
                 <div className="flex items-center justify-between p-4 bg-green-50 rounded-lg border border-green-200">
                   <span className="text-green-800 font-medium">{details.workerUsername}</span>
                   <Link 
-                    to={`/workers/${details.workerUsername}`}
+                    to={`/user/${details.workerUsername}`}
                     className="text-green-600 hover:text-green-700 font-medium"
                   >
                     View Profile
@@ -235,7 +302,12 @@ const ComplainDetails = () => {
             <div className="bg-white rounded-xl shadow-sm border border-slate-200">
               <div className="p-6">
                 <h2 className="text-xl font-semibold text-slate-900 mb-6">Workers Interested in This Task</h2>
-                <AcceptedWorkers workers={workers} />
+                <AcceptedWorkers
+                  workers={acceptedWorkersList}
+                  complainId={complainId}
+                  complainDetails={details}
+                  onAssigned={handleOnAssigned}
+                />
               </div>
             </div>
           )}
