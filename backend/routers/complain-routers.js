@@ -16,5 +16,6 @@ router.delete("/:cid", complainController.deleteComplain);
 router.post("/acceptById/:workerId/:complainId", complainController.acceptComplainById);
 router.post("/rejectById/:workerId/:complainId", complainController.workerRejectComplainById);
 router.post("/assign/:complainId/:workerId", complainController.assignComplain);
+router.post("/close", complainController.closeComplain);
 
 module.exports = router;

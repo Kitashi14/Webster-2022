@@ -10,6 +10,9 @@ const ComplainDetails = () => {
   const navigate = useNavigate();
   const currentUser = useContext(AuthContext).userName;
   const [modalIsOpen, setModalIsOpen] = useState(false);
+  const [resolveModalOpen, setResolveModalOpen] = useState(false);
+  const [resolveRating, setResolveRating] = useState(5);
+  const [resolveComment, setResolveComment] = useState("");
   const [details, setDetails] = useState({});
   const [acceptedWorkersList, setAcceptedWorkersList] = useState([]);
   const [isCreator, setIsCreator] = useState(false);
@@ -51,7 +54,6 @@ const ComplainDetails = () => {
     e.preventDefault();
     setModalIsOpen(true);
   };
-
   const handleOnAssigned = async () => {
     try {
       const resp = await fetch(`${process.env.REACT_APP_SERVER_ROOT_URI}/api/complain/getDetails/${complainId}`, { credentials: 'include' });
@@ -70,6 +72,10 @@ const ComplainDetails = () => {
       const already = (acceptedWorkersList || []).some(
         (w) => (w.workerUsername || w.username || w.userName) === currentUser
       );
+      if (details.workerUsername) {
+        alert("This task has already been assigned to a worker.");
+        return;
+      }
       if (already) {
         alert("You have already shown interest in this task.");
         return;
@@ -160,7 +166,6 @@ const ComplainDetails = () => {
         return "bg-gray-100 text-gray-800";
     }
   };
-
   return (
     <>
       <Modal 
@@ -262,6 +267,17 @@ const ComplainDetails = () => {
                     </button>
                   </div>
                 ) : (
+                  details.workerUsername ? (
+                    <div className="flex flex-col sm:flex-row gap-4 sm:justify-end">
+                    <button 
+                      onClick={() => {}}
+                      className="px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg transition-colors duration-200 flex items-center gap-2"
+                    >
+                      <span className="text-white font-semibold">Resolve</span>
+                      <span className="text-white">✓</span>
+                    </button>
+                  </div>
+                  ) : (
                   <div className="flex flex-col sm:flex-row gap-4 sm:justify-end">
                     <button onClick={() => navigate(`/complain/edit/${complainId}`)}
                       className="px-6 py-3 bg-slate-600 hover:bg-slate-700 text-white font-medium rounded-lg transition-colors duration-200">
@@ -274,7 +290,7 @@ const ComplainDetails = () => {
                       🗑️ Delete
                     </button>
                   </div>
-                )}
+                ))}
               </div>
             </div>
           </div>
@@ -285,7 +301,9 @@ const ComplainDetails = () => {
               <div className="p-6">
                 <h2 className="text-xl font-semibold text-slate-900 mb-4">Assigned Worker</h2>
                 <div className="flex items-center justify-between p-4 bg-green-50 rounded-lg border border-green-200">
-                  <span className="text-green-800 font-medium">{details.workerUsername}</span>
+                  <span className="text-green-800 font-medium flex items-center gap-2">
+                    {details.workerUsername}
+                  </span>
                   <Link 
                     to={`/user/${details.workerUsername}`}
                     className="text-green-600 hover:text-green-700 font-medium"
@@ -298,7 +316,7 @@ const ComplainDetails = () => {
           )}
 
           {/* Interested Workers Section */}
-          {isCreator && (
+          {(isCreator && !details.workerUsername) && (
             <div className="bg-white rounded-xl shadow-sm border border-slate-200">
               <div className="p-6">
                 <h2 className="text-xl font-semibold text-slate-900 mb-6">Workers Interested in This Task</h2>
