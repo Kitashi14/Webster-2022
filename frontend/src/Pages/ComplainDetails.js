@@ -271,7 +271,7 @@ const ComplainDetails = () => {
                   details.workerUsername && details.workerUsername !== "N/A" ? (
                     <div className="flex flex-col sm:flex-row gap-4 sm:justify-end">
                     <button 
-                      onClick={() => {}}
+                      onClick={() => navigate(`/complain/resolve/${complainId}`)}
                       className="px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg transition-colors duration-200 flex items-center gap-2"
                     >
                       <span className="text-white font-semibold">Resolve</span>

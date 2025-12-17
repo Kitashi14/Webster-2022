@@ -448,8 +448,11 @@ const Profile = () => {
                             <h3 className="font-semibold text-slate-800 group-hover:text-primary-600 transition-colors duration-200">
                               {data.workerProfession}
                             </h3>
-                            <p className="text-sm text-slate-500">
-                              Professional Service
+                            <p className="text-sm text-slate-500 flex items-center gap-2">
+                              <span>Professional Service</span>
+                              {data.workerId ? (
+                                <span className="text-slate-500">No rating yet</span>
+                              ) : null}
                             </p>
                           </div>
                         </div>

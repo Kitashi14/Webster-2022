@@ -13,6 +13,7 @@ import ResetPage from "./Pages/Authentication/ResetPage";
 import About from "./Pages/AboutUs";
 import Form from "./Pages/ComplainForm";
 import ComplainDetails from "./Pages/ComplainDetails";
+import ResolveComplain from "./Pages/ResolveComplain";
 import Profile from "./Pages/Profile";
 import WorkerProfile from "./Pages/WorkerProfile";
 import Page404 from "./Pages/Page404";
@@ -114,6 +115,7 @@ function App() {
               path="/complain/:cid"
               element={<ComplainDetails />}
             ></Route>
+            <Route exact path="/complain/resolve/:cid" element={<ResolveComplain />}></Route>
             <Route exact path="/user/:uid" element={<Profile />}></Route>
             <Route
               exact

@@ -638,21 +638,62 @@ const workerRejectComplainById = async (req, res) => {
 const closeComplain = async (req, res) => {
   try {
     const id = req.body.id;
-    const rating = req.body.rating;
-    const comment = req.body.comment;
-    const resolvedDate = req.body.resolvedDate;
+    const rating = Number(req.body.rating) || 0;
+    const comment = req.body.comment || "";
+    const resolvedDate = req.body.resolvedDate || Date.now();
+
+    const complain = await Complain.findById(id);
+    if (!complain) {
+      return res.status(400).json({ error: "Complain doesn't exists" });
+    }
+    let login_token;
+    try {
+      login_token = req.cookies[process.env.LOGIN_COOKIE_NAME];
+      if (!login_token) {
+        return res.status(400).json({ error: 'Please login to close complain' });
+      }
+    } catch (err) {
+      return res.status(400).json({ error: 'Please login to close complain' });
+    }
+
+    let decoded_login_token;
+    try {
+      decoded_login_token = jwt.verify(login_token, process.env.JWT_SECRET);
+    } catch (err) {
+      console.log('failed to decode token', err.message);
+      return res.status(500).json({ error: 'Failed to verify login token' });
+    }
+
+    const currentUser = decoded_login_token.userName;
+    const isAdmin = decoded_login_token.isAdmin === true;
+
+
+    if (!isAdmin && currentUser !== complain.creatorUsername) {
+      return res.status(403).json({ error: 'Not authorized to close this complain' });
+    }
+
     let res1 = await Complain.findByIdAndUpdate(id, {
       status: "resolved",
       rating: rating,
       comment: comment,
       resolvedDate: resolvedDate,
     });
-    const workerUsername = res1.workerUsername;
-    let res2 = await Woker.findOne({ workerUsername: workerUsername });
-    res2.TCR = res2.TCR + 1;
-    res2.score = res2.score + rating;
-    res2.rating = res2.score / res2.TCR;
-    await res2.save();
+
+    const workerUsername = res1 && res1.workerUsername;
+    if (workerUsername && workerUsername !== 'N/A') {
+      try {
+        let res2 = await Worker.findOne({ workerUsername: workerUsername });
+        if (res2) {
+          res2.TCR = (res2.TCR || 0) + 1;
+          res2.score = (res2.score || 0) + rating;
+          res2.rating = res2.score / res2.TCR;
+          await res2.save();
+        }
+      } catch (err) {
+        console.log('failed to update worker ratings', err.message);
+      }
+    }
+
     res.status(200).json({ data: res1, message: "complain closed" });
   } catch (err) {
     console.log(err.message);

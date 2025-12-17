@@ -19,17 +19,6 @@ const Form = () => {
   const addressInputRef = useRef();
   const phonenumInputRef = useRef();
   const [details, setDetails] = useState({});
-  // const [details, setDetails] = useState({
-  //   title: "",
-  //   description: "",
-  //   profession: "",
-  //   address: "",
-  //   location: {
-  //     lat: "",
-  //     lng: "",
-  //   },
-  //   phonenum: "",
-  // });
   const [isEditMode, setIsEditMode] = useState(complainId ? true : false);
 
   useEffect(() => {
@@ -238,80 +227,6 @@ const submitButtonHandler = async (event) => {
   }
 };
 
-
-
-  // const submitButtonHandler = async (event) => {
-  //   event.preventDefault();
-
-  //   const title = titleInputRef.current.value;
-  //   const description = descriptionInputRef.current.value;
-  //   const address = addressInputRef.current.value;
-  //   const phonenum = phonenumInputRef.current.value;
-  //   const profession = professionInputRef.current.value;
-
-  //   if (title.length === 0) alert("Enter a title");
-  //   else if (description.length > 1000) alert("Description too long");
-  //   else if (profession === "select") alert("Select a profession");
-  //   else if (phonenum.length !== 10) alert("Phone no. should be of 10 digits");
-  //   else if (address.length < 5) alert("Enter a valid address");
-  //   else if (address.length > 500) alert("Address too long");
-  //   else {
-  //     const coordinates = submitCooridnates(lat, long);
-  //     if (!coordinates) return;
-  //     const locationX = coordinates.lat;
-  //     const locationY = coordinates.long;
-  //     const creationTime = new Date(Date.now());
-
-  //     const data = {
-  //       title,
-  //       description,
-  //       profession,
-  //       address,
-  //       phonenum,
-  //       locationX,
-  //       locationY,
-  //       creationTime,
-  //     };
-  //     console.log(data);
-  //     try {
-  //       console.log("got complain data");
-  //       const complainData = JSON.stringify(data);
-
-  //       const response = await fetch(
-  //         `${process.env.REACT_APP_SERVER_ROOT_URI}/api/complain/add`,
-  //         {
-  //           method: "POST",
-  //           headers: {
-  //             "Content-type": "application/json",
-  //           },
-  //           body: complainData,
-  //           credentials: "include",
-  //         }
-  //       );
-
-  //       const responseData = await response.json();
-  //       console.log("response status:", response.status);
-
-  //       if (response.status === 200) {
-  //         console.log(responseData.message);
-  //         alert("Complain added");
-  //         // navigate(`/complain/${responseData.data.complainId}`);
-  //         navigate("/");
-  //         return;
-  //       } else if (response.status === 422) {
-  //         console.log(responseData.error);
-  //         alert(responseData.error);
-  //       } else {
-  //         console.log(responseData.error);
-  //         alert("Looks like there is some issue.");
-  //       }
-  //     } catch (err) {
-  //       console.log(err);
-  //       alert("Failed to register complain");
-  //       return;
-  //     }
-  //   }
-  // };
 
   let optionItems = profession.map((item) => (
     <option value={item.name} key={item.name}>
