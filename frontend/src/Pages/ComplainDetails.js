@@ -10,10 +10,8 @@ const ComplainDetails = () => {
   const navigate = useNavigate();
   const currentUser = useContext(AuthContext).userName;
   const [modalIsOpen, setModalIsOpen] = useState(false);
-  const [resolveModalOpen, setResolveModalOpen] = useState(false);
-  const [resolveRating, setResolveRating] = useState(5);
-  const [resolveComment, setResolveComment] = useState("");
   const [details, setDetails] = useState({});
+  const [resolved, setResolved] = useState(false);
   const [acceptedWorkersList, setAcceptedWorkersList] = useState([]);
   const [isCreator, setIsCreator] = useState(false);
 
@@ -31,6 +29,7 @@ const ComplainDetails = () => {
         if (response.status === 200) {
           setDetails(responseData.data.complain);
           setAcceptedWorkersList(responseData.data.acceptedWorkersDetails || []);
+          setResolved(responseData.data.complain.status.toLowerCase() === "resolved");
           setIsCreator(currentUser === responseData.data.complain.creatorUsername);
           return;
         } else if (response.status === 400) {
@@ -60,6 +59,7 @@ const ComplainDetails = () => {
       const data = await resp.json();
       if (resp.status === 200) {
         setDetails(data.data.complain);
+        setResolved(data.data.complain.status.toLowerCase() === "resolved");
         setAcceptedWorkersList(data.data.acceptedWorkersDetails || []);
       }
     } catch (err) {
@@ -72,7 +72,7 @@ const ComplainDetails = () => {
       const already = (acceptedWorkersList || []).some(
         (w) => (w.workerUsername || w.username || w.userName) === currentUser
       );
-      if (details.workerUsername) {
+      if (details.workerUsername && details.workerUsername !== "N/A") {
         alert("This task has already been assigned to a worker.");
         return;
       }
@@ -258,7 +258,8 @@ const ComplainDetails = () => {
                 </div>
               </div>
 
-              {/* Action Buttons */}
+             {/* Action Buttons */}
+              {!resolved && (
               <div className="mt-6 pt-6 border-t border-slate-200">
                 {!isCreator ? (
                   <div className="flex justify-center">
@@ -267,7 +268,7 @@ const ComplainDetails = () => {
                     </button>
                   </div>
                 ) : (
-                  details.workerUsername ? (
+                  details.workerUsername && details.workerUsername !== "N/A" ? (
                     <div className="flex flex-col sm:flex-row gap-4 sm:justify-end">
                     <button 
                       onClick={() => {}}
@@ -292,11 +293,11 @@ const ComplainDetails = () => {
                   </div>
                 ))}
               </div>
+              )}
             </div>
           </div>
-
           {/* Assigned Worker Section */}
-          {details.workerUsername && (
+          {(details.workerUsername && details.workerUsername !== "N/A") && (
             <div className="bg-white rounded-xl shadow-sm border border-slate-200 mb-8">
               <div className="p-6">
                 <h2 className="text-xl font-semibold text-slate-900 mb-4">Assigned Worker</h2>
@@ -316,7 +317,7 @@ const ComplainDetails = () => {
           )}
 
           {/* Interested Workers Section */}
-          {(isCreator && !details.workerUsername) && (
+          {(isCreator && (!details.workerUsername || details.workerUsername === "N/A")) && (
             <div className="bg-white rounded-xl shadow-sm border border-slate-200">
               <div className="p-6">
                 <h2 className="text-xl font-semibold text-slate-900 mb-6">Workers Interested in This Task</h2>
@@ -326,6 +327,29 @@ const ComplainDetails = () => {
                   complainDetails={details}
                   onAssigned={handleOnAssigned}
                 />
+              </div>
+            </div>
+          )}
+
+          {/*comment and rating Section*/}
+          {resolved && (
+            <div className="bg-white rounded-xl shadow-sm border border-slate-200">
+              <div className="p-6">
+                <h2 className="text-xl font-semibold text-slate-900 mb-6">Comments and Rating</h2>
+                <div className="flex flex-col space-y-4">
+                  {details.comment ? (
+                    <>
+                      <div className="p-4 bg-slate-50 rounded-lg border border-slate-200">
+                        <p className="text-slate-700">{details.comment}</p>
+                      </div>
+                      <div className="text-yellow-600 font-medium">
+                        ⭐ Rating: {details.rating} / 5
+                      </div>
+                    </>
+                  ) : (
+                    <p className="text-slate-500">No comments or ratings available for this task.</p>
+                  )}
+                </div>
               </div>
             </div>
           )}

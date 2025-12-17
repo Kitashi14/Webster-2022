@@ -58,64 +58,6 @@ const HomePage = () => {
 
   console.log("Home page entered.");
 
-  // const filterButtonHandler = async () => {
-  //   console.log("Filter button clicked",filteredComplainsData);
-  //   var profession = professionInputRef.current.value;
-  //   var status = statusInputRef.current.value;
-
-  //   if (status.toLowerCase() === "any") status = null;
-  //   if (profession.toLowerCase() === "any") profession = null;
-  //   console.log("inside filter button handler", profession, status);
-  //   if (status === profession) {
-  //     alert("Select a valid filter");
-  //     setfcomplain(!fcomplain);
-  //     return;
-  //   }
-
-  //   try {
-  //     console.log("sending request to filter complain");
-
-  //     const Data = {
-  //       profession,
-  //       status,
-  //       distance: null,
-  //     };
-
-  //     const response = await fetch(
-  //       `${process.env.REACT_APP_SERVER_ROOT_URI}/api/complain/filter`,
-  //       {
-  //         method: "POST",
-  //         headers: {
-  //           "Content-type": "application/json",
-  //         },
-  //         body: JSON.stringify(Data),
-  //         credentials: "include",
-  //       }
-  //     );
-
-  //     console.log(response.status);
-
-  //     const responseData = await response.json();
-
-  //     if (response.status === 200) {
-  //       setComplainsData(responseData.data);
-  //       return;
-  //     } else if (response.status === 400) {
-  //       console.log(responseData.error);
-  //       alert(responseData.error);
-  //       setfcomplain(!fcomplain);
-  //       return;
-  //     } else {
-  //       throw Error("Couldn't filter complain");
-  //     }
-  //   } catch (err) {
-  //     console.log(err);
-  //     alert("Couldn't able to filter complains");
-  //     setfcomplain(!fcomplain);
-  //     return;
-  //   }
-  // };
-
   const filterButtonHandler = () => {
     let profession = professionInputRef.current.value;
     let status = statusInputRef.current.value;
@@ -133,46 +75,6 @@ const HomePage = () => {
 
     setFilteredComplainsData(filtered);
   };
-
-
-  // const usernameButtonHandler = async () => {
-  //   const username = userNameInputRef.current.value;
-
-  //   if (username.length === 0) {
-  //     alert("Enter a username");
-  //     setfcomplain(!fcomplain);
-  //     return;
-  //   }
-
-  //   try {
-  //     console.log("sending request to filter complain of username", username);
-
-  //     const response = await fetch(
-  //       `${process.env.REACT_APP_SERVER_ROOT_URI}/api/complain/username/${username}`
-  //     );
-
-  //     console.log(response.status);
-
-  //     const responseData = await response.json();
-
-  //     if (response.status === 200) {
-  //       setComplainsData(responseData.data);
-  //       return;
-  //     } else if (response.status === 400) {
-  //       console.log(responseData.error);
-  //       alert(responseData.error);
-  //       setfcomplain(!fcomplain);
-  //       return;
-  //     } else {
-  //       throw Error("Couldn't filter complain");
-  //     }
-  //   } catch (err) {
-  //     console.log(err);
-  //     alert("Couldn't able to filter complains of user", username);
-  //     setfcomplain(!fcomplain);
-  //     return;
-  //   }
-  // };
 
 const usernameButtonHandler = () => {
     const username = userNameInputRef.current.value;
@@ -223,7 +125,6 @@ const usernameButtonHandler = () => {
                   >
                     <option value="not_assigned">Not Assigned</option>
                     <option value="assigned">Assigned</option>
-                    <option value="resolved">Resolved</option>
                     <option value="any">Any Status</option>
                   </select>
                 </div>

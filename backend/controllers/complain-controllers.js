@@ -17,10 +17,9 @@ const latestComplain = async (req, res, next) => {
   try {
     console.log("\nfetching latest complains");
 
-    //fetching latest complains from database
-    latestComplains = await Complain.find({})
+      latestComplains = await Complain.find({ status: { $not: { $regex: '^resolved$', $options: 'i' } } })
       .sort({ creationTime: -1 })
-      .limit(20);
+      .limit(50);
     console.log("\ngot latest complains");
     console.log("\nsent latest complains");
     res.status(200).json({ data: latestComplains });
