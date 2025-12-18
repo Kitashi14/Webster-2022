@@ -21,6 +21,7 @@ const Profile = () => {
 
   const [details, setDetails] = useState({});
   const [userProfessions, setUserProfessions] = useState([]);
+  const [workerDetailsMap, setWorkerDetailsMap] = useState({});
   const [regComplains, setRegComplains] = useState([]);
   const [resComplains, setResComplains] = useState([]);
   const [assComplains, setAssComplains] = useState([]);
@@ -68,13 +69,47 @@ const Profile = () => {
         console.log("Hello");
 
         if (response.status === 200) {
-          setRegComplains(responseData.data.regComplains);
-          setDetails(responseData.data.userDetails);
+          const userDetails = responseData.data.userDetails || {};
+          const professions = userDetails.professions || [];
+
+          setRegComplains(responseData.data.regComplains || []);
+          setDetails(userDetails);
           setIsOwner(responseData.data.isVerifiedUser);
-          setRegComplains(responseData.data.regComplains);
-          setResComplains(responseData.data.resComplains);
-          setAssComplains(responseData.data.assComplains);
-          setUserProfessions(responseData.data.userDetails.professions);
+          setRegComplains(responseData.data.regComplains || []);
+          setResComplains(responseData.data.resComplains || []);
+          setAssComplains(responseData.data.assComplains || []);
+          setUserProfessions(professions);
+
+          (async () => {
+            try {
+              const map = {};
+              const fetchFor = async (entry) => {
+                if (!entry) return null;
+                try {
+                  const res = await fetch(
+                    `${process.env.REACT_APP_SERVER_ROOT_URI}/api/worker/getDetails/${userName}/${encodeURIComponent(entry.workerProfession)}`,
+                    { credentials: "include" }
+                  );
+                  if (res.status === 200) {
+                    const d = await res.json();
+                    // controller returns data.details
+                    const details = d.data?.details || d.data || {};
+                    return { key: `${userName}|${entry.workerProfession}`, data: details };
+                  }
+                } catch (err) {
+                  console.log("worker details fetch failed", entry, err);
+                }
+                return null;
+              };
+
+              const promises = professions.map((p) => fetchFor(p));
+              const results = await Promise.all(promises);
+              for (const r of results) if (r) map[r.key] = r.data;
+              setWorkerDetailsMap(map);
+            } catch (err) {
+              console.log("failed to fetch worker details map", err);
+            }
+          })();
         } else if (response.status === 400) {
           alert(responseData.error);
           navigate("/");
@@ -91,6 +126,7 @@ const Profile = () => {
 
     fetchProfileDetails();
   }, [userName, navigate, render]);
+
   console.log(isLoading);
 
   const addProfessionButtonHandler = async () => {
@@ -450,9 +486,16 @@ const Profile = () => {
                             </h3>
                             <p className="text-sm text-slate-500 flex items-center gap-2">
                               <span>Professional Service</span>
-                              {data.workerId ? (
-                                <span className="text-slate-500">No rating yet</span>
-                              ) : null}
+                              {(() => {
+                                const key = `${userName}|${data.workerProfession}`;
+                                const wd = workerDetailsMap[key];
+                                const ratingFromMap = wd && (wd.rating || wd.avgRating || wd.score || wd.TCR);
+                                const rating = ratingFromMap ?? data.rating ?? data.workerRating ?? data.score ?? data.TCR;
+                                if (rating || rating === 0) {
+                                  return <span className="text-slate-700 font-medium">{Number(rating).toFixed(1)} ⭐</span>;
+                                }
+                                return <span className="text-slate-500">No rating yet</span>;
+                              })()}
                             </p>
                           </div>
                         </div>

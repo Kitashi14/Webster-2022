@@ -33,7 +33,7 @@ const WorkerProfile = () => {
         const responseData = await response.json();
         console.log(responseData);
         if (response.status === 200) {
-          setDetails(responseData.data.details);
+          setDetails(responseData.data.details || {});
           setIsOwner(responseData.data.isVerifiedUser);
           return;
         } else if (response.status === 400) {
@@ -160,6 +160,16 @@ const WorkerProfile = () => {
                       d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2-2v2m8 0V6a2 2 0 012 2v6a2 2 0 01-2 2H6a2 2 0 01-2-2V8a2 2 0 012-2V6"
                     />
                   </svg>
+                </div>
+                <div className="ml-4 text-right text-white">
+                  <div className="text-sm">{details.workerFirstName || username}</div>
+                  <div className="text-lg font-semibold mt-1">
+                    {details.rating || details.score || 0} ⭐
+                  </div>
+                  <div className="text-xs mt-1">
+                    <span className="mr-2">Resolved: {details.TCR ?? 0}</span>
+                    <span>Score: {details.score ?? 0}</span>
+                  </div>
                 </div>
               </div>
             </div>
