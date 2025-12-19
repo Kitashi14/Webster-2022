@@ -359,7 +359,7 @@ const submitButtonHandler = async (event) => {
             <div className="mb-2 text-center">
               <button
                 onClick={submitButtonHandler}
-                className="w-full px-4 py-2 font-bold text-white bg-red-500 rounded-full hover:bg-red-700 focus:outline focus:shadow-outline "
+                className="w-full px-4 py-2 font-bold text-white bg-primary-500 rounded-full hover:bg-primary-700 focus:outline focus:shadow-outline "
                 type="button"
               >
                 {isEditMode ? "Update Complain" : "Submit Complain"}

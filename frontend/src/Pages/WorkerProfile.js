@@ -214,7 +214,7 @@ const WorkerProfile = () => {
                     {!isOwner && (
                       <Link
                         to={`/chat/${username}`}
-                        className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-primary-600 to-primary-700 text-white font-semibold rounded-lg shadow-md hover:shadow-lg transform hover:scale-[1.02] transition-all duration-200"
+                        className="inline-flex items-center justify-center gap-2 px-6 py-3 min-w-[220px] bg-gradient-to-r from-primary-600 to-primary-700 text-white font-semibold rounded-lg shadow-md hover:shadow-lg transform hover:scale-[1.02] transition-all duration-200"
                       >
                         <svg
                           className="w-5 h-5"
@@ -257,7 +257,7 @@ const WorkerProfile = () => {
 
                     <Link
                       to={`/user/${username}`}
-                      className="inline-flex items-center gap-2 px-6 py-3 bg-slate-100 text-slate-700 font-semibold rounded-lg hover:bg-slate-200 transition-all duration-200"
+                      className="inline-flex items-center justify-center gap-2 px-6 py-3 min-w-[220px] bg-gradient-to-r from-primary-600 to-primary-700 text-white font-semibold rounded-lg shadow-md hover:shadow-lg transform hover:scale-[1.02] transition-all duration-200"
                     >
                       <svg
                         className="w-5 h-5"
