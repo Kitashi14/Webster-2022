@@ -241,9 +241,9 @@ const submitButtonHandler = async (event) => {
         <div className="w-1/2 bg-white p-5 rounded-lg border ">
           <div className="px-8 mb-4 text-center">
             <img
-              src="https://w7.pngwing.com/pngs/178/595/png-transparent-user-profile-computer-icons-login-user-avatars.png"
-              className="h-10 w-10 inline-block rounded-full border"
-              alt=""
+                src="/settings-icon.svg"
+                className="h-20 w-20 inline-block rounded-full border-2 mx-auto"
+              alt="Complaint Box"
             />
           </div>
 
