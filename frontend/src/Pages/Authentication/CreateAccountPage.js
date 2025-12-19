@@ -126,214 +126,218 @@ const CreateAccountPage = () => {
 
   return (
     <>
-      <div className="container mx-auto">
-        <div className="flex justify-center px-6 my-12 ">
-          {/* <!-- Col --> */}
-          <div className="w-1/2 bg-white p-5 rounded-lg border ">
-            <div className="px-8 mb-4 text-center">
-              <img
-                src="https://w7.pngwing.com/pngs/178/595/png-transparent-user-profile-computer-icons-login-user-avatars.png"
-                className="h-10 w-10 inline-block rounded-full border"
-                alt=""
-              />
-              {/* <!-- 						<p className="mb-4 text-sm text-gray-700">
-							 Enter your email address below and we'll send you a
-								link to reset your password!
-							</p>  --> */}
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 py-12 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-2xl mx-auto">
+          <div className="bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden">
+            {/* Header */}
+            <div className="bg-gradient-to-r from-primary-500 to-primary-600 px-8 py-6 text-center">
+              <div className="w-20 h-20 mx-auto mb-4 bg-white/20 rounded-full flex items-center justify-center">
+                <svg
+                  className="w-10 h-10 text-white"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"
+                  />
+                </svg>
+              </div>
+              <h2 className="text-3xl font-bold text-white mb-2">
+                Create Account
+              </h2>
+              <p className="text-primary-100">
+                Join Webster to connect with skilled workers
+              </p>
             </div>
+            <form className="p-8 space-y-6">
+              {/* Personal Information Section */}
+              <div className="space-y-6">
+                <h3 className="text-lg font-semibold text-slate-900 mb-4">
+                  Personal Information
+                </h3>
 
-            {/* <!-- Login  --> */}
-            <div className="px-8 mb-4 text-center">
-              <h2 className="pt-4 mb-2 text-2xl">Create Account</h2>
-              {/* <!-- 							<p className="mb-4 text-sm text-gray-700">
-							 Enter your email address below and we'll send you a
-								link to reset your password!
-							</p> --> */}
-            </div>
-            <div className="px-8 pt-6 pb-8 mb-4 bg-white rounded">
-              {/* <!-- Enter Name --> */}
-              <div className="mb-4">
-                <label
-                  className="block mb-2 text-sm font-bold text-gray-700"
-                  htmlFor="email"
-                >
-                  First Name
-                </label>
-                <input
-                  ref={firstNameInputRef}
-                  type="text"
-                  required
-                  className="w-full px-3 py-2 text-sm leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
-                  id="firstname"
-                  placeholder="Enter your first name..."
-                />
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label
+                      className="block text-sm font-medium text-slate-700 mb-2"
+                      htmlFor="firstname"
+                    >
+                      First Name *
+                    </label>
+                    <input
+                      ref={firstNameInputRef}
+                      type="text"
+                      required
+                      className="w-full px-4 py-3 border border-slate-300 rounded-lg bg-white text-slate-700 placeholder-slate-400 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors duration-200"
+                      id="firstname"
+                      placeholder="Enter your first name"
+                    />
+                  </div>
+
+                  <div>
+                    <label
+                      className="block text-sm font-medium text-slate-700 mb-2"
+                      htmlFor="lastname"
+                    >
+                      Last Name
+                    </label>
+                    <input
+                      ref={lastNameInputRef}
+                      type="text"
+                      className="w-full px-4 py-3 border border-slate-300 rounded-lg bg-white text-slate-700 placeholder-slate-400 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors duration-200"
+                      id="lastname"
+                      placeholder="Enter your last name"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label
+                      className="block text-sm font-medium text-slate-700 mb-2"
+                      htmlFor="age"
+                    >
+                      Age *
+                    </label>
+                    <input
+                      ref={ageInputRef}
+                      type="number"
+                      required
+                      min="5"
+                      max="140"
+                      className="w-full px-4 py-3 border border-slate-300 rounded-lg bg-white text-slate-700 placeholder-slate-400 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors duration-200"
+                      id="age"
+                      placeholder="Enter your age"
+                    />
+                  </div>
+
+                  <div>
+                    <label
+                      className="block text-sm font-medium text-slate-700 mb-2"
+                      htmlFor="phoneNo"
+                    >
+                      Phone Number *
+                    </label>
+                    <input
+                      ref={phonenumInputRef}
+                      type="tel"
+                      required
+                      className="w-full px-4 py-3 border border-slate-300 rounded-lg bg-white text-slate-700 placeholder-slate-400 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors duration-200"
+                      id="phoneNo"
+                      placeholder="Enter 10-digit phone number"
+                    />
+                  </div>
+                </div>
               </div>
 
-              {/* <!-- Enter Last Name btn --> */}
-              <div className="mb-4">
-                <label
-                  className="block mb-2 text-sm font-bold text-gray-700"
-                  htmlFor="email"
-                >
-                  Last Name
-                </label>
-                <input
-                  ref={lastNameInputRef}
-                  type="text"
-                  className="w-full px-3 py-2 text-sm leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
-                  id="lastname"
-                  placeholder="Enter your last name..."
-                />
+              {/* Address Section */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold text-slate-900 mb-4">
+                  Address Information
+                </h3>
+
+                <div>
+                  <label
+                    className="block text-sm font-medium text-slate-700 mb-2"
+                    htmlFor="address"
+                  >
+                    Address *
+                  </label>
+                  <textarea
+                    ref={addressInputRef}
+                    className="w-full px-4 py-3 border border-slate-300 rounded-lg bg-white text-slate-700 placeholder-slate-400 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors duration-200 resize-none"
+                    required
+                    rows="3"
+                    id="address"
+                    placeholder="Enter your complete address"
+                  />
+                </div>
+
+                <div className="bg-slate-50 p-4 rounded-lg">
+                  <label className="block text-sm font-medium text-slate-700 mb-2">
+                    Location on Map *
+                  </label>
+                  <MapForm
+                    setCoordinates={setCoordinates}
+                    initialValues={{ lat: null, lng: null }}
+                  />
+                </div>
               </div>
 
-              {/* <!-- Enter Age btn --> */}
-              <div className="mb-4">
-                <label
-                  className="block mb-2 text-sm font-bold text-gray-700"
-                  htmlFor="age"
-                >
-                  Age
-                </label>
-                <input
-                  ref={ageInputRef}
-                  type="number"
-                  required
-                  className="w-full px-3 py-2 text-sm leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
-                  id="age"
-                  placeholder="Enter your age..."
-                />
+              {/* Security Section */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold text-slate-900 mb-4">
+                  Account Security
+                </h3>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label
+                      className="block text-sm font-medium text-slate-700 mb-2"
+                      htmlFor="password"
+                    >
+                      Password *
+                    </label>
+                    <input
+                      ref={passwordInputRef}
+                      type="password"
+                      required
+                      className="w-full px-4 py-3 border border-slate-300 rounded-lg bg-white text-slate-700 placeholder-slate-400 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors duration-200"
+                      id="password"
+                      placeholder="Enter password (min. 8 characters)"
+                    />
+                  </div>
+
+                  <div>
+                    <label
+                      className="block text-sm font-medium text-slate-700 mb-2"
+                      htmlFor="confirmPassword"
+                    >
+                      Confirm Password *
+                    </label>
+                    <input
+                      ref={confirmPasswordInputRef}
+                      type="password"
+                      required
+                      className="w-full px-4 py-3 border border-slate-300 rounded-lg bg-white text-slate-700 placeholder-slate-400 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors duration-200"
+                      id="confirmPassword"
+                      placeholder="Confirm your password"
+                    />
+                  </div>
+                </div>
               </div>
 
-              {/* <!-- Enter Address --> */}
-              <div className="mb-4 large-input block text-sm font-bold text-gray-700">
-                Address
-                <textarea
-                  ref={addressInputRef}
-                  className="w-full px-3 py-2 font-normal text-sm  text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
-                  required
-                  rows="4"
-                  id="address"
-                  placeholder="Enter your address..."
-                />
-              </div>
-
-              <MapForm
-                setCoordinates={setCoordinates}
-                initialValues={{ lat: null, lng: null }}
-              />
-
-              {/* <!-- Enter PhoneNo --> */}
-              <div className="mb-4">
-                <label
-                  className="block mb-2 text-sm font-bold text-gray-700"
-                  htmlFor="phoneNo"
-                >
-                  Phone No.
-                </label>
-                <input
-                  ref={phonenumInputRef}
-                  type="number"
-                  required
-                  className="w-full px-3 py-2 text-sm text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
-                  id="phoneNo"
-                  placeholder="Enter Phone no..."
-                />
-              </div>
-
-              {/* <!-- Enter Password --> */}
-              <div className="mb-4">
-                <label
-                  className="block mb-2 text-sm font-bold text-gray-700"
-                  htmlFor="password"
-                >
-                  Password
-                </label>
-                <input
-                  ref={passwordInputRef}
-                  type="password"
-                  required
-                  className="w-full px-3 py-2 text-sm leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
-                  id="password"
-                  placeholder="Enter password..."
-                />
-              </div>
-
-              {/* <!-- Confirm Password --> */}
-              <div className="mb-4">
-                <label
-                  className="block mb-2 text-sm font-bold text-gray-700"
-                  htmlFor="phoneNo"
-                >
-                  Confirm Password
-                </label>
-                <input
-                  ref={confirmPasswordInputRef}
-                  type="password"
-                  required
-                  className="w-full px-3 py-2 text-sm leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
-                  id="confirmPassword"
-                  placeholder="Confirm Password..."
-                />
-              </div>
-
-              {/* <!-- Create button --> */}
-              <div className="mb-6 text-center">
+              {/* Submit Button */}
+              <div className="pt-4">
                 <button
                   onClick={submitButtonHandler}
-                  className="w-full px-4 py-2 font-bold text-white bg-red-500 rounded-full hover:bg-red-700 focus:outline-none focus:shadow-outline"
+                  className="w-full bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 text-white font-semibold py-4 px-6 rounded-lg transition-all duration-200 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
                   type="button"
                 >
                   Create Account
                 </button>
+
+                <div className="text-center mt-6">
+                  <span className="text-slate-600">
+                    Already have an account?{" "}
+                  </span>
+                  <Link
+                    className="text-primary-600 hover:text-primary-700 font-medium transition-colors duration-200"
+                    to="/login"
+                  >
+                    Sign in
+                  </Link>
+                </div>
               </div>
-            </div>
+            </form>
           </div>
         </div>
       </div>
     </>
-
-    // <Container>
-    //       <form>
-    //         <div>
-    //           <input ref={firstNameInputRef} type="text" required />
-    //           <label>First Name</label>
-    //         </div>
-
-    //         <div>
-    //           <input ref={lastNameInputRef} type="text" />
-    //           <label>Last Name</label>
-    //         </div>
-
-    //         <div>
-    //           <input ref={ageInputRef} type="number" required />
-    //           <label>Age</label>
-    //         </div>
-
-    //         <div>
-    //           <input ref={addressInputRef} type="text" required />
-    //           <label>Address</label>
-    //         </div>
-    //         <div>
-    //           <input ref={phonenumInputRef} type="text" required />
-    //           <label>Phone No.</label>
-    //         </div>
-
-    //         <input ref={locationXInputRef} type="text" required />
-    //         <input ref={locationYInputRef} type="text" required />
-
-    //         <div>
-    //           <input ref={passwordInputRef} type="password" required />
-    //           <label>Password</label>
-    //         </div>
-
-    //         <div>
-    //           <input ref={confirmPasswordInputRef} type="password" required />
-    //           <label>Confirm Password</label>
-    //         </div>
-
-    //         <button onClick={submitButtonHandler}>Create</button>
-    //       </form>
-    //     </Container>
   );
 };
 

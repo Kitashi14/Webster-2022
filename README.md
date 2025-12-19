@@ -40,13 +40,69 @@ where technology meets community engagement! Our team is dedicated to building a
 - **Backend:** NODE.js, ExpressJS, MongoDB
 - **Frontend:** ReactJS, HTML, CSS (Tailwind), JavaScript
 
-## Get Started
+## 🚀 Deployment
 
-Follow these simple steps to contribute or get the application up and running locally:
+Ready to deploy? We've got you covered!
 
-1. Clone the repository.
-2. Install dependencies using `npm install`.
-3. Run the application with `npm start`.
+### Quick Deploy (Recommended)
+```bash
+./deploy.sh
+```
+This interactive script guides you through the entire deployment process.
+
+### Manual Deployment
+- **Start here**: [QUICK_DEPLOY.md](QUICK_DEPLOY.md) - Fast track deployment guide
+- **Detailed guide**: [DEPLOYMENT_GUIDE.md](DEPLOYMENT_GUIDE.md) - Comprehensive documentation
+- **Ready to go**: [DEPLOYMENT_READY.md](DEPLOYMENT_READY.md) - Final checklist
+
+### Deployment Architecture
+- **Frontend**: Vercel (Free tier)
+- **Backend**: Railway (Free $5 credit/month)
+- **Database**: MongoDB Atlas (Free tier)
+
+**Total Cost**: FREE for moderate usage! 🎉
+
+## Get Started (Local Development)
+
+### Prerequisites
+- Node.js (v14 or higher)
+- MongoDB (local or Atlas account)
+- Git
+
+### Installation
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/Kitashi14/Webster-2022.git
+   cd Webster-2022
+   ```
+
+2. **Backend Setup**
+   ```bash
+   cd backend
+   npm install
+   cp .env.example .env  # Create .env file and add your credentials
+   npm start
+   ```
+
+3. **Frontend Setup** (in a new terminal)
+   ```bash
+   cd frontend
+   npm install
+   npm start
+   ```
+
+4. **Access the app**
+   - Frontend: http://localhost:8080
+   - Backend: http://localhost:4000
+
+### Environment Variables
+
+Create `.env` files based on the examples:
+- `backend/.env` - Backend configuration (database, OAuth, etc.)
+- `frontend/.env.development` - Frontend development configuration
+
+See `.env.example` files for required variables.
 
 ## Contribution Guidelines
 

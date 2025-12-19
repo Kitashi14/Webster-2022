@@ -9,6 +9,10 @@ const userSchema = new mongoose.Schema({
     unique: true,
     maxlength: 25,
   },
+  isAdmin: {
+    type: Boolean,
+    required: [false, "Please tell is admin or not"],
+  },
   email: {
     type: String,
     required: [true, "Please enter the email"],

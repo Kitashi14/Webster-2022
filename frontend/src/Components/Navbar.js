@@ -17,18 +17,34 @@ const Navbar = (props) => {
 
   return (
     <>
-      <nav className=" bg-tc px-2 sm:px-4 py-2.5  dark:bg-pc">
-        <div className="container flex flex-wrap justify-between items-center mx-auto">
-          <a href="/" className="flex items-center">
-            {/* <img src="" className="mr-3 h-6 sm:h-9" alt="Logo"> */}
-            <span className="text-sc self-center text-xl font-semibold whitespace-nowrap dark:text-sc">
-              Complain Box
+      <nav className="bg-white shadow-lg border-b border-slate-200 px-4 sm:px-6 py-3 sticky top-0 z-50 backdrop-blur-md bg-white/95">
+        <div className="container flex flex-wrap justify-between items-center mx-auto max-w-7xl">
+          <a
+            href="/"
+            className="flex items-center space-x-3 hover:scale-105 transition-transform duration-200"
+          >
+            <div className="w-10 h-10 bg-gradient-to-br from-primary-500 to-primary-600 rounded-lg flex items-center justify-center">
+              <svg
+                className="w-6 h-6 text-white"
+                fill="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M12 5.69l5 4.5V18h-2v-6H9v6H7v-7.81l5-4.5M12 3L2 12h3v8h6v-6h2v6h6v-8h3L12 3z"
+                  clipRule="evenodd"
+                />
+              </svg>
+            </div>
+            <span className="text-slate-800 self-center text-xl font-bold whitespace-nowrap tracking-tight">
+              Complaint Box
             </span>
+
           </a>
           <button
             data-collapse-toggle="navbar-default"
             type="button"
-            className="inline-flex items-center p-2 ml-3 text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
+            className="inline-flex items-center p-2 ml-3 text-sm text-slate-500 rounded-lg md:hidden hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-slate-200 transition-colors duration-200"
             aria-controls="navbar-default"
             aria-expanded="false"
           >
@@ -48,11 +64,11 @@ const Navbar = (props) => {
             </svg>
           </button>
           <div className="hidden w-full md:block md:w-auto" id="navbar-default">
-            <ul className="flex flex-col p-4 mt-4  rounded-lg border  md:flex-row md:space-x-8 md:mt-0 md:text-sm md:font-medium md:border-0  ">
+            <ul className="flex flex-col p-4 mt-4 bg-white rounded-lg border border-slate-200 md:flex-row md:space-x-1 md:mt-0 md:text-sm md:font-medium md:border-0 md:bg-transparent">
               <li>
                 <Link
                   to="/"
-                  className="block py-2 pr-4 pl-3 text-white  rounded md:bg-transparent md:text-sc  hover:text-gray-500  md:p-0 dark:text-white"
+                  className="block py-2 px-4 text-slate-700 rounded-md hover:text-primary-600 hover:bg-slate-50 transition-colors duration-200 font-medium"
                   aria-current="page"
                 >
                   Home
@@ -61,7 +77,7 @@ const Navbar = (props) => {
               <li>
                 <Link
                   to="/about"
-                  className="block py-2 pr-4 pl-3 text-sc  hover:text-gray-500  md:border-0  md:p-0 dark:text-gray-400 "
+                  className="block py-2 px-4 text-slate-700 rounded-md hover:text-primary-600 hover:bg-slate-50 transition-colors duration-200 font-medium"
                 >
                   About
                 </Link>
@@ -71,7 +87,7 @@ const Navbar = (props) => {
                 <>
                   <li>
                     <Link to={`/user/${auth.userName}`}>
-                      <div className="block py-2 pr-4 pl-3 text-sc  hover:text-gray-500  md:border-0  md:p-0 dark:text-gray-400">
+                      <div className="block py-2 px-4 text-slate-700 rounded-md hover:text-primary-600 hover:bg-slate-50 transition-colors duration-200 font-medium">
                         Profile
                       </div>
                     </Link>
@@ -85,11 +101,11 @@ const Navbar = (props) => {
                 <>
                   <li>
                     <Link to={`/chat`}>
-                      <div className="block py-2 pr-4   pl-3 text-sc md:border-0  md:p-0 dark:text-gray-400">
-                        <span className="hover:text-gray-500">Chat</span>
+                      <div className="block py-2 px-4 text-slate-700 rounded-md hover:text-primary-600 hover:bg-slate-50 transition-colors duration-200 font-medium relative">
+                        <span>Chat</span>
                         {unreadUsersCount > 0 ? (
                           <>
-                            <span className="ml-1 bg-white text-red-500 text-xs font-bold rounded-full px-2 py-1">
+                            <span className="ml-2 bg-red-500 text-white text-xs font-bold rounded-full px-2 py-1 animate-pulse">
                               {unreadUsersCount}
                             </span>
                           </>
@@ -107,7 +123,7 @@ const Navbar = (props) => {
                 {!props.login ? (
                   <>
                     <Link to="./login">
-                      <div className="block py-2 pr-4 pl-3 text-sc  hover:text-gray-500  md:border-0  md:p-0 dark:text-gray-400">
+                      <div className="block py-2 px-4 bg-primary-500 text-white rounded-md hover:bg-primary-600 transition-colors duration-200 font-medium">
                         Log In
                       </div>
                     </Link>
@@ -115,7 +131,7 @@ const Navbar = (props) => {
                 ) : (
                   <>
                     <Link onClick={submitLogout}>
-                      <div className="block py-2 pr-4 pl-3 text-sc  hover:text-gray-100  md:border-0  md:p-0 dark:text-gray-400">
+                      <div className="block py-2 px-4 text-slate-700 rounded-md hover:text-red-600 hover:bg-red-50 transition-colors duration-200 font-medium">
                         Log Out
                       </div>
                     </Link>

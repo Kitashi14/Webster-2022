@@ -60,92 +60,73 @@ const ResetPage = () => {
 
   return (
     <>
-      
-<div className="container mx-auto">
-  <div className="flex justify-center px-6 my-12 ">
-    
-      {/* <!-- Col --> */}
-      <div className="w-1/2 bg-white p-5 rounded-lg border ">
+      <div className="min-h-screen bg-gradient-to-br from-slate-100 to-slate-200">
+        <div className="flex items-center justify-center px-6 py-12">
+          <div className="w-full max-w-md">
+            {/* Header */}
+            <div className="bg-gradient-to-r from-primary-600 to-primary-700 rounded-t-lg px-8 py-6 text-center">
+              <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg
+                  className="w-6 h-6 text-white"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-3a1 1 0 011-1l2.586-2.586A6 6 0 0112 3a6 6 0 016 6z"
+                  />
+                </svg>
+              </div>
+              <h1 className="text-2xl font-bold text-white mb-2">
+                Reset Password
+              </h1>
+              <p className="text-primary-100">Enter your new password below</p>
+            </div>
 
-        <form className="px-8 pt-6 pb-8 bg-white rounded d-flex flex-column">
-           <h2 className="pt-4 mb-1">Enter New Password</h2>
-          <div className="mb-4">
-            <label className="block text-sm font-bold text-gray-700" for="password">
+            {/* Form */}
+            <div className="bg-white rounded-b-lg shadow-lg px-8 py-6">
+              <form className="space-y-6">
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-2">
+                    New Password
+                  </label>
+                  <input
+                    className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200"
+                    id="password"
+                    type="password"
+                    ref={passwordInputRef}
+                    placeholder="Enter your new password..."
+                  />
+                </div>
 
-            </label>
-            <input
-              className="w-full px-3 py-2 text-sm leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
-              id="password"
-              type="password"
-              ref={passwordInputRef}
-              placeholder="Enter your password..."
-            />
-          </div>
-          <h2 className="pt-4  mb-1">Confirm Password</h2>
-          <div className="mb-6">
-            <label className="block text-sm font-bold text-gray-700" for="password">
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-2">
+                    Confirm Password
+                  </label>
+                  <input
+                    className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200"
+                    id="confirmPassword"
+                    type="password"
+                    ref={confirmPasswordInputRef}
+                    placeholder="Confirm your password..."
+                  />
+                </div>
 
-            </label>
-            <input
-              className="w-full px-3 py-2 text-sm leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
-              id="confirmPassword"
-              type="password"
-              ref={confirmPasswordInputRef}
-              placeholder="Confirm password..."
-            />
+                <button
+                  className="w-full py-3 px-4 bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-700 hover:to-primary-800 text-white font-semibold rounded-lg shadow-md hover:shadow-lg transform hover:scale-[1.02] transition-all duration-200"
+                  type="button"
+                  onClick={resetButtonHandler}
+                >
+                  Reset Password
+                </button>
+              </form>
+            </div>
           </div>
-          <div className="mb-1 text-center">
-            <button
-              className="w-full px-4 py-2 font-bold text-white bg-red-500 rounded-full hover:bg-red-700 focus:outline-none focus:shadow-outline"
-              type="button"
-              onClick={resetButtonHandler}
-            >
-              Change Password
-            </button>
-          </div>
-{/* <!-- 							<hr className="mb-6 border-t" />
-          <div className="text-center">
-            <a
-              className="inline-block text-sm text-blue-500 align-baseline hover:text-blue-800"
-              href="./register.html"
-            >
-              Create an Account!
-            </a>
-          </div>
-          <div className="text-center">
-            <a
-              className="inline-block text-sm text-blue-500 align-baseline hover:text-blue-800"
-              href="./index.html"
-            >
-              Already have an account? Login!
-            </a> --> */}
-{/* <!-- 							</div> --> */}
-        </form>
+        </div>
       </div>
-    
-  </div>
-</div>
-
-
-
-
-
-
-
-
-
-      {/* <Container>
-        <div>
-          <input type="password" ref={passwordInputRef} />
-          <label>New Password</label>
-        </div>
-        <br />
-        <div>
-          <input type="password" ref={confirmPasswordInputRef} />
-          <label>Confirm Password</label>
-        </div>
-        <button onClick={resetButtonHandler}>Reset</button>
-      </Container> */}
     </>
   );
 };

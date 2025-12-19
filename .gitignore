@@ -9,7 +9,6 @@
 
 # testing
 /coverage
-
 # production
 /build
 
@@ -35,3 +34,4 @@ package-lock.json
 */.env
 
 build
+Context.md

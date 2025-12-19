@@ -1,22 +1,19 @@
-import { useEffect, useState } from "react";
+import { useContext,useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import Modal from "../Components/ui/Modal";
 import BackDrop from "../Components/ui/Backdrop";
-import AcceptedWorker from "../Components/AcceptedWorker";
-import WorkerList from "../Components/WorkerList";
 import AcceptedWorkers from "../Components/AcceptedWorkers";
-import { workers } from "../Helper/Workers";
-// import { type } from "os";
+import AuthContext from "../context/auth-context";
 
 const ComplainDetails = () => {
   const complainId = useParams().cid;
   const navigate = useNavigate();
-
+  const currentUser = useContext(AuthContext).userName;
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [details, setDetails] = useState({});
+  const [resolved, setResolved] = useState(false);
+  const [acceptedWorkersList, setAcceptedWorkersList] = useState([]);
   const [isCreator, setIsCreator] = useState(false);
-  console.log(details);
-  console.log("isCreator:", isCreator);
 
   useEffect(() => {
     const fetchComplainDetails = async () => {
@@ -27,14 +24,13 @@ const ComplainDetails = () => {
             credentials: "include",
           }
         );
-
-        console.log(response.status);
-
         const responseData = await response.json();
-
+        console.log("complaindettails", responseData.data.complain);
         if (response.status === 200) {
           setDetails(responseData.data.complain);
-          setIsCreator(responseData.data.isVerifiedUser);
+          setAcceptedWorkersList(responseData.data.acceptedWorkersDetails || []);
+          setResolved(responseData.data.complain.status.toLowerCase() === "resolved");
+          setIsCreator(currentUser === responseData.data.complain.creatorUsername);
           return;
         } else if (response.status === 400) {
           alert(responseData.error);
@@ -57,6 +53,74 @@ const ComplainDetails = () => {
     e.preventDefault();
     setModalIsOpen(true);
   };
+  const handleOnAssigned = async () => {
+    try {
+      const resp = await fetch(`${process.env.REACT_APP_SERVER_ROOT_URI}/api/complain/getDetails/${complainId}`, { credentials: 'include' });
+      const data = await resp.json();
+      if (resp.status === 200) {
+        setDetails(data.data.complain);
+        setResolved(data.data.complain.status.toLowerCase() === "resolved");
+        setAcceptedWorkersList(data.data.acceptedWorkersDetails || []);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const acceptTask = async () => {
+    try {
+      const already = (acceptedWorkersList || []).some(
+        (w) => (w.workerUsername || w.username || w.userName) === currentUser
+      );
+      if (details.workerUsername && details.workerUsername !== "N/A") {
+        alert("This task has already been assigned to a worker.");
+        return;
+      }
+      if (already) {
+        alert("You have already shown interest in this task.");
+        return;
+      }
+
+      // find worker document for current user (matching username)
+      const wResp = await fetch(
+        `${process.env.REACT_APP_SERVER_ROOT_URI}/api/worker/getDetails/${currentUser}/` + details.profession,
+        { method: "GET",
+          credentials: "include" }
+      );
+      if (wResp.status !== 200) {
+        alert("You need to register as a worker for this profession to accept tasks.");
+        return;
+      }
+      const wData = await wResp.json();
+      const workerId = wData.data.details._id;
+
+      const response = await fetch(
+        `${process.env.REACT_APP_SERVER_ROOT_URI}/api/complain/acceptById/${workerId}/${complainId}`,
+        {
+          method: "POST",
+          credentials: "include",
+        }
+      );
+      const responseData = await response.json();
+      if (response.status === 200) {
+        alert("You have shown interest in this task");
+        const resp = await fetch(
+          `${process.env.REACT_APP_SERVER_ROOT_URI}/api/complain/getDetails/${complainId}`,
+          { credentials: "include" }
+        );
+        const data = await resp.json();
+        if (resp.status === 200) {
+          setDetails(data.data.complain);
+          setAcceptedWorkersList(data.data.acceptedWorkersDetails || []);
+        }
+      } else {
+        alert(responseData.error || "Failed to accept task");
+      }
+    } catch (err) {
+      console.log(err);
+      alert("Failed to accept task");
+    }
+  };
 
   const closeModal = (e) => {
     e.preventDefault();
@@ -65,8 +129,6 @@ const ComplainDetails = () => {
 
   const deleteComplain = async () => {
     setModalIsOpen(false);
-    console.log("to delete complain api request hit");
-
     try {
       const response = await fetch(
         `${process.env.REACT_APP_SERVER_ROOT_URI}/api/complain/${complainId}`,
@@ -75,8 +137,6 @@ const ComplainDetails = () => {
           credentials: "include",
         }
       );
-
-      console.log(response.status);
 
       const responseData = await response.json();
 
@@ -87,146 +147,213 @@ const ComplainDetails = () => {
       } else if (response.status === 400) {
         alert(responseData.error);
         return;
-      } else if (response.status === 500) {
-        throw Error(responseData.error);
       }
     } catch (err) {
       console.log(err);
       alert("Failed to delete complain.");
-      return;
     }
   };
 
-  // var date = details.creationTime;
-  // console.log(typeof date);
-  // const day = date.split("T")[0];
-  // console.log(day);
-
-  // const [workersData, setWorkersData] = useState([]);
-  // const [fworker, setfworker] = useState(false);
-
-  // useEffect(() => {
-  //   const getWorkerData = async () => {
-  //     console.log("sending request to fetch latest workers...");
-  //     try {
-  //       const response = await fetch(
-  //         `${process.env.REACT_APP_SERVER_ROOT_URI}/api/worker/latest`
-  //       );
-
-  //       const responseData = await response.json();
-
-  //       console.log("response status", response.status);
-
-  //       if (response.status === 200) {
-  //         console.log("got latest workers");
-  //         setWorkersData(responseData.data);
-  //         return;
-  //       } else if (response.status === 400) {
-  //         console.log(responseData.error);
-  //         alert(responseData.error);
-  //         return;
-  //       } else {
-  //         console.log(response.error);
-  //         alert("Couldn't able to fetch latest workers");
-  //       }
-  //     } catch (err) {
-  //       console.log(err);
-  //       alert("Couldn't able to fetch latest workers");
-  //     }
-  //   };
-  //   getWorkerData();
-  // }, [fworker]);
-
+  const getStatusColor = (status) => {
+    switch (status) {
+      case "Not Assigned":
+        return "bg-yellow-100 text-yellow-800";
+      case "Assigned":
+        return "bg-blue-100 text-blue-800";
+      case "Resolved":
+        return "bg-green-100 text-green-800";
+      default:
+        return "bg-gray-100 text-gray-800";
+    }
+  };
   return (
     <>
-      {/* <Modal show={modalIsOpen} onCancel={closeModal} onOk={deleteComplain} header={"Press OK to delete this complain"}>
-            
-        </Modal>
-        {modalIsOpen ? <BackDrop onCancel={closeModal} /> : null}
-        <div>
-            {complainId}
+      <Modal 
+        show={modalIsOpen} 
+        onCancel={closeModal} 
+        onOk={deleteComplain} 
+        header={"Press OK to delete this complain"}
+      />
+      {modalIsOpen && <BackDrop/>}
+
+      <div className="min-h-screen bg-slate-50">
+        {/* Header */}
+        <div className="bg-white border-b border-slate-200 shadow-sm">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <button
+              onClick={() => navigate(-1)}
+              className="flex items-center text-slate-600 hover:text-slate-800 transition-colors duration-200"
+            >
+              ← Back
+            </button>
+          </div>
         </div>
 
-        {isCreator ? (
-            <>
-            <button onClick={OpenDeleteModal}>Delete</button>
-            </>
-        ): (
-            <></>
-        )} */}
-      <div className=" bg-red-100 w-full h-full">
-        <div className="flex p-4">Back</div>
-        <main className="flex flex-col m-4 p-2 mt-8">
-          <div className="p-2 bg-red-300 flex-col w-full h-fit content-around">
-            <div className="flex bg-white md:flex-row flex-col items-center ">
-              <img
-                class="p-4 object-cover md:w-1/4 basis-1/3 rounded-lg md:h-1/3"
-                src="https://www.pngitem.com/pimgs/m/146-1468479_my-profile-icon-blank-profile-picture-circle-hd.png"
-                alt="profile pic"
-              />
+        {/* Main Content */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          {/* Complaint Details Card */}
+          <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden mb-8">
+            <div className="p-6">
+              <div className="flex flex-col lg:flex-row gap-6">
+                {/* Profile Image */}
+                <div className="flex-shrink-0">
+                  <img
+                    className="w-32 h-32 rounded-full object-cover border-4 border-slate-100"
+                    src="https://www.pngitem.com/pimgs/m/146-1468479_my-profile-icon-blank-profile-picture-circle-hd.png"
+                    alt="Profile"
+                  />
+                </div>
 
-              <div className="flex basis-2/3 h-full flex-col justify-between p-4 leading-normal">
-                <h1 className=" text-2xl">Title : {details.title}</h1>
-                <h1 className=" text-2xl">
-                  Username : {details.creatorUsername}
-                </h1>
-                <h1 className=" text-2xl">Status : {details.status}</h1>
-                <h1 className=" text-2xl">
-                  Description : {details.description}
-                </h1>
-                <h1 className=" text-2xl">Profession : {details.profession}</h1>
-                <h1 className=" text-2xl">Address : {details.address}</h1>
-                <h1 className=" text-2xl">Phone No. : {details.phonenum}</h1>
-                <h1 className=" text-2xl">
-                  Worker Assigned : {details.workerUsername}
-                </h1>
-                {/* <h1 className=" text-2xl">complaint Date : {day}</h1> */}
+                {/* Details */}
+                <div className="flex-1 space-y-4">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                    <h1 className="text-3xl font-bold text-slate-900">{details.title}</h1>
+                    <span className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(details.status)}`}>
+                      {details.status}
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="flex items-center text-slate-600">
+                      <span className="mr-3">👤</span>
+                      <span className="font-medium">Username:</span>
+                      <Link to={`/user/${details.creatorUsername}`} className="ml-2 text-blue-600 hover:text-blue-700 font-medium">
+                        {details.creatorUsername}
+                      </Link>
+                    </div>
+
+                    <div className="flex items-center text-slate-600">
+                      <span className="mr-3">💼</span>
+                      <span className="font-medium">Profession:</span>
+                      <span className="ml-2">{details.profession}</span>
+                    </div>
+
+                    <div className="flex items-center text-slate-600">
+                      <span className="mr-3">📞</span>
+                      <span className="font-medium">Phone:</span>
+                      <span className="ml-2">{details.phonenum}</span>
+                    </div>
+
+                    <div className="flex items-center text-slate-600">
+                      <span className="mr-3">👷</span>
+                      <span className="font-medium">Assigned to:</span>
+                      <span className="ml-2">{details.workerUsername || "Not assigned"}</span>
+                    </div>
+                  </div>
+
+                  <div className="space-y-3">
+                    <div className="flex items-start text-slate-600">
+                      <span className="mr-3 mt-0.5">📍</span>
+                      <div>
+                        <span className="font-medium">Address:</span>
+                        <p className="ml-0 text-slate-700">{details.address}</p>
+                      </div>
+                    </div>
+
+                    <div>
+                      <span className="font-medium text-slate-600">Description:</span>
+                      <p className="mt-1 text-slate-700 leading-relaxed">{details.description}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+             {/* Action Buttons */}
+              {!resolved && (
+              <div className="mt-6 pt-6 border-t border-slate-200">
+                {!isCreator ? (
+                  <div className="flex justify-center">
+                    <button onClick={acceptTask} className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors duration-200">
+                      Accept Task
+                    </button>
+                  </div>
+                ) : (
+                  details.workerUsername && details.workerUsername !== "N/A" ? (
+                    <div className="flex flex-col sm:flex-row gap-4 sm:justify-end">
+                    <button 
+                      onClick={() => navigate(`/complain/resolve/${complainId}`)}
+                      className="px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg transition-colors duration-200 flex items-center gap-2"
+                    >
+                      <span className="text-white font-semibold">Resolve</span>
+                      <span className="text-white">✓</span>
+                    </button>
+                  </div>
+                  ) : (
+                  <div className="flex flex-col sm:flex-row gap-4 sm:justify-end">
+                    <button onClick={() => navigate(`/complain/edit/${complainId}`)}
+                      className="px-6 py-3 bg-slate-600 hover:bg-slate-700 text-white font-medium rounded-lg transition-colors duration-200">
+                        ✏️ Edit
+                    </button>
+                    <button 
+                      onClick={OpenDeleteModal}
+                      className="px-6 py-3 bg-red-600 hover:bg-red-700 text-white font-medium rounded-lg transition-colors duration-200"
+                    >
+                      🗑️ Delete
+                    </button>
+                  </div>
+                ))}
+              </div>
+              )}
+            </div>
+          </div>
+          {/* Assigned Worker Section */}
+          {(details.workerUsername && details.workerUsername !== "N/A") && (
+            <div className="bg-white rounded-xl shadow-sm border border-slate-200 mb-8">
+              <div className="p-6">
+                <h2 className="text-xl font-semibold text-slate-900 mb-4">Assigned Worker</h2>
+                <div className="flex items-center justify-between p-4 bg-green-50 rounded-lg border border-green-200">
+                  <span className="text-green-800 font-medium flex items-center gap-2">
+                    {details.workerUsername}
+                  </span>
+                  <Link 
+                    to={`/user/${details.workerUsername}`}
+                    className="text-green-600 hover:text-green-700 font-medium"
+                  >
+                    View Profile
+                  </Link>
+                </div>
               </div>
             </div>
-            {isCreator ? (
-              <>
-                <div className="flex justify-center m-3">
-                  <div className="p-2 bg-red-800 hover:-translate-y-1 hover:scale-110 rounded-md  text-white">
-                    accept
-                  </div>
-                </div>
-              </>
-            ) : (
-              <>
-                <div className="flex justify-around m-3">
-                  <div className="p-2 bg-blue-800 hover:-translate-y-1 hover:scale-110 rounded-md  text-white">
-                    EDIT
-                  </div>
-                  <div className="p-2 bg-red-800 hover:-translate-y-1 hover:scale-110 rounded-md  text-white">
-                    DELETE
-                  </div>
-                </div>
-              </>
-            )}
-          </div>
-        </main>
-        {isCreator ? (
-          <></>
-        ) : (
-          <>
-            <main className="flex flex-col m-4 p-2 mt-8">
-              <div className=" bg-red-300 flex-col w-full h-fit p-2 content-around text-center text-2xl">
-                Assigned to
-                {/* Insert AcceptedWorker profile */}
-                <Link to={`/workers/${AcceptedWorkers}`}></Link>
-              </div>
-            </main>
+          )}
 
-            <main className="flex flex-col m-4 p-2 mt-8">
-              <div className=" bg-red-300 flex-col w-full h-fit p-2 content-around">
-                <p className="text-center text-2xl bg-red-100 p-1 text-red-800">
-                  Workers who wants to accept this task
-                </p>
-                <AcceptedWorkers workers={workers} />
+          {/* Interested Workers Section */}
+          {(isCreator && (!details.workerUsername || details.workerUsername === "N/A")) && (
+            <div className="bg-white rounded-xl shadow-sm border border-slate-200">
+              <div className="p-6">
+                <h2 className="text-xl font-semibold text-slate-900 mb-6">Workers Interested in This Task</h2>
+                <AcceptedWorkers
+                  workers={acceptedWorkersList}
+                  complainId={complainId}
+                  complainDetails={details}
+                  onAssigned={handleOnAssigned}
+                />
               </div>
-            </main>
-          </>
-        )}
+            </div>
+          )}
+
+          {/*comment and rating Section*/}
+          {resolved && (
+            <div className="bg-white rounded-xl shadow-sm border border-slate-200">
+              <div className="p-6">
+                <h2 className="text-xl font-semibold text-slate-900 mb-6">Comments and Rating</h2>
+                <div className="flex flex-col space-y-4">
+                  {details.comment ? (
+                    <>
+                      <div className="p-4 bg-slate-50 rounded-lg border border-slate-200">
+                        <p className="text-slate-700">{details.comment}</p>
+                      </div>
+                      <div className="text-yellow-600 font-medium">
+                        ⭐ Rating: {details.rating} / 5
+                      </div>
+                    </>
+                  ) : (
+                    <p className="text-slate-500">No comments or ratings available for this task.</p>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
     </>
   );

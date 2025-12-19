@@ -1,7 +1,7 @@
 /** @format */
 
 import React, { useContext, useEffect, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import AuthContext from "../context/auth-context";
 
 import { profession } from "../Helper/Profession";
@@ -12,21 +12,14 @@ const Form = () => {
   const navigate = useNavigate();
   const auth = useContext(AuthContext);
   const userName = auth.userName;
-
+  const complainId = useParams().cid;
   const titleInputRef = useRef();
   const descriptionInputRef = useRef();
   const professionInputRef = useRef();
   const addressInputRef = useRef();
   const phonenumInputRef = useRef();
-
-  const [details, setDetails] = useState({
-    address: "",
-    location: {
-      lat: "",
-      lng: "",
-    },
-    phonenum: "",
-  });
+  const [details, setDetails] = useState({});
+  const [isEditMode, setIsEditMode] = useState(complainId ? true : false);
 
   useEffect(() => {
     const fetchProfileDetails = async () => {
@@ -38,10 +31,9 @@ const Form = () => {
           }
         );
 
-        console.log(response.status);
 
         const responseData = await response.json();
-        console.log(responseData);
+        console.log("userdetails", responseData);
 
         if (response.status === 200) {
           setDetails(responseData.data.userDetails);
@@ -58,7 +50,37 @@ const Form = () => {
       }
     };
 
-    fetchProfileDetails();
+    const fetchComplainDetails = async () => {
+      try {
+        const response = await fetch(
+          `${process.env.REACT_APP_SERVER_ROOT_URI}/api/complain/getDetails/${complainId}`,
+          {
+            credentials: "include",
+          }
+        );
+        const responseData = await response.json();
+        if (userName !== responseData.data.complain.creatorUsername) navigate("/");
+        console.log("complaindettails", responseData.data.complain);
+        if (response.status === 200) {
+          setDetails(responseData.data.complain);
+          return;
+        } else if (response.status === 400) {
+          alert(responseData.error);
+          navigate("/");
+          return;
+        } else if (response.status === 500) {
+          throw Error(responseData.error);
+        }
+      } catch (err) {
+        console.log(err);
+        alert("Failed to fetch complain details.");
+        navigate("/");
+      }
+    };
+
+    if (isEditMode) fetchComplainDetails();
+    else fetchProfileDetails();
+  
   }, [navigate, userName]);
 
   const [lat, setLat] = useState(null);
@@ -89,78 +111,122 @@ const Form = () => {
     } else return false;
   };
 
-  const submitButtonHandler = async (event) => {
-    event.preventDefault();
-
-    const title = titleInputRef.current.value;
-    const description = descriptionInputRef.current.value;
-    const address = addressInputRef.current.value;
-    const phonenum = phonenumInputRef.current.value;
-    const profession = professionInputRef.current.value;
-
-    if (title.length === 0) alert("Enter a title");
-    else if (description.length > 1000) alert("Description too long");
-    else if (profession === "select") alert("Select a profession");
-    else if (phonenum.length !== 10) alert("Phone no. should be of 10 digits");
-    else if (address.length < 5) alert("Enter a valid address");
-    else if (address.length > 500) alert("Address too long");
-    else {
-      const coordinates = submitCooridnates(lat, long);
-      if (!coordinates) return;
-      const locationX = coordinates.lat;
-      const locationY = coordinates.long;
-      const creationTime = new Date(Date.now());
-
-      const data = {
-        title,
-        description,
-        profession,
-        address,
-        phonenum,
-        locationX,
-        locationY,
-        creationTime,
-      };
-      console.log(data);
-      try {
-        console.log("got complain data");
-        const complainData = JSON.stringify(data);
-
-        const response = await fetch(
-          `${process.env.REACT_APP_SERVER_ROOT_URI}/api/complain/add`,
-          {
-            method: "POST",
-            headers: {
-              "Content-type": "application/json",
-            },
-            body: complainData,
-            credentials: "include",
-          }
-        );
-
-        const responseData = await response.json();
-        console.log("response status:", response.status);
-
-        if (response.status === 200) {
-          console.log(responseData.message);
-          alert("Complain added");
-          // navigate(`/complain/${responseData.data.complainId}`);
-          navigate("/");
-          return;
-        } else if (response.status === 422) {
-          console.log(responseData.error);
-          alert(responseData.error);
-        } else {
-          console.log(responseData.error);
-          alert("Looks like there is some issue.");
-        }
-      } catch (err) {
-        console.log(err);
-        alert("Failed to register complain");
-        return;
+const createComplaint = async (data) => {
+  try {
+    console.log("Creating new complaint");
+    const response = await fetch(
+      `${process.env.REACT_APP_SERVER_ROOT_URI}/api/complain/add`,
+      {
+        method: "POST",
+        headers: {
+          "Content-type": "application/json",
+        },
+        body: JSON.stringify(data),
+        credentials: "include",
       }
+    );
+
+    const responseData = await response.json();
+    console.log("response status:", response.status);
+
+    if (response.status === 200) {
+      console.log(responseData.message);
+      alert("Complain added successfully");
+      navigate("/");
+      return;
+    } else if (response.status === 422) {
+      console.log(responseData.error);
+      alert(responseData.error);
+    } else {
+      console.log(responseData.error);
+      alert("Looks like there is some issue.");
     }
-  };
+  } catch (err) {
+    console.log(err);
+    alert("Failed to register complain");
+  }
+};
+
+const updateComplaint = async (data) => {
+  try {
+    console.log("Updating complaint");
+    const response = await fetch(
+      `${process.env.REACT_APP_SERVER_ROOT_URI}/api/complain/update`,
+      {
+        method: "POST",
+        headers: {
+          "Content-type": "application/json",
+        },
+        body: JSON.stringify(data),
+        credentials: "include",
+      }
+    );
+
+    const responseData = await response.json();
+    console.log("response status:", response.status);
+
+    if (response.status === 200) {
+      console.log(responseData.message);
+      alert("Complaint updated successfully");
+      navigate(`/complain/${complainId}`);
+      return;
+    } else if (response.status === 400) {
+      console.log(responseData.error);
+      alert(responseData.error);
+    } else {
+      console.log(responseData.error);
+      alert("Failed to update complaint");
+    }
+  } catch (err) {
+    console.log(err);
+    alert("Failed to update complaint");
+  }
+};
+
+const submitButtonHandler = async (event) => {
+  event.preventDefault();
+
+  const title = titleInputRef.current.value;
+  const description = descriptionInputRef.current.value;
+  const address = addressInputRef.current.value;
+  const phonenum = phonenumInputRef.current.value;
+  const profession = professionInputRef.current.value;
+
+  if (title.length === 0) alert("Enter a title");
+  else if (description.length > 1000) alert("Description too long");
+  else if (profession === "select") alert("Select a profession");
+  else if (phonenum.length !== 10) alert("Phone no. should be of 10 digits");
+  else if (address.length < 5) alert("Enter a valid address");
+  else if (address.length > 500) alert("Address too long");
+  else {
+    const coordinates = submitCooridnates(lat, long);
+    if (!coordinates) return;
+    
+    const locationX = coordinates.lat;
+    const locationY = coordinates.long;
+    const creationTime = new Date(Date.now());
+
+    const data = {
+      ...(isEditMode && { complainId: complainId }),  // Add complainId only in edit mode
+      title,
+      description,
+      profession,
+      address,
+      phonenum,
+      locationX,
+      locationY,
+      ...(!isEditMode && { creationTime }),  // Add creationTime only in create mode
+    };
+    if (isEditMode) {
+      console.log("Update data:", data);
+      await updateComplaint(data);
+    } else {
+      console.log("Create data:", data);
+      await createComplaint(data);
+    }
+  }
+};
+
 
   let optionItems = profession.map((item) => (
     <option value={item.name} key={item.name}>
@@ -175,14 +241,10 @@ const Form = () => {
         <div className="w-1/2 bg-white p-5 rounded-lg border ">
           <div className="px-8 mb-4 text-center">
             <img
-              src="https://w7.pngwing.com/pngs/178/595/png-transparent-user-profile-computer-icons-login-user-avatars.png"
-              className="h-10 w-10 inline-block rounded-full border"
-              alt=""
+                src="/settings-icon.svg"
+                className="h-20 w-20 inline-block rounded-full border-2 mx-auto"
+              alt="Complaint Box"
             />
-            {/* <!-- 						<p className="mb-4 text-sm text-gray-700">
-           Enter your email address below and we'll send you a
-            link to reset your password!
-          </p>  --> */}
           </div>
 
           {/* <!-- complain  --> */}
@@ -208,6 +270,7 @@ const Form = () => {
                 className="w-full px-3 py-2 text-sm leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline focus:border-blue-400"
                 id="title"
                 placeholder="Title of complain..."
+                defaultValue={details.title}
               />
             </div>
 
@@ -226,6 +289,7 @@ const Form = () => {
                 className="w-full px-3 py-2 text-sm leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline focus:border-blue-400"
                 id="description"
                 placeholder="Write your description..."
+                defaultValue={details.description}
               />
             </div>
 
@@ -244,17 +308,11 @@ const Form = () => {
                 name="Professions"
                 id="Professions"
                 ref={professionInputRef}
-                defaultValue="select"
+                defaultValue={isEditMode ? details.profession : "select"}
               >
-                <option value="select"> --Select Profession--</option>
+                {!isEditMode && <option value="select">--Select Profession--</option>}
                 {optionItems}
               </select>
-              {/* <button
-              type="dropbox" required
-              className="w-full px-3 py-2 text-sm leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
-              id="profession"
-              
-            /> */}
             </div>
 
             {/* <!-- Enter Phone no --> */}
@@ -274,31 +332,6 @@ const Form = () => {
                 defaultValue={details.phonenum}
               />
             </div>
-            {/* <input
-              ref={locationXInputRef}
-              className="invisible"
-              type="text"
-              required
-            />
-            <input
-              className="invisible"
-              ref={locationYInputRef}
-              type="text"
-              required
-            /> */}
-
-            {/* <!--Forget Password --> */}
-            {/* <div className="mb-6">
-        <Link
-          className="ml-1  p-2 inline-block text-sm text-blue-500 align-baseline hover:text-blue-800 px-2 py-2 font-semibold  bg-white shadow-sm"
-          to="/forgetPassword"
-          // onClick={forgetPassword}
-        >
-          Forget Password?
-        </Link>
-
-      </div> */}
-
             {/* <!-- Enter Description --> */}
             <div className="mb-4">
               <label
@@ -319,83 +352,24 @@ const Form = () => {
             </div>
             <MapForm
               setCoordinates={setCoordinates}
-              initialValues={details.location}
+              initialValues={details.location || {lat:"", lng:""}}
             />
 
             {/* <!-- Create button --> */}
             <div className="mb-2 text-center">
               <button
                 onClick={submitButtonHandler}
-                className="w-full px-4 py-2 font-bold text-white bg-red-500 rounded-full hover:bg-red-700 focus:outline focus:shadow-outline "
+                className="w-full px-4 py-2 font-bold text-white bg-primary-500 rounded-full hover:bg-primary-700 focus:outline focus:shadow-outline "
                 type="button"
               >
-                Register Complain
+                {isEditMode ? "Update Complain" : "Submit Complain"}
               </button>
             </div>
-            {/* <hr className="mb-6 border-t" />
-      <div className="text-center mb-2">
-        Sign in with<a
-          className="inline-block text-sm text-blue-500 align-middle hover:text-blue-800"
-          href="./register.html"
-        >
-          <img src="https://qotoqot.com/sad-animations/img/100/sigh/sigh.png" className="h-6 rounded-full border mx-2 w-6 d-flex" alt='' />
-        </a>
-      </div>
-      <div className="text-center">
-        Create Account<a
-          className="ml-1  p-2 inline-block text-sm text-blue-500 align-baseline hover:text-blue-800 px-2 py-2 font-semibold  bg-white  shadow-sm"
-          href="./index.html"
-        >
-          Sign Up
-        </a>
-      </div> */}
           </div>
         </div>
       </div>
     </div>
 
-    // <Container>
-    //       <form>
-    //         <div>
-    //           <input ref={firstNameInputRef} type="text" required />
-    //           <label>First Name</label>
-    //         </div>
-
-    //         <div>
-    //           <input ref={lastNameInputRef} type="text" />
-    //           <label>Last Name</label>
-    //         </div>
-
-    //         <div>
-    //           <input ref={ageInputRef} type="number" required />
-    //           <label>Age</label>
-    //         </div>
-
-    //         <div>
-    //           <input ref={addressInputRef} type="text" required />
-    //           <label>Address</label>
-    //         </div>
-    //         <div>
-    //           <input ref={phonenumInputRef} type="text" required />
-    //           <label>Phone No.</label>
-    //         </div>
-
-    //         <input ref={locationXInputRef} type="text" required />
-    //         <input ref={locationYInputRef} type="text" required />
-
-    //         <div>
-    //           <input ref={passwordInputRef} type="password" required />
-    //           <label>Password</label>
-    //         </div>
-
-    //         <div>
-    //           <input ref={confirmPasswordInputRef} type="password" required />
-    //           <label>Confirm Password</label>
-    //         </div>
-
-    //         <button onClick={submitButtonHandler}>Create</button>
-    //       </form>
-    //     </Container>
   );
 };
 

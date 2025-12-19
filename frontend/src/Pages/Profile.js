@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { profession } from "../Helper/Profession";
 import ComplainBoxes from "../Components/ComplainBoxes";
+import { LoadingScreen } from "../Components/ui/Loading";
 import { storage } from "../Helper/firebase";
 import {
   getDownloadURL,
@@ -20,6 +21,7 @@ const Profile = () => {
 
   const [details, setDetails] = useState({});
   const [userProfessions, setUserProfessions] = useState([]);
+  const [workerDetailsMap, setWorkerDetailsMap] = useState({});
   const [regComplains, setRegComplains] = useState([]);
   const [resComplains, setResComplains] = useState([]);
   const [assComplains, setAssComplains] = useState([]);
@@ -67,13 +69,47 @@ const Profile = () => {
         console.log("Hello");
 
         if (response.status === 200) {
-          setRegComplains(responseData.data.regComplains);
-          setDetails(responseData.data.userDetails);
+          const userDetails = responseData.data.userDetails || {};
+          const professions = userDetails.professions || [];
+
+          setRegComplains(responseData.data.regComplains || []);
+          setDetails(userDetails);
           setIsOwner(responseData.data.isVerifiedUser);
-          setRegComplains(responseData.data.regComplains);
-          setResComplains(responseData.data.resComplains);
-          setAssComplains(responseData.data.assComplains);
-          setUserProfessions(responseData.data.userDetails.professions);
+          setRegComplains(responseData.data.regComplains || []);
+          setResComplains(responseData.data.resComplains || []);
+          setAssComplains(responseData.data.assComplains || []);
+          setUserProfessions(professions);
+
+          (async () => {
+            try {
+              const map = {};
+              const fetchFor = async (entry) => {
+                if (!entry) return null;
+                try {
+                  const res = await fetch(
+                    `${process.env.REACT_APP_SERVER_ROOT_URI}/api/worker/getDetails/${userName}/${encodeURIComponent(entry.workerProfession)}`,
+                    { credentials: "include" }
+                  );
+                  if (res.status === 200) {
+                    const d = await res.json();
+                    // controller returns data.details
+                    const details = d.data?.details || d.data || {};
+                    return { key: `${userName}|${entry.workerProfession}`, data: details };
+                  }
+                } catch (err) {
+                  console.log("worker details fetch failed", entry, err);
+                }
+                return null;
+              };
+
+              const promises = professions.map((p) => fetchFor(p));
+              const results = await Promise.all(promises);
+              for (const r of results) if (r) map[r.key] = r.data;
+              setWorkerDetailsMap(map);
+            } catch (err) {
+              console.log("failed to fetch worker details map", err);
+            }
+          })();
         } else if (response.status === 400) {
           alert(responseData.error);
           navigate("/");
@@ -90,6 +126,7 @@ const Profile = () => {
 
     fetchProfileDetails();
   }, [userName, navigate, render]);
+
   console.log(isLoading);
 
   const addProfessionButtonHandler = async () => {
@@ -188,7 +225,7 @@ const Profile = () => {
   };
 
   const setProfilePic = async (file) => {
-    if (file.size > (1048576/2)) {
+    if (file.size > 1048576 / 2) {
       toast.error("File size should be less then 500 KB");
       return;
     }
@@ -215,7 +252,7 @@ const Profile = () => {
           },
           body: JSON.stringify({
             username: userName,
-            profilepic: fileUrl
+            profilepic: fileUrl,
           }),
         }
       );
@@ -238,189 +275,340 @@ const Profile = () => {
   return (
     <>
       {isLoading ? (
-        <>Loading....</>
+        <LoadingScreen />
       ) : (
-        <>
-          <div className="flex flex-col items-center justify-center w-screen bg-gray-100">
+        <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 py-8">
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
             {/* Profile section */}
-            <div className="flex flex-col m-2 items-center w-4/5  bg-white border border-gray-200 rounded-lg shadow md:flex-row md:max-w-full ">
-              <div className="bg-gray-200 w-[220px] h-[220px]  border-2 border-red-600 m-5 ml-12 mr-12 rounded-full flex flex-col relative">
-                <img
-                  className="object-cover w-full h-full basis-1/3 text-center  rounded-full top-0 left-0 absolute"
-                  src={
-                    details.profilePic
-                      ? details.profilePic
-                      : "https://st3.depositphotos.com/6672868/13701/v/450/depositphotos_137014128-stock-illustration-user-profile-icon.jpg"
-                  }
-                  alt="profile pic"
-                />
-                {isOwner ? (
-                  <>
-                    <div className="w-full h-full rounded-full top-0 left-0 absolute opacity-0 hover:opacity-100 hover:ease-in hover:duration-100">
-                      <div className="bg-opacity-30 bg-red-500 rounded-full backdrop-blur-[2px] h-full w-full font-bold text-2xl text-white flex justify-center items-center ">
-                        <label htmlFor="profilePic">
-                          <svg
-                            className="fill-white opacity-80 hover:cursor-pointer"
-                            xmlns="http://www.w3.org/2000/svg"
-                            height="2em"
-                            viewBox="0 0 512 512"
-                          >
-                            <path d="M441 58.9L453.1 71c9.4 9.4 9.4 24.6 0 33.9L424 134.1 377.9 88 407 58.9c9.4-9.4 24.6-9.4 33.9 0zM209.8 256.2L344 121.9 390.1 168 255.8 302.2c-2.9 2.9-6.5 5-10.4 6.1l-58.5 16.7 16.7-58.5c1.1-3.9 3.2-7.5 6.1-10.4zM373.1 25L175.8 222.2c-8.7 8.7-15 19.4-18.3 31.1l-28.6 100c-2.4 8.4-.1 17.4 6.1 23.6s15.2 8.5 23.6 6.1l100-28.6c11.8-3.4 22.5-9.7 31.1-18.3L487 138.9c28.1-28.1 28.1-73.7 0-101.8L474.9 25C446.8-3.1 401.2-3.1 373.1 25zM88 64C39.4 64 0 103.4 0 152V424c0 48.6 39.4 88 88 88H360c48.6 0 88-39.4 88-88V312c0-13.3-10.7-24-24-24s-24 10.7-24 24V424c0 22.1-17.9 40-40 40H88c-22.1 0-40-17.9-40-40V152c0-22.1 17.9-40 40-40H200c13.3 0 24-10.7 24-24s-10.7-24-24-24H88z" />
-                          </svg>
-                        </label>
-                        <input
-                          id="profilePic"
-                          type="file"
-                          className="hidden"
-                          accept="image/*"
-                          onChange={displayFile}
-                          ref={fileInputRef}
-                        />
-                      </div>
-                    </div>
-                  </>
-                ) : (
-                  <></>
-                )}
-              </div>
-
-              <div className="flex basis-2/3 ml-12 h-full flex-row justify-between p-4 leading-normal">
-                <div className="flex flex-col ">
-                  <h5 className="flex flex-none text-2xl font-bold itemstracking-tight text-gray-900 dark:text-white">
-                    {userName}
-                  </h5>
-                  <p className="font-normal text-gray-700 dark:text-gray-400">
-                    name
-                  </p>
-                  <p className="font-normal text-gray-700 dark:text-gray-400">
-                    email
-                  </p>
-                  <p className="font-normal text-gray-700 dark:text-gray-400">
-                    address
-                  </p>
-                  <p className="font-normal text-gray-700 dark:text-gray-400">
-                    phone
-                  </p>
-                  <p className="font-normal text-gray-700 dark:text-gray-400">
-                    age
-                  </p>
-                  {!isOwner ? (
-                    <>
-                      <span className="mt-4">
-                        <Link
-                          to={`/chat/${userName}`}
-                          className="bg-red-600 py-2 text-white px-3 rounded-full hover:bg-red-700"
+            <div className="bg-white rounded-xl shadow-lg overflow-hidden mb-8">
+              <div className="flex flex-col md:flex-row items-center md:items-start">
+                {/* Profile Image */}
+                <div className="relative group">
+                  <div className="w-32 h-32 md:w-40 md:h-40 rounded-full overflow-hidden border-4 border-primary-100 shadow-lg">
+                    <img
+                      className="w-full h-full object-cover"
+                      src={
+                        details.profilePic
+                          ? details.profilePic
+                          : "https://st3.depositphotos.com/6672868/13701/v/450/depositphotos_137014128-stock-illustration-user-profile-icon.jpg"
+                      }
+                      alt="profile pic"
+                    />
+                  </div>
+                  {isOwner && (
+                    <div className="absolute inset-0 bg-black bg-opacity-50 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                      <label htmlFor="profilePic" className="cursor-pointer">
+                        <svg
+                          className="w-8 h-8 text-white"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
                         >
-                          Click to chat
-                        </Link>
-                      </span>
-                    </>
-                  ) : (
-                    <></>
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
+                          />
+                        </svg>
+                      </label>
+                      <input
+                        id="profilePic"
+                        type="file"
+                        className="hidden"
+                        accept="image/*"
+                        onChange={displayFile}
+                        ref={fileInputRef}
+                      />
+                    </div>
                   )}
                 </div>
-                {isOwner ? (
-                  <>
-                    <div className="flex flex-col h-6">
-                      <button className="flex rounded">Edit</button>
-                    </div>
-                  </>
-                ) : (
-                  <></>
-                )}
-              </div>
-            </div>
 
-            {/* User Professional */}
-            <div className="flex flex-col items-center w-4/5 m-auto bg-white border border-gray-200 rounded-lg shadow md:max-w-full ">
-              <h2 className="flex text-l mb-2 font-bold itemstracking-tight text-gray-900 ">
-                Profession
-              </h2>
-              <div className="flex flex-row mb-4">
-                {isOwner ? (
-                  <>
-                    <div className="flex">
-                      Add profession:
-                      <div className="flex ml-2 items-end">
-                        <select ref={professionInputRef} key="profession">
-                          {toAddProfession.map((profession) => {
-                            return (
-                              <option
-                                value={`${profession}`}
-                                key={`${profession}`}
-                              >{`${profession}`}</option>
-                            );
-                          })}
-                        </select>
-                        <button
-                          className="flex ml-3"
-                          onClick={addProfessionButtonHandler}
+                {/* Profile Information */}
+                <div className="md:ml-8 mt-6 md:mt-0 flex-1">
+                  <div className="flex items-center justify-between mb-4">
+                    <h1 className="text-3xl font-bold text-slate-800">
+                      {userName}
+                    </h1>
+                    {isOwner && (
+                      <button className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors duration-200 flex items-center gap-2">
+                        <svg
+                          className="w-4 h-4"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
                         >
-                          Add
-                        </button>
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
+                          />
+                        </svg>
+                        Edit Profile
+                      </button>
+                    )}
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                    <div className="space-y-3">
+                      <div>
+                        <span className="text-sm font-medium text-slate-500">
+                          Email
+                        </span>
+                        <p className="text-slate-700">
+                          {details.email || "Not provided"}
+                        </p>
+                      </div>
+                      <div>
+                        <span className="text-sm font-medium text-slate-500">
+                          Phone
+                        </span>
+                        <p className="text-slate-700">
+                          {details.phone || "Not provided"}
+                        </p>
                       </div>
                     </div>
-                  </>
-                ) : (
-                  <></>
-                )}
-              </div>
+                    <div className="space-y-3">
+                      <div>
+                        <span className="text-sm font-medium text-slate-500">
+                          Address
+                        </span>
+                        <p className="text-slate-700">
+                          {details.address || "Not provided"}
+                        </p>
+                      </div>
+                      <div>
+                        <span className="text-sm font-medium text-slate-500">
+                          Age
+                        </span>
+                        <p className="text-slate-700">
+                          {details.age || "Not provided"}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
 
-              <div
-                className="flex flex-row justify-between leading-normal"
-                key="profession"
-              >
-                {userProfessions.map((data) => {
-                  return (
-                    <>
-                      <div className="flex flex-col items-center pb-2 justify-around">
-                        <img
-                          className="w-8 h-8 mb-3 rounded-full shadow-lg"
-                          src=""
-                          alt="pic"
+                  {!isOwner && (
+                    <Link
+                      to={`/chat/${userName}`}
+                      className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-primary-600 to-primary-700 text-white font-semibold rounded-lg shadow-md hover:shadow-lg transform hover:scale-[1.02] transition-all duration-200"
+                    >
+                      <svg
+                        className="w-5 h-5"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
                         />
-                        <Link
-                          to={`/worker/${userName}/${data.workerProfession}`}
-                        >
-                          <span className="mb-1 text-sm font-medium text-gray-900 ">{`${data.workerProfession}`}</span>
-                        </Link>
-                        <span className="text-sm text-gray-500 ">Rating</span>
-                      </div>
-                    </>
-                  );
-                })}
+                      </svg>
+                      Start Chat
+                    </Link>
+                  )}
+                </div>
               </div>
             </div>
 
-            <div className="flex flex-col  items-center justify-center w-4/5 md:max-w-full ">
-              <div className="flex flex-col m-2 items-center justify-center w-full rounded-lg  bg-red-200 md:max-w-full">
-                <h2 className="flex text-l mt-2 font-bold itemstracking-tight text-gray-900 ">
-                  Registered complains
+            {/* User Professions */}
+            <div className="bg-white rounded-xl shadow-lg p-6 mb-8">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-2xl font-bold text-slate-800">
+                  Professional Services
+                </h2>
+                {isOwner && toAddProfession.length > 0 && (
+                  <div className="flex items-center gap-3">
+                    <select
+                      ref={professionInputRef}
+                      className="px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                    >
+                      {toAddProfession.map((profession) => (
+                        <option value={profession} key={profession}>
+                          {profession}
+                        </option>
+                      ))}
+                    </select>
+                    <button
+                      onClick={addProfessionButtonHandler}
+                      className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors duration-200 flex items-center gap-2"
+                    >
+                      <svg
+                        className="w-4 h-4"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+                        />
+                      </svg>
+                      Add
+                    </button>
+                  </div>
+                )}
+              </div>
+
+              {userProfessions.length > 0 ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {userProfessions.map((data, index) => (
+                    <Link
+                      key={index}
+                      to={`/worker/${userName}/${data.workerProfession}`}
+                      className="group"
+                    >
+                      <div className="bg-gradient-to-br from-slate-50 to-slate-100 rounded-lg p-4 border border-slate-200 hover:shadow-md transition-all duration-200 group-hover:border-primary-300">
+                        <div className="flex items-center gap-3">
+                          <div className="w-12 h-12 bg-primary-100 rounded-lg flex items-center justify-center">
+                            <svg
+                              className="w-6 h-6 text-primary-600"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth="2"
+                                d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2-2v2m8 0V6a2 2 0 012 2v6a2 2 0 01-2 2H6a2 2 0 01-2-2V8a2 2 0 012-2V6"
+                              />
+                            </svg>
+                          </div>
+                          <div>
+                            <h3 className="font-semibold text-slate-800 group-hover:text-primary-600 transition-colors duration-200">
+                              {data.workerProfession}
+                            </h3>
+                            <p className="text-sm text-slate-500 flex items-center gap-2">
+                              <span>Professional Service</span>
+                              {(() => {
+                                const key = `${userName}|${data.workerProfession}`;
+                                const wd = workerDetailsMap[key];
+                                const ratingFromMap = wd && (wd.rating || wd.avgRating || wd.score || wd.TCR);
+                                const rating = ratingFromMap ?? data.rating ?? data.workerRating ?? data.score ?? data.TCR;
+                                if (rating || rating === 0) {
+                                  return <span className="text-slate-700 font-medium">{Number(rating).toFixed(1)} ⭐</span>;
+                                }
+                                return <span className="text-slate-500">No rating yet</span>;
+                              })()}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-8">
+                  <svg
+                    className="w-16 h-16 text-slate-300 mx-auto mb-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="1"
+                      d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2-2v2m8 0V6a2 2 0 012 2v6a2 2 0 01-2 2H6a2 2 0 01-2-2V8a2 2 0 012-2V6"
+                    />
+                  </svg>
+                  <p className="text-slate-500">
+                    No professional services listed
+                  </p>
+                </div>
+              )}
+            </div>
+
+            {/* Complaints Sections */}
+            <div className="space-y-8">
+              {/* Registered Complaints */}
+              <div className="bg-white rounded-xl shadow-lg p-6">
+                <h2 className="text-2xl font-bold text-slate-800 mb-6 flex items-center gap-3">
+                  <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+                    <svg
+                      className="w-5 h-5 text-blue-600"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                      />
+                    </svg>
+                  </div>
+                  Registered Complaints
+                  <span className="text-sm font-normal text-slate-500 bg-slate-100 px-2 py-1 rounded-full">
+                    {regComplains.length}
+                  </span>
                 </h2>
                 <ComplainBoxes complains={regComplains} />
               </div>
 
-              <div className="flex flex-col m-2 items-center justify-center w-full rounded-lg bg-red-200 md:max-w-full">
-                <h2 className="flex text-l mt-2 font-bold itemstracking-tight text-gray-900 ">
-                  Resolved complains
+              {/* Resolved Complaints */}
+              <div className="bg-white rounded-xl shadow-lg p-6">
+                <h2 className="text-2xl font-bold text-slate-800 mb-6 flex items-center gap-3">
+                  <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
+                    <svg
+                      className="w-5 h-5 text-green-600"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                      />
+                    </svg>
+                  </div>
+                  Resolved Complaints
+                  <span className="text-sm font-normal text-slate-500 bg-slate-100 px-2 py-1 rounded-full">
+                    {resComplains.length}
+                  </span>
                 </h2>
                 <ComplainBoxes complains={resComplains} />
               </div>
-              {isOwner ? (
-                <>
-                  <div className="flex flex-col m-2 items-center justify-center w-full rounded-lg bg-red-200 md:max-w-full">
-                    <h2 className="flex text-l mt-2 font-bold itemstracking-tight text-gray-900 ">
-                      Assigned complains
-                    </h2>
-                    <ComplainBoxes complains={assComplains} />
-                  </div>
-                </>
-              ) : (
-                <></>
+
+              {/* Assigned Complaints (Owner Only) */}
+              {isOwner && (
+                <div className="bg-white rounded-xl shadow-lg p-6">
+                  <h2 className="text-2xl font-bold text-slate-800 mb-6 flex items-center gap-3">
+                    <div className="w-8 h-8 bg-orange-100 rounded-lg flex items-center justify-center">
+                      <svg
+                        className="w-5 h-5 text-orange-600"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2"
+                        />
+                      </svg>
+                    </div>
+                    Assigned Complaints
+                    <span className="text-sm font-normal text-slate-500 bg-slate-100 px-2 py-1 rounded-full">
+                      {assComplains.length}
+                    </span>
+                  </h2>
+                  <ComplainBoxes complains={assComplains} />
+                </div>
               )}
             </div>
           </div>
-        </>
+        </div>
       )}
     </>
   );

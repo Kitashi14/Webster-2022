@@ -156,13 +156,13 @@ const ChatBox = (props) => {
   return (
     <>
       <div className="bg-gray-200 flex flex-col h-full w-2/3">
-        <div className="h-1/6 flex drop-shadow-lg flex-row pl-10 items-center  text-4xl text-red-600 font-semibold bg-gray-200 justify-between">
+        <div className="h-1/6 flex drop-shadow-lg flex-row pl-10 items-center  text-4xl text-primary-600 font-semibold bg-gray-200 justify-between">
           <span className="ml-5 h-full w-3/4 flex flex-col pr-3">
             <span className="w-full h-2/3 font-[Laila] pt-6 truncate ">
               <Link to={`/user/${userName}`}>{`${userName}`}</Link>
             </span>
 
-            <span className="  h-1/3 text-xl font-normal text-red-400  italic">
+            <span className="  h-1/3 text-xl font-normal text-primary-400  italic">
               {chat.userTyping[userName] > 0 ? "is typing...." : ""}
             </span>
           </span>
@@ -201,7 +201,7 @@ const ChatBox = (props) => {
                       {setDay ? (
                         <>
                           <div className="flex flex-row justify-center">
-                            <span className="w-1/3 bg-red-700 text-white text-center py-1 rounded">
+                            <span className="w-1/3 bg-primary-700 text-white text-center py-1 rounded">
                               {prevDay}
                             </span>
                           </div>
@@ -218,12 +218,12 @@ const ChatBox = (props) => {
                         }
                         className={`w-full ${
                           props.selectedMsg === message._id
-                            ? "bg-red-300 rounded"
+                            ? "bg-primary-300 rounded"
                             : ""
                         } flex flex-row justify-end mt-1 `}
                       >
-                        <span className="max-w-screen-md bg-red-600 rounded-l-2xl rounded-tr-2xl rounder-br-xs overflow-hidden">
-                          <div className="w-full flex bg-red-600 flex-row rounded pl-6 space-x-8 pb-2 px-0 pt-2 items-end text-white justify-start ">
+                        <span className="max-w-screen-md bg-primary-600 rounded-l-2xl rounded-tr-2xl rounder-br-xs overflow-hidden">
+                          <div className="w-full flex bg-primary-600 flex-row rounded pl-6 space-x-8 pb-2 px-0 pt-2 items-end text-white justify-start ">
                             <span className="w-11/12  break-words whitespace-pre-wrap">
                               {message.message}
                             </span>
@@ -242,7 +242,7 @@ const ChatBox = (props) => {
                       {setDay ? (
                         <>
                           <div className="flex flex-row justify-center">
-                            <span className="w-1/3 bg-red-700 text-white text-center py-1 rounded">
+                            <span className="w-1/3 bg-primary-700 text-white text-center py-1 rounded">
                               {prevDay}
                             </span>
                           </div>
@@ -259,13 +259,13 @@ const ChatBox = (props) => {
                         }
                         className={`w-full ${
                           props.selectedMsg === message._id
-                            ? "bg-red-300 rounded"
+                            ? "bg-primary-300 rounded"
                             : ""
                         } flex flex-row mt-1  `}
                       >
                         <span className="max-w-screen-md bg-gray-300 rounded-r-2xl rounded-tl-2xl rounder-bl-xs overflow-hidden">
                           <div className="w-full flex flex-row rounded pr-14  pl-6 pb-2 pt-2">
-                            <span className="w-full  break-words whitespace-pre-wrap">
+                              <span className="w-full  break-words whitespace-pre-wrap">
                               {message.message}
                             </span>
                           </div>
@@ -285,7 +285,7 @@ const ChatBox = (props) => {
           {messages.length ? (
             <>
               <div className="flex flex-row justify-center">
-                <span className="w-1/3 bg-red-700 text-white text-center py-1 rounded">
+                <span className="w-1/3 bg-primary-700 text-white text-center py-1 rounded">
                   {currDate}
                 </span>
               </div>
@@ -300,7 +300,7 @@ const ChatBox = (props) => {
                   onClick={() => {
                     scrollBlock.current.scrollTop = 0;
                   }}
-                  className="bg-red-400 h-full w-[50px] flex flex-row justify-center rounded-full items-center"
+                  className="bg-primary-400 h-full w-[50px] flex flex-row justify-center rounded-full items-center"
                 >
                   <svg
                     className="fill-white"
@@ -319,19 +319,22 @@ const ChatBox = (props) => {
         </div>
         <div className="h-1/6 ">
           <div className="h-full w-full px-0  flex flex-row justify-around items-center space-x-3">
-            <textarea
-              className="w-3/4 h-full px-3 py-2 text-xl leading-tight bg-gray-200 outline-none text-red-500 font-medium appearance-none focus:outline-none focus:shadow-outline resize-none placeholder:font-normal"
-              ref={chatInputRef}
-              onChange={setTyping}
-              onKeyPress={(e) => {
-                if (e.which === 13 && !e.shiftKey) {
-                  sendButtonHandler();
-                }
-              }}
-              placeholder="Type your message here..."
-            />
+            <div className="flex flex-col w-3/4">
+              <textarea
+                className="w-full h-12 px-3 py-2 text-base leading-tight bg-white outline-none text-primary-700 font-medium appearance-none focus:outline-none focus:shadow-outline resize-none placeholder:font-normal border border-slate-200 rounded-md"
+                ref={chatInputRef}
+                onChange={setTyping}
+                onKeyPress={(e) => {
+                  if (e.which === 13 && !e.shiftKey) {
+                    sendButtonHandler();
+                  }
+                }}
+                placeholder="Write your message here..."
+              />
+              <p className="text-xs text-slate-500 mt-1 ml-2">Write your message here</p>
+            </div>
             <button
-              className="px-3 py-3 rounded-full font-normal bg-red-600 text-white"
+              className="px-3 py-3 rounded-full font-normal bg-primary-600 text-white"
               onClick={sendButtonHandler}
             >
               <svg

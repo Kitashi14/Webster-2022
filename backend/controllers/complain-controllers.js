@@ -17,10 +17,9 @@ const latestComplain = async (req, res, next) => {
   try {
     console.log("\nfetching latest complains");
 
-    //fetching latest complains from database
-    latestComplains = await Complain.find({})
+      latestComplains = await Complain.find({ status: { $not: { $regex: '^resolved$', $options: 'i' } } })
       .sort({ creationTime: -1 })
-      .limit(20);
+      .limit(50);
     console.log("\ngot latest complains");
     console.log("\nsent latest complains");
     res.status(200).json({ data: latestComplains });
@@ -32,7 +31,6 @@ const latestComplain = async (req, res, next) => {
   }
 };
 
-//add complain
 const addComplain = async (req, res, next) => {
   console.log("\nadd complain api hit");
 
@@ -285,6 +283,23 @@ const getComplainDetails = async (req, res, next) => {
 
   const userName = complainDetails.creatorUsername;
 
+  // populate accepted workers details (if any)
+  let acceptedWorkersDetails = [];
+  try {
+    if (complainDetails.acceptedWorkers && complainDetails.acceptedWorkers.length) {
+      for (const wid of complainDetails.acceptedWorkers) {
+        try {
+          const w = await Worker.findById(wid);
+          if (w) acceptedWorkersDetails.push(w);
+        } catch (err) {
+          console.log('failed to fetch worker', wid, err.message);
+        }
+      }
+    }
+  } catch (err) {
+    console.log('error populating accepted workers', err.message);
+  }
+
   let decoded_login_token;
   //verifying login token
   try {
@@ -314,7 +329,7 @@ const getComplainDetails = async (req, res, next) => {
   console.log("\nisUserVerified", isVerifiedUser);
 
   //sending response
-  res.status(200).json({ data: { complain: complainDetails, isVerifiedUser } });
+  res.status(200).json({ data: { complain: complainDetails, acceptedWorkersDetails, isVerifiedUser } });
   return;
 };
 
@@ -378,7 +393,7 @@ const deleteComplain = async (req, res, next) => {
   }
 };
 
-//update complain
+
 const updateComplain = async (req, res, next) => {
   console.log("\nupdate complain api hit");
 
@@ -462,33 +477,159 @@ const updateComplain = async (req, res, next) => {
     res.status(500).json({ error: err.message });
   }
 };
-const acceptComplain = async (req, res) => {
+
+const assignComplain = async (req, res, next) => {
+  console.log('\nassign complain api hit');
+  const { complainId, workerId } = req.params;
+  let login_token;
   try {
-    const workerid = req.params.workerId;
+    login_token = req.cookies[process.env.LOGIN_COOKIE_NAME];
+    if (!login_token) throw Error('Session expired');
+  } catch (err) {
+    console.log(err.message);
+    res.status(400).json({ error: 'Please login to assign worker' });
+    return;
+  }
+
+  let decoded_token;
+  try {
+    decoded_token = jwt.verify(login_token, process.env.JWT_SECRET);
+  } catch (err) {
+    console.log('failed to decode token', err.message);
+    res.status(401).json({ error: 'Invalid session' });
+    return;
+  }
+  let complain;
+  try {
+    complain = await Complain.findById(complainId);
+    if (!complain) {
+      res.status(404).json({ error: 'Complain not found' });
+      return;
+    }
+  } catch (err) {
+    console.log('error fetching complain', err.message);
+    res.status(500).json({ error: err.message });
+    return;
+  }
+
+  let requesterIsAdmin = false;
+  try {
+    const requester = await User.findOne({ username: decoded_token.userName });
+    if (requester && requester.isAdmin) requesterIsAdmin = true;
+  } catch (err) {
+    console.log('error fetching requester user', err.message);
+  }
+  if (!requesterIsAdmin && complain.creatorUsername !== decoded_token.userName) {
+    res.status(403).json({ error: 'Only complain creator or admin can assign a worker' });
+    return;
+  }
+  let worker;
+  try {
+    worker = await Worker.findById(workerId);
+    if (!worker) {
+      res.status(404).json({ error: 'Worker not found' });
+      return;
+    }
+  } catch (err) {
+    console.log('error fetching worker', err.message);
+    res.status(500).json({ error: err.message });
+    return;
+  }
+  if (complain.workerId && complain.workerId.toString() !== 'N/A' && !requesterIsAdmin) {
+    res.status(400).json({ error: 'Worker already assigned' });
+    return;
+  }
+
+  try {
+    complain.workerId = worker._id;
+    complain.workerUsername = worker.workerUsername || worker.username || worker.userName || 'unknown';
+    complain.status = 'assigned';
+    complain.approvedDate = new Date();
+    console.log('assigning worker to complain');
+    await complain.save();
+    try {
+      if (!worker.assignedWorks) worker.assignedWorks = [];
+      if (!worker.assignedWorks.includes(complain._id.toString())) {
+        worker.assignedWorks.push(complain._id.toString());
+        await worker.save();
+      }
+    } catch (werr) {
+      console.log('warning: failed to update worker.assignedWorks', werr.message);
+    }
+
+    res.status(200).json({ message: 'Worker assigned successfully', data: { complainId: complain._id } });
+    return;
+  } catch (err) {
+    console.log('error assigning worker', err.message);
+    res.status(500).json({ error: err.message });
+    return;
+  }
+};
+const acceptComplainById = async (req, res) => {
+  try {
+    const workerId = req.params.workerId;
     const complainid = req.params.complainId;
-    let res1 = await Complain.findById(complainid);
-    res1.acceptedWorkers.addToSet(workerid);
-    let res2 = await Worker.findById(workerid);
-    res2.acceptedWorks.addToSet(complainid);
-    console.log(res1);
-    console.log(res2);
-    res.status(200).json({ message: "complain accepted" });
+
+    const worker = await Worker.findById(workerId);
+    if (!worker) {
+      res.status(400).json({ error: "Worker not found" });
+      return;
+    }
+
+    const complain = await Complain.findById(complainid);
+    if (!complain) {
+      res.status(400).json({ error: "Complain not found" });
+      return;
+    }
+
+    if (!complain.acceptedWorkers) complain.acceptedWorkers = [];
+    if (!complain.acceptedWorkers.includes(worker._id.toString())) {
+      complain.acceptedWorkers.push(worker._id.toString());
+    }
+
+    if (!worker.acceptedWorks) worker.acceptedWorks = [];
+    if (!worker.acceptedWorks.includes(complain._id.toString())) {
+      worker.acceptedWorks.push(complain._id.toString());
+    }
+
+    await complain.save();
+    await worker.save();
+
+    res.status(200).json({ message: "complain accepted by id" });
   } catch (err) {
     console.log(err.message);
     res.status(500).json({ error: err.message });
   }
 };
-const workerRejectComplain = async (req, res) => {
+
+const workerRejectComplainById = async (req, res) => {
   try {
-    const workerid = req.params.workerId;
+    const workerId = req.params.workerId;
     const complainid = req.params.complainId;
-    let res1 = await Complain.findById(complainid);
-    res1.acceptedWorkers.pull(workerid);
-    let res2 = await Worker.findById(workerid);
-    res2.acceptedWorks.pull(complainid);
-    console.log(res1);
-    console.log(res2);
-    res.status(200).json({ message: "complain accepted" });
+    const worker = await Worker.findById(workerId);
+    if (!worker) {
+      res.status(400).json({ error: "Worker not found" });
+      return;
+    }
+
+    const complain = await Complain.findById(complainid);
+    if (!complain) {
+      res.status(400).json({ error: "Complain not found" });
+      return;
+    }
+
+    complain.acceptedWorkers = (complain.acceptedWorkers || []).filter(
+      (id) => id.toString() !== worker._id.toString()
+    );
+
+    worker.acceptedWorks = (worker.acceptedWorks || []).filter(
+      (id) => id.toString() !== complain._id.toString()
+    );
+
+    await complain.save();
+    await worker.save();
+
+    res.status(200).json({ message: "complain rejected by id" });
   } catch (err) {
     console.log(err.message);
     res.status(500).json({ error: err.message });
@@ -497,21 +638,62 @@ const workerRejectComplain = async (req, res) => {
 const closeComplain = async (req, res) => {
   try {
     const id = req.body.id;
-    const rating = req.body.rating;
-    const comment = req.body.comment;
-    const resolvedDate = req.body.resolvedDate;
+    const rating = Number(req.body.rating) || 0;
+    const comment = req.body.comment || "";
+    const resolvedDate = req.body.resolvedDate || Date.now();
+
+    const complain = await Complain.findById(id);
+    if (!complain) {
+      return res.status(400).json({ error: "Complain doesn't exists" });
+    }
+    let login_token;
+    try {
+      login_token = req.cookies[process.env.LOGIN_COOKIE_NAME];
+      if (!login_token) {
+        return res.status(400).json({ error: 'Please login to close complain' });
+      }
+    } catch (err) {
+      return res.status(400).json({ error: 'Please login to close complain' });
+    }
+
+    let decoded_login_token;
+    try {
+      decoded_login_token = jwt.verify(login_token, process.env.JWT_SECRET);
+    } catch (err) {
+      console.log('failed to decode token', err.message);
+      return res.status(500).json({ error: 'Failed to verify login token' });
+    }
+
+    const currentUser = decoded_login_token.userName;
+    const isAdmin = decoded_login_token.isAdmin === true;
+
+
+    if (!isAdmin && currentUser !== complain.creatorUsername) {
+      return res.status(403).json({ error: 'Not authorized to close this complain' });
+    }
+
     let res1 = await Complain.findByIdAndUpdate(id, {
       status: "resolved",
       rating: rating,
       comment: comment,
       resolvedDate: resolvedDate,
     });
-    const workerUsername = res1.workerUsername;
-    let res2 = await Woker.findOne({ workerUsername: workerUsername });
-    res2.TCR = res2.TCR + 1;
-    res2.score = res2.score + rating;
-    res2.rating = res2.score / res2.TCR;
-    await res2.save();
+
+    const workerUsername = res1 && res1.workerUsername;
+    if (workerUsername && workerUsername !== 'N/A') {
+      try {
+        let res2 = await Worker.findOne({ workerUsername: workerUsername });
+        if (res2) {
+          res2.TCR = (res2.TCR || 0) + 1;
+          res2.score = (res2.score || 0) + rating;
+          res2.rating = res2.score / res2.TCR;
+          await res2.save();
+        }
+      } catch (err) {
+        console.log('failed to update worker ratings', err.message);
+      }
+    }
+
     res.status(200).json({ data: res1, message: "complain closed" });
   } catch (err) {
     console.log(err.message);
@@ -568,8 +750,9 @@ exports.filterComplain = filterComplain;
 exports.deleteComplain = deleteComplain;
 exports.getComplainDetails = getComplainDetails;
 exports.updateComplain = updateComplain;
-exports.workerRejectComplain = workerRejectComplain;
-exports.acceptComplain = acceptComplain;
+exports.acceptComplainById = acceptComplainById;
+exports.workerRejectComplainById = workerRejectComplainById;
+exports.assignComplain = assignComplain;
 exports.closeComplain = closeComplain;
 exports.approveComplain = approveComplain;
 exports.rejectComplain = rejectComplain;

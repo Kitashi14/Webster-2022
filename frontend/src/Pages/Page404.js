@@ -1,6 +1,8 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
 const Page404 = () => {
+  const navigate = useNavigate();
   return (
     <>
       <main className="bg-white  overflow-hidden h-screen relative">
@@ -10,8 +12,9 @@ const Page404 = () => {
               <h1 className="font-light font-sans text-center lg:text-left text-5xl lg:text-8xl mt-12 md:mt-0 text-gray-700">
                 Sorry, this page isn&#x27;t available
               </h1>
-              <button className="px-2 py-2 w-36 mt-16 font-light transition ease-in duration-200 hover:bg-tc border-2 text-lg border-gray-700 bg-tc-300 hover:text-sc focus:outline-white">
-                Go back home
+              <button onClick={()=>{navigate('/')}}
+                className="px-2 py-2 w-36 mt-16 font-light transition ease-in duration-200 hover:bg-tc border-2 text-lg border-gray-700 bg-tc-300 hover:text-sc focus:outline-white">
+                  Go back home
               </button>
             </div>
             <div className="block w-full mx-auto md:mt-0 relative max-w-md lg:max-w-2xl">

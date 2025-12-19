@@ -45,13 +45,13 @@ const SearchedMsgCard = (props) => {
   return (
     <button
       onClick={openUser}
-      className={`h-24 w-full  bg-red-${
+      className={`h-24 w-full  bg-primary-${
         props.selectedMsg && (messageObj._id === props.selectedMsg)
           ? "400"
           : "600"
       } flex flex-row ${props.selectedMsg && (messageObj._id === props.selectedMsg)
         ? ""
-        : "hover:bg-red-500"} `}
+        : "hover:bg-primary-500"} `}
     >
       <div className=" w-4/5 h-full flex flex-col pl-4 py-1 items-start justify-center space-y-1">
         <span className="text-white text-2xl font-normal font-[Laila]">
@@ -64,10 +64,10 @@ const SearchedMsgCard = (props) => {
         </span>
       </div>
       <div className="w-1/5 h-full justify-center flex flex-col  pr-4 py-0 space-y-0 items-end">
-        <span className="text-red-100 text-sm">
+        <span className="text-primary-100 text-sm">
           {lastDay(date)}
         </span>
-        <span className="text-red-100 text-sm">
+        <span className="text-primary-100 text-sm">
           {getTime(date)}
         </span>
       </div>
