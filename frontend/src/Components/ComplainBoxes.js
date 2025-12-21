@@ -9,9 +9,10 @@ const ComplainBoxes = (props) => {
         {props.complains.length ? (
           <div className="grid grid-cols-1 sm:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
             {props.complains.map((complain) => {
-              const imageUrl = profession.filter(
+               const professionData = profession.find(
                 (data) => data.name === complain.profession
-              )[0].logo;
+                  );
+                  const imageUrl = professionData?.logo;
               return (
                 <ComplainBox
                   item={{ ...complain, img: imageUrl }}
