@@ -31,6 +31,17 @@ const Token = require("../models/token");
 
 const redirectURI = process.env.GOOGLE_AUTH_REDIRECT_URI;
 
+// Helper function for cookie options based on environment
+const getCookieOptions = (maxAge) => {
+  const isProduction = process.env.NODE_ENV === 'production';
+  return {
+    maxAge: maxAge,
+    httpOnly: true,
+    secure: isProduction, // true in production (HTTPS), false in development
+    sameSite: isProduction ? 'none' : 'lax', // 'none' required for cross-site cookies in production
+  };
+};
+
 //for getting url of google authentication page
 const googleAuthPage = async (req, res, next) => {
   console.log("\n", "google auth page request hit");
@@ -142,11 +153,7 @@ const redirectGoogleEmail = async (req, res, next) => {
     
           //sending cookies to client side
           console.log("\ncreating email token");
-          res.cookie(process.env.EMAIL_COOKIE_NAME, token, {
-            expires: new Date(Date.now() + 60 * 60 * 1000), //milliseconds
-            httpOnly: true,
-            secure: false,
-          });
+          res.cookie(process.env.EMAIL_COOKIE_NAME, token, getCookieOptions(60 * 60 * 1000));
           console.log("\n", "redirecting to create account page with email token");
           res.redirect(`${process.env.UI_ROOT_URI}/createAccount`);
           return;
@@ -165,11 +172,7 @@ const redirectGoogleEmail = async (req, res, next) => {
     
           //sending cookies to client side
           console.log("\nCreating login token");
-          res.cookie(process.env.LOGIN_COOKIE_NAME, token, {
-            maxAge: 10 * 24 * 60 * 60 * 1000,
-            httpOnly: true,
-            secure: false,
-          });
+          res.cookie(process.env.LOGIN_COOKIE_NAME, token, getCookieOptions(10 * 24 * 60 * 60 * 1000));
           console.log("\nredirecting to home page with login token");
           res.redirect(`${process.env.UI_ROOT_URI}`);
           return;
@@ -228,11 +231,7 @@ const createOtp = async (req, res, next) => {
         console.log(token);
         //sending cookies to client side
         console.log("\ncreating and sending email-token");
-        res.cookie(process.env.EMAIL_COOKIE_NAME, token, {
-          expires: new Date(Date.now() + 60 * 60 * 1000), //milliseconds
-          httpOnly: true,
-          secure: false,
-        });
+        res.cookie(process.env.EMAIL_COOKIE_NAME, token, getCookieOptions(60 * 60 * 1000));
         console.log("\nsent email-token for otp verification");
 
         try {
@@ -348,11 +347,7 @@ const createOtp = async (req, res, next) => {
         console.log(token);
         //sending cookies to client side
         console.log("\ncreating and sending email-token");
-        res.cookie(process.env.EMAIL_COOKIE_NAME, token, {
-          expires: new Date(Date.now() + 60 * 60 * 1000), //milliseconds
-          httpOnly: true,
-          secure: false,
-        });
+        res.cookie(process.env.EMAIL_COOKIE_NAME, token, getCookieOptions(60 * 60 * 1000));
         console.log("\nsent email-token for otp verification");
 
         try {
@@ -544,11 +539,7 @@ const verifyOpt = async (req, res, next) => {
     //sending cookies to client side
     console.log("\ncreating new modified email token");
     console.log("\nsending modified email-token");
-    res.cookie(process.env.EMAIL_COOKIE_NAME, token, {
-      expires: new Date(Date.now() + 60 * 60 * 1000), //milliseconds
-      httpOnly: true,
-      secure: false,
-    });
+    res.cookie(process.env.EMAIL_COOKIE_NAME, token, getCookieOptions(60 * 60 * 1000));
 
     res.status(200).json({
       message: "otp matched",
@@ -705,11 +696,7 @@ const verifyUser = async (req, res, next) => {
 
     //sending cookies to client side
     console.log("\nCreating login token");
-    res.cookie(process.env.LOGIN_COOKIE_NAME, token, {
-      maxAge: 10 * 24 * 60 * 60 * 1000,
-      httpOnly: true,
-      secure: false,
-    });
+    res.cookie(process.env.LOGIN_COOKIE_NAME, token, getCookieOptions(10 * 24 * 60 * 60 * 1000));
     console.log("\nsent login token");
 
     res.status(200).json({
