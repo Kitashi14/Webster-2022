@@ -630,6 +630,7 @@ const verifyLoginToken = async (req, res, next) => {
     const response = { error: "Failed to authenticate" };
 
     res.status(500).json(response);
+    return; // Added missing return statement
   }
 };
 
