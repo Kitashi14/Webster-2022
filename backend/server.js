@@ -21,7 +21,26 @@ const userRouters = require("./routers/user-routers");
 const complainRouters = require("./routers/complain-routers");
 const workerRouters = require("./routers/worker-routers");
 
-//for reading cookies while getting requests
+//CORS must be first to handle preflight requests properly
+app.use(
+  cors({
+    //Sets Access-Control-Allow-Origin to the UI URI
+    origin: process.env.UI_ROOT_URI,
+    //Sets Access-Control-Allow-Credentials to true to recieve cookies
+    credentials: true,
+    //Expose headers needed for cookies
+    exposedHeaders: ['set-cookie'],
+    //Allow common headers and cookie headers
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Cookie', 'Set-Cookie'],
+    //Allow cookies to be sent
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
+    //Handle preflight requests
+    preflightContinue: false,
+    optionsSuccessStatus: 204
+  })
+);
+
+//for reading cookies while getting requests (AFTER CORS)
 app.use(cookieParser());
 
 //for parsering json file
@@ -30,16 +49,6 @@ app.use(bodyParser.json());
 
 //allowing excess to public folder
 app.use(express.static("public"));
-
-//for allowing cors request from client side
-app.use(
-  cors({
-    //Sets Access-Control-Allow-Origin to the UI URI
-    origin: process.env.UI_ROOT_URI,
-    //Sets Access-Control-Allow-Credentials to true to recieve cookies
-    credentials: true,
-  })
-);
 
 //for allowing cors request from any server
 // app.use(cors());

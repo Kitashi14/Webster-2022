@@ -34,12 +34,17 @@ const redirectURI = process.env.GOOGLE_AUTH_REDIRECT_URI;
 // Helper function for cookie options based on environment
 const getCookieOptions = (maxAge) => {
   const isProduction = process.env.NODE_ENV === 'production';
-  return {
+  const options = {
     maxAge: maxAge,
     httpOnly: true,
     secure: isProduction, // true in production (HTTPS), false in development
     sameSite: isProduction ? 'none' : 'lax', // 'none' required for cross-site cookies in production
+    path: '/', // Ensure cookie is available across all paths
   };
+  
+  // Don't set domain in production to use the default (current domain)
+  // This is more reliable for cross-origin scenarios
+  return options;
 };
 
 //for getting url of google authentication page
@@ -716,7 +721,14 @@ const authLogout = async (req, res, next) => {
   //remove login token
   console.log("\nremoving login token");
   try {
-    res.clearCookie(process.env.LOGIN_COOKIE_NAME);
+    const isProduction = process.env.NODE_ENV === 'production';
+    // CRITICAL: Must use same options as when setting cookie for proper clearing in production
+    res.clearCookie(process.env.LOGIN_COOKIE_NAME, {
+      httpOnly: true,
+      secure: isProduction,
+      sameSite: isProduction ? 'none' : 'lax',
+      path: '/',
+    });
     console.log("\nremoved login token");
     res.status(200).json({ message: "logged out" });
   } catch (err) {
